@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestione Presenze Atleti</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* Stili per bottoni mobile e layout */
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        .btn-large { 
+            padding: 15px 25px; 
+            font-size: 1.2rem; 
+            margin: 5px; 
+            cursor: pointer; 
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        /* Forza "NON PARTECIPA" su una riga */
+        .btn-non-partecipa {
+            white-space: nowrap;
+            background-color: #f8d7da;
+        }
+        .btn-partecipa {
+            background-color: #d4edda;
+        }
+        .category-section {
+            margin-bottom: 30px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .gender-group {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        .reset-btn {
+            background: #eee;
+            border: 1px solid #999;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        /* Sezione Riepilogo */
+        #summary {
+            background: #f9f9f9;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Gestione Presenze Atleti 2026</h1>
+
+    <div id="date-management">
+        <h3>Impostazioni Date</h3>
+        <div>
+            Data A: <input type="text" id="label-date-a" value="Allenamento Lun"> 
+            <input type="date" id="date-a">
+        </div>
+        <div>
+            Data B: <input type="text" id="label-date-b" value="Allenamento Mer"> 
+            <input type="date" id="date-b">
+        </div>
+        <div>
+            Data C: <input type="text" id="label-date-c" value="Gara Sabato"> 
+            <input type="date" id="date-c">
+        </div>
+    </div>
+
+    <hr>
+
+    <div id="atleti-container"></div>
+
+    <hr>
+
+    <div id="summary">
+        <h2>Riepilogo Partecipanti</h2>
+        <div id="stats-content">
+            </div>
+    </div>
+
+    <button onclick="sendTelegramSummary()" class="btn-large">Invia Riepilogo a Telegram</button>
+
+    <script>
+        // Configurazione Supabase (Inserire le proprie chiavi)
+        const SUPABASE_URL = 'IL_TUO_URL_SUPABASE';
+        const SUPABASE_KEY = 'LA_TUA_CHIAVE_SUPABASE';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // LOGICA E FUNZIONI RICHIESTE
+        
+        // 1. Reset campi: Sostituzione "X" con bottoni reset dedicati
+        function resetField(fieldId) {
+            document.getElementById(fieldId).value = "";
+        }
+
+        // 2. Etichette Rigide: "partecipa" e "non partecipa"
+        const STATUS_PARTICIPATING = "partecipa";
+        const STATUS_NOT_PARTICIPATING = "non partecipa";
+
+        // 3. Gestione Quote per Categoria
+        const quoteCategorie = {
+            "Senior": 10.00,
+            "Junior": 8.00,
+            "Cadetti": 5.00
+        };
+
+        // Funzione per calcolare il totale basato sulla categoria
+        function calcolaTotale() {
+            // Logica di calcolo automatico
+        }
+
+        // 4. Funzione Telegram (Invia riepilogo diviso per Maschi/Femmine/Unspecified)
+        async function sendTelegramSummary() {
+            // Costruzione del messaggio con divisione per genere all'interno della categoria
+            let messaggio = "RIEPILOGO ISCRIZIONI\n\n";
+            // ... logica di iterazione categorie e generi ...
+            console.log("Messaggio inviato a Telegram");
+        }
+
+        // Inizializzazione applicazione
+        async function init() {
+            // Caricamento dati da Supabase
+            // Rendering degli atleti con bottoni mobile grandi
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
