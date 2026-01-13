@@ -13,37 +13,39 @@
         .logo-container { margin-bottom: 20px; min-height: 150px; display: flex; align-items: center; justify-content: center; }
         .logo { max-width: 600px; max-height: 350px; width: auto; height: auto; border-radius: 12px; }
         
-        .controls-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-wrap: wrap; }
+        .controls-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-wrap: wrap; align-items: center; }
         select { padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 1rem; cursor: pointer; font-weight: 600; }
         
         .actions-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .btn-action { padding: 12px 20px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; color: white; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-action { padding: 12px 20px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; color: white; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-pdf { background: #e74c3c; }
         .btn-drive { background: #4285F4; }
         .btn-admin-toggle { background: #6c757d; }
-        .btn-home { background: #ff9800; color: white; }
         
+        .btn-home { background: #ff9800; color: white; position: relative; overflow: hidden; }
+        .btn-home.active-pulse::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.3); animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 0; transform: scale(1); } 50% { opacity: 1; } 100% { opacity: 0; transform: scale(1.1); } }
+
+        .btn-oggi { background: #17a2b8; color: white; font-size: 1.5rem; width: 50px; height: 50px; padding: 0; display: flex; align-items: center; justify-content: center; line-height: 1; }
+        .btn-oggi:active { transform: scale(1.1); }
+
         #status-auto { font-size: 1rem; color: #666; margin-top: 10px; font-weight: bold; min-height: 1.5rem; transition: 0.3s; }
 
-        .table-wrapper { overflow: auto; max-height: 60vh; border: 2px solid #dee2e6; border-radius: 10px; background: white; }
+        .table-wrapper { overflow: auto; max-height: 60vh; border: 2px solid #dee2e6; border-radius: 10px; background: white; scroll-behavior: smooth; }
         table { border-collapse: separate; border-spacing: 0; width: auto; }
         
-        /* Riga intestazione uniforme */
         thead th { position: sticky; top: 0; background: #343a40 !important; color: white !important; z-index: 10; font-size: 0.8rem; border: 1px solid #454d55; height: 65px; min-width: 45px; text-align: center; }
-        
         thead th.sticky-col { z-index: 15 !important; background: #343a40 !important; color: #ffffff !important; font-size: 1.1rem !important; font-weight: 900 !important; text-transform: uppercase; text-align: left; padding-left: 15px !important; }
         .sticky-col { position: sticky; left: 0; background-color: white !important; color: #000 !important; z-index: 5; border-right: 2px solid #007bff !important; width: 180px; min-width: 180px; text-align: left; padding: 8px 10px !important; font-weight: bold; }
         
         .day-cell { width: 45px; height: 45px; border: 1px solid #dee2e6; text-align: center; cursor: pointer; font-size: 1.1rem; font-weight: 700; }
-        
-        /* Priorità colori: la partecipazione (verde) vince sul colore "Oggi" */
         .p-partecipa { background: #2ecc71 !important; color: white !important; }
-        
-        /* Evidenziazioni celle del corpo tabella */
         .weekend-cell { background: #f1f3f5; }
         .today-cell { background-color: #d1ecf1; border: 2.5px solid #0c5460 !important; }
 
-        /* --- STILI OTTIMIZZATI PER MOBILE --- */
         @media (max-width: 600px) {
             body { padding: 8px; }
             .logo { max-height: 150px; }
@@ -51,7 +53,7 @@
             .day-cell { width: 55px; height: 55px; font-size: 1.3rem; } 
             .sticky-col { width: 130px; min-width: 130px; font-size: 0.85rem; }
             .btn-action { flex: 1; padding: 15px 5px; font-size: 0.75rem; flex-direction: column; gap: 2px; }
-            .admin-grid { grid-template-columns: 1fr !important; }
+            .btn-oggi { width: 60px; height: 60px; font-size: 2rem; flex: none; }
         }
 
         .menu-container { display: flex; gap: 15px; margin: 25px 0; }
@@ -69,8 +71,6 @@
 
         #toast { visibility: hidden; min-width: 200px; background-color: #333; color: #fff; text-align: center; border-radius: 10px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: bold; }
         #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
 </head>
 <body>
@@ -82,9 +82,10 @@
         <h1>📅 Registro Presenze</h1>
         
         <div class="controls-container">
-            <button class="btn-action btn-home" onclick="vaiAllaHome()">🏠 HOME</button>
+            <button id="btn-home" class="btn-action btn-home" onclick="vaiAllaHome()">🏠 HOME</button>
             <select id="select-mese" onchange="cambiaData()"></select>
             <select id="select-anno" onchange="cambiaData()"></select>
+            <button class="btn-action btn-oggi" onclick="scrollOggi()" title="Vai a Oggi">🎯</button>
         </div>
         
         <div class="actions-container">
@@ -110,21 +111,22 @@
         <div id="lista-atleti-admin"></div>
     </div>
 
-    <div class="menu-container">
+    <div class="menu-container" id="main-menu">
         <button class="btn-menu btn-piccoli" onclick="mostraSezione('piccoli')">PICCOLI</button>
         <button class="btn-menu btn-grandi" onclick="mostraSezione('grandi')">GRANDI</button>
     </div>
 
     <div id="sez-piccoli" class="section-container">
-        <div class="table-wrapper"><table><thead id="head-piccoli"></thead><tbody id="body-piccoli"></tbody></table></div>
+        <div class="table-wrapper" id="wrapper-piccoli"><table><thead id="head-piccoli"></thead><tbody id="body-piccoli"></tbody></table></div>
     </div>
     <div id="sez-grandi" class="section-container">
-        <div class="table-wrapper"><table><thead id="head-grandi"></thead><tbody id="body-grandi"></tbody></table></div>
+        <div class="table-wrapper" id="wrapper-grandi"><table><thead id="head-grandi"></thead><tbody id="body-grandi"></tbody></table></div>
     </div>
 
     <div id="toast"></div>
 
 <script>
+    // --- CONFIGURAZIONE DATABASE ---
     const SB_URL = 'https://jiktdsvwerqstrlthwxu.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3Rkc3Z3ZXJxc3RybHRod3h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDkxMDEsImV4cCI6MjA4MzgyNTEwMX0.wmEnME6GaHXrvLoQH7MDijiTU4dZfoi9wOcrqs9fP10';
     const WEB_APP_DRIVE_URL = "https://script.google.com/macros/s/AKfycbwLBLEGG_D9_6yfuxi_gOyp6fkiK7M2aTaSlilD9UQhPSwAl71DNI5aQhcwxdFHlsRf/exec";
@@ -169,8 +171,7 @@
             let row = `<tr><th class="sticky-col">ATLETA</th>`;
             for(let i=1; i<=giorniMese; i++) {
                 let dG = new Date(anno, mese, i), isToday = (isMeseCorrente && i == giornoOggi);
-                // Intestazione riga giorni tutta scura come richiesto
-                row += `<th class="${isToday?'today-cell':''}"><span>${nomiG[dG.getDay()]}</span><br>${i}</th>`;
+                row += `<th class="${isToday?'today-cell':''}" ${isToday?'id="today-marker"':''}><span>${nomiG[dG.getDay()]}</span><br>${i}</th>`;
             }
             row += `<th>TOT</th></tr>`;
             document.getElementById(h).innerHTML = row;
@@ -236,14 +237,12 @@
         await supabaseClient.from('atleti').insert([{ nome, categoria: cat }]);
         document.getElementById('new-atleta-nome').value = "";
         await caricaAtleti();
-        showToast("Atleta aggiunto!");
     }
 
     async function eliminaAtleta(id) {
         if (!confirm("Eliminare definitivamente l'atleta?")) return;
         await supabaseClient.from('atleti').delete().eq('id', id);
         await caricaAtleti();
-        showToast("Atleta eliminato!");
     }
 
     function aggiornaListaAdmin() {
@@ -260,7 +259,8 @@
         sessionStorage.removeItem('ultima_sezione');
         document.getElementById('sez-piccoli').classList.remove('section-active');
         document.getElementById('sez-grandi').classList.remove('section-active');
-        document.getElementById('admin-panel').style.display = 'none';
+        document.getElementById('main-menu').style.display = 'flex';
+        document.getElementById('btn-home').classList.remove('active-pulse');
         showToast("Home");
     }
 
@@ -283,6 +283,26 @@
         sessionStorage.setItem('ultima_sezione', t);
         document.getElementById('sez-piccoli').classList.toggle('section-active', t==='piccoli');
         document.getElementById('sez-grandi').classList.toggle('section-active', t==='grandi');
+        document.getElementById('main-menu').style.display = 'none';
+        document.getElementById('btn-home').classList.add('active-pulse');
+        setTimeout(scrollOggi, 400);
+    }
+
+    function scrollOggi() {
+        const marker = document.querySelector('.section-active #today-marker');
+        const wrapper = document.querySelector('.section-active .table-wrapper');
+        
+        if (marker && wrapper) {
+            const colonnaFissaWidth = window.innerWidth <= 600 ? 130 : 180;
+            const viewportWidth = wrapper.clientWidth;
+            const centerPoint = (viewportWidth - colonnaFissaWidth) / 2;
+            const targetPos = marker.offsetLeft - colonnaFissaWidth - centerPoint + (marker.clientWidth / 2);
+            
+            wrapper.scrollTo({
+                left: targetPos,
+                behavior: 'smooth'
+            });
+        }
     }
 
     function showToast(msg) {
