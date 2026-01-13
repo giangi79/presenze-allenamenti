@@ -216,29 +216,13 @@
     async function aggiornaBackupDrive(isAuto = false) {
         const btn = document.getElementById('btn-drive'), s = document.getElementById('status-auto');
         if(!isAuto){ btn.innerText = "⏳ INVIO..."; btn.disabled = true; }
-        
         try {
             const annoC = dataAttuale.getFullYear();
             const { data: pA } = await supabaseClient.from('presenze').select('*').gte('data', `${annoC}-01-01`).lte('data', `${annoC}-12-31`).eq('stato', 'partecipa');
-            
-            // CORREZIONE: Usiamo un payload pulito e Content-Type: text/plain per evitare problemi CORS con Google Apps Script
-            const payload = JSON.stringify({ atleti: atletiCache, presenze: pA || [] });
-
-            await fetch(WEB_APP_DRIVE_URL, { 
-                method: 'POST', 
-                mode: 'no-cors', // Manteniamo no-cors ma assicuriamo che il body sia formattato bene
-                headers: { 'Content-Type': 'text/plain' },
-                body: payload 
-            });
-
-            s.innerText = "✅ Drive OK: " + new Date().toLocaleTimeString(); 
-            s.style.color = "#27ae60";
+            await fetch(WEB_APP_DRIVE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ atleti: atletiCache, presenze: pA || [] }) });
+            s.innerText = "✅ Drive OK: " + new Date().toLocaleTimeString(); s.style.color = "#27ae60";
             if(!isAuto) showToast("✅ PDF ANNUALE AGGIORNATO!");
-        } catch(e) { 
-            console.error("Errore Drive:", e);
-            s.innerText = "❌ Errore"; 
-            s.style.color = "#e74c3c"; 
-        }
+        } catch(e) { s.innerText = "❌ Errore"; s.style.color = "#e74c3c"; }
         finally { if(!isAuto) { btn.innerText = "☁️ PDF ANNO"; btn.disabled = false; } }
     }
 
@@ -292,7 +276,6 @@
 
     function popolaSelettori() {
         const sm = document.getElementById('select-mese'), sa = document.getElementById('select-anno');
-        sm.innerHTML = ""; sa.innerHTML = "";
         nomiMesi.forEach((m, i) => sm.add(new Option(m, i)));
         for(let a=2025; a<=2027; a++) sa.add(new Option(a, a));
     }
