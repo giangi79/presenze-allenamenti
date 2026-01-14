@@ -10,31 +10,42 @@
     <style>
         body { font-family: 'Segoe UI', sans-serif; padding: 5px; background: #eef2f7; color: #333; margin: 0; }
         .header { text-align: center; margin-bottom: 10px; }
-        .logo { max-height: 80px; border-radius: 8px; margin-bottom: 5px; }
-        h1 { font-size: 1.2rem; margin: 5px 0; }
+        .logo { max-height: 70px; border-radius: 8px; margin-bottom: 5px; }
         
-        .controls-container { display: flex; justify-content: center; gap: 5px; margin-bottom: 10px; background: white; padding: 10px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-wrap: wrap; }
-        select, input { padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-weight: bold; font-size: 0.9rem; }
+        .controls-container { display: flex; justify-content: center; gap: 5px; margin-bottom: 10px; background: white; padding: 8px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-wrap: wrap; }
+        select, input { padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-weight: bold; font-size: 0.85rem; }
         
         .actions-container { display: flex; justify-content: center; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
-        .btn-action { padding: 10px 14px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; gap: 5px; font-size: 0.8rem; }
-        .btn-pdf { background: #e74c3c; } .btn-drive { background: #4285F4; } .btn-open-drive { background: #34a853; } .btn-admin { background: #6c757d; } .btn-home { background: #ff9800; }
-        .btn-oggi { background: #17a2b8; width: 45px; height: 45px; justify-content: center; font-size: 1.3rem; }
+        .btn-action { padding: 8px 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; gap: 5px; font-size: 0.75rem; }
+        .btn-pdf { background: #e74c3c; } 
+        .btn-drive { background: #4285F4; } 
+        .btn-open-drive { background: #34a853; } 
+        .btn-admin { background: #6c757d; } 
+        .btn-home { background: #ff9800; }
+        .btn-oggi { background: #17a2b8; width: 42px; height: 42px; justify-content: center; font-size: 1.2rem; }
         
         /* TABELLA MASSIMIZZATA */
         .table-wrapper { overflow: auto; max-height: 75vh; border: 1px solid #ccc; border-radius: 8px; background: white; position: relative; -webkit-overflow-scrolling: touch; }
         table { border-collapse: separate; border-spacing: 0; width: 100%; }
         
+        /* FIX INTESTAZIONE ATLETA (Angolo in alto a sinistra) */
+        thead th.sticky-col { 
+            position: sticky; 
+            left: 0; 
+            top: 0; 
+            z-index: 15 !important; /* Deve stare sopra tutto */
+            background: #343a40 !important; 
+        }
+
         thead th { position: sticky; top: 0; background: #343a40 !important; color: white !important; z-index: 10; padding: 5px; font-size: 0.65rem; border: 1px solid #454d55; text-align: center; }
         
-        /* COLONNA ATLETA FISSA E UNIFORME */
-        .sticky-col-header { position: sticky; left: 0; background: #343a40 !important; color: white !important; z-index: 12; border-right: 2px solid #007bff; }
+        /* COLONNA NOMI FISSA */
         .sticky-col { position: sticky; left: 0; background: white !important; color: #333 !important; z-index: 11; border-right: 2px solid #007bff; min-width: 130px; padding: 8px; font-weight: bold; text-align: left !important; white-space: nowrap; font-size: 0.85rem; }
         
         .day-cell { min-width: 45px; height: 45px; border: 1px solid #eee; text-align: center; cursor: pointer; font-weight: bold; font-size: 1rem; }
         .p-partecipa { background: #2ecc71 !important; color: white !important; }
         .today-cell { background: #d1ecf1; border: 2px solid #0c5460 !important; }
-        .tot-cell { text-align: center; font-weight: bold; background: #f8f9fa; min-width: 40px; font-size: 0.9rem; }
+        .tot-cell { text-align: center; font-weight: bold; background: #f8f9fa; min-width: 40px; font-size: 0.9rem; border-left: 1px solid #ccc; }
 
         .menu-container { display: flex; gap: 10px; margin: 10px 0; }
         .btn-menu { flex: 1; padding: 25px 10px; font-weight: 900; font-size: 1.3rem; border-radius: 15px; color: white; border: none; cursor: pointer; text-transform: uppercase; }
@@ -47,31 +58,40 @@
     <div class="header">
         <img src="logo.png" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/400x100?text=LOGO'">
         <div class="controls-container">
-            <button class="btn-action btn-home" onclick="vaiAllaHome()">🏠</button>
+            <button class="btn-action btn-home" onclick="vaiAllaHome()">🏠 HOME</button>
             <select id="select-mese" onchange="cambiaData()"></select>
             <select id="select-anno" onchange="cambiaData()"></select>
-            <button class="btn-action btn-oggi" onclick="scrollOggi()">🎯</button>
+            <button class="btn-action btn-oggi" onclick="scrollOggi()" title="Vai a oggi">🎯</button>
         </div>
         <div class="actions-container">
-            <button class="btn-action btn-pdf" onclick="esportaPDFLocale()">PDF</button>
-            <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()">☁️</button>
-            <button class="btn-action btn-open-drive" onclick="apriFileDrive()">📂</button>
-            <button class="btn-action btn-admin" onclick="toggleAdmin()">⚙️</button>
+            <button class="btn-action btn-pdf" onclick="esportaPDFLocale()">📄 PDF</button>
+            <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()">☁️ BACKUP</button>
+            <button class="btn-action btn-open-drive" onclick="apriFileDrive()">📂 DRIVE</button>
+            <button class="btn-action btn-admin" onclick="toggleAdmin()">⚙️ ATLETI</button>
         </div>
-        <div id="status-auto" style="font-size:0.8rem;"></div>
+        <div id="status-auto" style="font-size:0.75rem; color: #d35400; font-weight: bold;"></div>
     </div>
 
-    <div id="admin-panel" style="display:none; padding:15px; background:white; border-radius:10px; margin-bottom:10px; border:1px solid #ccc;">
-        <h3>Gestione Atleti</h3>
-        <div style="display:flex; flex-direction:column; gap:5px;">
-            <input type="text" id="new-nome" placeholder="Nome Atleta">
+    <div id="admin-panel" style="display:none; padding:15px; background:white; border-radius:10px; margin: 0 5px 10px 5px; border:1px solid #ccc; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+        <h3 style="margin-top:0">⚙️ Gestione Atleti</h3>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+            <input type="text" id="new-nome" placeholder="Nome e Cognome Atleta">
             <select id="new-cat">
-                <option value="GIOVANISSIMI">GIOVANISSIMI</option><option value="ESORDIENTI">ESORDIENTI</option>
-                <option value="R12">R12</option><option value="RAGAZZI">RAGAZZI</option><option value="ALLIEVI">ALLIEVI</option><option value="JUNIOR">JUNIOR</option><option value="SENIOR">SENIOR</option>
+                <optgroup label="PICCOLI">
+                    <option value="GIOVANISSIMI">GIOVANISSIMI</option>
+                    <option value="ESORDIENTI">ESORDIENTI</option>
+                </optgroup>
+                <optgroup label="GRANDI">
+                    <option value="R12">R12</option>
+                    <option value="RAGAZZI">RAGAZZI</option>
+                    <option value="ALLIEVI">ALLIEVI</option>
+                    <option value="JUNIOR">JUNIOR</option>
+                    <option value="SENIOR">SENIOR</option>
+                </optgroup>
             </select>
-            <button class="btn-action btn-open-drive" style="width:100%; justify-content:center" onclick="aggiungiAtleta()">SALVA</button>
+            <button class="btn-action btn-open-drive" style="width:100%; justify-content:center; padding:12px" onclick="aggiungiAtleta()">✅ AGGIUNGI AL DATABASE</button>
         </div>
-        <div id="lista-atleti-admin" style="margin-top:10px;"></div>
+        <div id="lista-atleti-admin" style="margin-top:15px; max-height: 200px; overflow-y: auto; border-top: 1px solid #eee;"></div>
     </div>
 
     <div class="menu-container" id="main-menu">
@@ -134,7 +154,7 @@
 
         ["piccoli", "grandi"].forEach(tipo => {
             const table = document.getElementById(`tab-${tipo}`);
-            let head = `<tr><th class="sticky-col-header sticky-col">ATLETA</th>`;
+            let head = `<tr><th class="sticky-col">ATLETA</th>`;
             for(let i=1; i<=giorniMese; i++) head += `<th>${nomiGiorni[new Date(anno, mese, i).getDay()]}<br>${i}</th>`;
             head += `<th>TOT</th></tr>`;
             table.querySelector('thead').innerHTML = head;
@@ -174,7 +194,6 @@
         const stickyWidth = active.querySelector('.sticky-col').offsetWidth; 
         
         if (target && wrapper) {
-            // Posiziona il giorno corrente esattamente allineato al bordo della colonna atleta
             const scrollPos = target.offsetLeft - stickyWidth;
             wrapper.scrollTo({ left: scrollPos, behavior: 'smooth' });
         }
@@ -195,17 +214,24 @@
         location.reload();
     }
     function toggleAdmin() { const p = document.getElementById('admin-panel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
+    
     async function aggiungiAtleta() {
         const nome = document.getElementById('new-nome').value.trim(), cat = document.getElementById('new-cat').value;
-        if(nome) { await supabaseClient.from('atleti').insert([{ nome, categoria: cat }]); location.reload(); }
+        if(nome) { 
+            await supabaseClient.from('atleti').insert([{ nome, categoria: cat }]); 
+            location.reload(); 
+        }
     }
+
     function renderAdminList() {
         document.getElementById('lista-atleti-admin').innerHTML = atletiCache.map(a => `
-            <div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #eee;">
-                <span>${a.nome}</span><button onclick="eliminaAtleta(${a.id})" style="color:red; border:none; background:none;">X</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:8px; border-bottom:1px solid #eee;">
+                <span style="font-size:0.9rem"><b>${a.nome}</b> <small>(${a.categoria})</small></span>
+                <button onclick="eliminaAtleta(${a.id})" style="color:#e74c3c; border:1px solid #e74c3c; background:none; padding:4px 8px; border-radius:5px; font-weight:bold; cursor:pointer;">ELIMINA</button>
             </div>`).join('');
     }
-    async function eliminaAtleta(id) { if(confirm("Eliminare?")) { await supabaseClient.from('atleti').delete().eq('id', id); location.reload(); } }
+
+    async function eliminaAtleta(id) { if(confirm("Vuoi davvero eliminare questo atleta?")) { await supabaseClient.from('atleti').delete().eq('id', id); location.reload(); } }
     window.onload = inizializza;
 </script>
 </body>
