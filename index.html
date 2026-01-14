@@ -8,54 +8,52 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
-        /* MODIFICA AGGIUNTA: Blocco scorrimento laterale e box-sizing */
         * { box-sizing: border-box; }
-        html, body { overflow-x: hidden; width: 100%; position: relative; }
+        html, body { overflow-x: hidden; width: 100%; position: relative; margin: 0; padding: 0; }
 
-        body { font-family: 'Segoe UI', sans-serif; padding: 5px; background: #eef2f7; color: #333; margin: 0; }
-        .header { text-align: center; margin-bottom: 15px; }
-        .logo { max-height: 80px; border-radius: 10px; margin-bottom: 10px; }
+        body { font-family: 'Segoe UI', sans-serif; padding: 5px; background: #eef2f7; color: #333; }
+        .header { text-align: center; margin-bottom: 10px; width: 100%; }
         
-        .controls-container { display: flex; justify-content: center; gap: 12px; margin-bottom: 15px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 6px 15px rgba(0,0,0,0.08); flex-wrap: wrap; align-items: center; }
-        select, input { padding: 12px 15px; border-radius: 10px; border: 2px solid #ddd; font-weight: 900; font-size: 1.1rem; color: #333; outline: none; transition: border-color 0.2s; }
-        input:focus { border-color: #007bff; }
+        /* LOGO OTTIMIZZATO */
+        .logo { max-height: 80px; max-width: 90%; height: auto; border-radius: 10px; margin-bottom: 10px; }
         
-        .actions-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; padding: 0 10px; }
+        .controls-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 6px 15px rgba(0,0,0,0.08); flex-wrap: wrap; align-items: center; }
+        select, input { padding: 10px; border-radius: 10px; border: 2px solid #ddd; font-weight: 900; font-size: 1rem; color: #333; outline: none; }
         
-        .btn-action { padding: 15px 22px; border-radius: 12px; border: none; font-weight: 900; cursor: pointer; color: white; display: flex; align-items: center; gap: 10px; font-size: 1.1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); text-transform: uppercase; transition: transform 0.1s; }
+        .actions-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; padding: 0 5px; width: 100%; }
+        
+        .btn-action { padding: 12px 15px; border-radius: 12px; border: none; font-weight: 900; cursor: pointer; color: white; display: flex; align-items: center; gap: 5px; font-size: 0.9rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); text-transform: uppercase; transition: transform 0.1s; }
         .btn-action:active { transform: scale(0.92); }
 
         .btn-pdf { background: #e74c3c; } .btn-drive { background: #4285F4; } .btn-open-drive { background: #34a853; } .btn-admin { background: #6c757d; } 
-        .btn-home { background: #ff9800; padding: 15px 25px; font-size: 1.1rem; }
-        .btn-oggi { background: #17a2b8; width: 55px; height: 55px; justify-content: center; font-size: 1.8rem; border-radius: 15px; }
+        .btn-home { background: #ff9800; padding: 12px 20px; }
+        .btn-oggi { background: #17a2b8; width: 45px; height: 45px; justify-content: center; font-size: 1.5rem; border-radius: 12px; }
         
         #admin-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
-        #admin-panel { background: white; width: 90%; max-width: 500px; padding: 25px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; max-height: 85vh; display: flex; flex-direction: column; }
-        .close-admin { position: absolute; top: 15px; right: 15px; font-size: 2rem; cursor: pointer; color: #999; line-height: 1; }
-        .admin-title { margin: 0 0 20px 0; font-size: 1.5rem; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        #admin-panel { background: white; width: 95%; max-width: 500px; padding: 20px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; max-height: 85vh; display: flex; flex-direction: column; }
+        .close-admin { position: absolute; top: 15px; right: 15px; font-size: 2rem; cursor: pointer; color: #999; }
         
-        .atleta-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #f8f9fa; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; }
-        .atleta-info { display: flex; flex-direction: column; }
-        .atleta-name { font-weight: 900; color: #333; font-size: 1rem; }
-        .atleta-cat { font-size: 0.75rem; color: #007bff; font-weight: bold; text-transform: uppercase; }
-        .btn-del { background: #ffebee; color: #e74c3c; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 900; cursor: pointer; transition: 0.2s; }
-        .btn-del:hover { background: #e74c3c; color: white; }
+        .atleta-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; }
+        .atleta-name { font-weight: 900; color: #333; font-size: 0.9rem; }
+        .atleta-cat { font-size: 0.7rem; color: #007bff; font-weight: bold; text-transform: uppercase; }
 
-        .table-wrapper { overflow: auto; max-height: 70vh; border: 1px solid #ccc; border-radius: 10px; background: white; position: relative; -webkit-overflow-scrolling: touch; }
+        .table-wrapper { overflow: auto; max-height: 65vh; border: 1px solid #ccc; border-radius: 10px; background: white; position: relative; -webkit-overflow-scrolling: touch; }
         table { border-collapse: separate; border-spacing: 0; width: 100%; }
-        thead th.sticky-col { position: sticky; left: 0; top: 0; z-index: 20 !important; background: #343a40 !important; color: #ffffff !important; text-align: left; padding-left: 12px; font-size: 0.85rem; text-transform: uppercase; }
-        thead th { position: sticky; top: 0; background: #343a40 !important; color: white !important; z-index: 10; padding: 8px; font-size: 0.7rem; border: 1px solid #454d55; text-align: center; }
-        .sticky-col { position: sticky; left: 0; background: white !important; color: #333 !important; z-index: 11; border-right: 3px solid #007bff; min-width: 140px; padding: 10px; font-weight: 900; text-align: left !important; white-space: nowrap; font-size: 0.9rem; }
-        .day-cell { min-width: 50px; height: 50px; border: 1px solid #eee; text-align: center; cursor: pointer; font-weight: bold; font-size: 1.2rem; }
+        thead th.sticky-col { position: sticky; left: 0; top: 0; z-index: 20 !important; background: #343a40 !important; color: white !important; padding-left: 10px; font-size: 0.8rem; }
+        thead th { position: sticky; top: 0; background: #343a40 !important; color: white !important; z-index: 10; padding: 8px; font-size: 0.65rem; border: 1px solid #454d55; text-align: center; }
+        .sticky-col { position: sticky; left: 0; background: white !important; z-index: 11; border-right: 3px solid #007bff; min-width: 130px; padding: 10px; font-weight: 900; font-size: 0.85rem; }
+        .day-cell { min-width: 45px; height: 45px; border: 1px solid #eee; text-align: center; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
         .p-partecipa { background: #2ecc71 !important; color: white !important; }
         .today-cell { background: #d1ecf1; border: 2px solid #0c5460 !important; }
-        .tot-cell { text-align: center; font-weight: 900; background: #f8f9fa; min-width: 45px; font-size: 1rem; border-left: 2px solid #ddd; }
-        #status-auto { font-size: 1rem; color: #d35400; font-weight: 900; margin-bottom: 15px; min-height: 1.4rem; text-align: center; background: #fff3cd; padding: 5px 15px; border-radius: 20px; display: inline-block; }
+        .tot-cell { text-align: center; font-weight: 900; background: #f8f9fa; min-width: 40px; font-size: 0.9rem; border-left: 2px solid #ddd; }
+        
+        #status-auto { font-size: 0.9rem; color: #d35400; font-weight: 900; margin-bottom: 10px; background: #fff3cd; padding: 5px 12px; border-radius: 20px; display: inline-block; }
 
-        .menu-container { display: flex; flex-direction: column; gap: 15px; margin: 15px; max-width: 100%; }
-        .btn-menu { width: 100%; padding: 40px 10px; font-weight: 900; font-size: 2rem; border-radius: 20px; color: white; border: none; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        /* MENU HOME OTTIMIZZATO */
+        .menu-container { display: flex; flex-direction: column; gap: 10px; padding: 10px; width: 100%; }
+        .btn-menu { width: 100%; padding: 30px 10px; font-weight: 900; font-size: 1.4rem; border-radius: 20px; color: white; border: none; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .btn-piccoli { background: #007bff; } .btn-grandi { background: #28a745; }
-        .section-container { display: none; } .section-active { display: block; }
+        .section-container { display: none; width: 100%; } .section-active { display: block; }
     </style>
 </head>
 <body>
@@ -81,7 +79,6 @@
         <div id="admin-panel">
             <span class="close-admin" onclick="toggleAdmin()">&times;</span>
             <h2 class="admin-title">👤 Gestione Atleti</h2>
-            
             <div style="background: #f0f4f8; padding: 15px; border-radius: 15px; margin-bottom: 20px;">
                 <input type="text" id="new-nome" placeholder="NOME E COGNOME" style="width:100%; margin-bottom:10px; box-sizing: border-box; border: 2px solid #fff;">
                 <select id="new-cat" style="width:100%; margin-bottom:15px; border: 2px solid #fff;">
@@ -90,9 +87,7 @@
                 </select>
                 <button class="btn-action btn-open-drive" style="width:100%; justify-content:center; padding:15px;" onclick="aggiungiAtleta()">+ AGGIUNGI ORA</button>
             </div>
-
-            <div id="lista-atleti-admin" style="overflow-y: auto; flex-grow: 1; padding-right: 5px;">
-                </div>
+            <div id="lista-atleti-admin" style="overflow-y: auto; flex-grow: 1; padding-right: 5px;"></div>
         </div>
     </div>
 
