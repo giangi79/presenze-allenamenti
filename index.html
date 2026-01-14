@@ -9,44 +9,49 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     <style>
         body { font-family: 'Segoe UI', sans-serif; padding: 5px; background: #eef2f7; color: #333; margin: 0; }
-        .header { text-align: center; margin-bottom: 10px; }
-        .logo { max-height: 70px; border-radius: 8px; margin-bottom: 5px; }
+        .header { text-align: center; margin-bottom: 15px; }
+        .logo { max-height: 80px; border-radius: 10px; margin-bottom: 10px; }
         
-        .controls-container { display: flex; justify-content: center; gap: 5px; margin-bottom: 10px; background: white; padding: 8px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-wrap: wrap; }
-        select, input { padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-weight: bold; font-size: 0.85rem; }
+        .controls-container { display: flex; justify-content: center; gap: 12px; margin-bottom: 15px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 6px 15px rgba(0,0,0,0.08); flex-wrap: wrap; align-items: center; }
+        select, input { padding: 12px 15px; border-radius: 10px; border: 2px solid #ddd; font-weight: 900; font-size: 1.1rem; color: #333; outline: none; transition: border-color 0.2s; }
+        input:focus { border-color: #007bff; }
         
-        .actions-container { display: flex; justify-content: center; gap: 5px; margin-bottom: 10px; flex-wrap: wrap; }
-        .btn-action { padding: 8px 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; color: white; display: flex; align-items: center; gap: 5px; font-size: 0.75rem; }
-        .btn-pdf { background: #e74c3c; } 
-        .btn-drive { background: #4285F4; } 
-        .btn-open-drive { background: #34a853; } 
-        .btn-admin { background: #6c757d; } 
-        .btn-home { background: #ff9800; }
-        .btn-oggi { background: #17a2b8; width: 42px; height: 42px; justify-content: center; font-size: 1.2rem; }
+        .actions-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; padding: 0 10px; }
         
-        .table-wrapper { overflow: auto; max-height: 75vh; border: 1px solid #ccc; border-radius: 8px; background: white; position: relative; -webkit-overflow-scrolling: touch; }
-        table { border-collapse: separate; border-spacing: 0; width: 100%; }
-        
-        thead th.sticky-col { 
-            position: sticky; left: 0; top: 0; z-index: 20 !important; 
-            background: #343a40 !important; color: #ffffff !important; 
-            text-align: left; padding-left: 10px; font-size: 0.75rem; 
-            text-transform: uppercase; letter-spacing: 1px;
-        }
+        .btn-action { padding: 15px 22px; border-radius: 12px; border: none; font-weight: 900; cursor: pointer; color: white; display: flex; align-items: center; gap: 10px; font-size: 1.1rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); text-transform: uppercase; transition: transform 0.1s; }
+        .btn-action:active { transform: scale(0.92); }
 
-        thead th { position: sticky; top: 0; background: #343a40 !important; color: white !important; z-index: 10; padding: 5px; font-size: 0.65rem; border: 1px solid #454d55; text-align: center; }
+        .btn-pdf { background: #e74c3c; } .btn-drive { background: #4285F4; } .btn-open-drive { background: #34a853; } .btn-admin { background: #6c757d; } 
+        .btn-home { background: #ff9800; padding: 15px 25px; font-size: 1.1rem; }
+        .btn-oggi { background: #17a2b8; width: 55px; height: 55px; justify-content: center; font-size: 1.8rem; border-radius: 15px; }
         
-        .sticky-col { position: sticky; left: 0; background: white !important; color: #333 !important; z-index: 11; border-right: 2px solid #007bff; min-width: 130px; padding: 8px; font-weight: bold; text-align: left !important; white-space: nowrap; font-size: 0.85rem; }
+        /* Pannello Admin Migliorato */
+        #admin-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
+        #admin-panel { background: white; width: 90%; max-width: 500px; padding: 25px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; max-height: 85vh; display: flex; flex-direction: column; }
+        .close-admin { position: absolute; top: 15px; right: 15px; font-size: 2rem; cursor: pointer; color: #999; line-height: 1; }
+        .admin-title { margin: 0 0 20px 0; font-size: 1.5rem; color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; display: flex; align-items: center; gap: 10px; }
         
-        .day-cell { min-width: 45px; height: 45px; border: 1px solid #eee; text-align: center; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .atleta-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #f8f9fa; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; }
+        .atleta-info { display: flex; flex-direction: column; }
+        .atleta-name { font-weight: 900; color: #333; font-size: 1rem; }
+        .atleta-cat { font-size: 0.75rem; color: #007bff; font-weight: bold; text-transform: uppercase; }
+        .btn-del { background: #ffebee; color: #e74c3c; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 900; cursor: pointer; transition: 0.2s; }
+        .btn-del:hover { background: #e74c3c; color: white; }
+
+        /* Tabelle e Menù */
+        .table-wrapper { overflow: auto; max-height: 70vh; border: 1px solid #ccc; border-radius: 10px; background: white; position: relative; -webkit-overflow-scrolling: touch; }
+        table { border-collapse: separate; border-spacing: 0; width: 100%; }
+        thead th.sticky-col { position: sticky; left: 0; top: 0; z-index: 20 !important; background: #343a40 !important; color: #ffffff !important; text-align: left; padding-left: 12px; font-size: 0.85rem; text-transform: uppercase; }
+        thead th { position: sticky; top: 0; background: #343a40 !important; color: white !important; z-index: 10; padding: 8px; font-size: 0.7rem; border: 1px solid #454d55; text-align: center; }
+        .sticky-col { position: sticky; left: 0; background: white !important; color: #333 !important; z-index: 11; border-right: 3px solid #007bff; min-width: 140px; padding: 10px; font-weight: 900; text-align: left !important; white-space: nowrap; font-size: 0.9rem; }
+        .day-cell { min-width: 50px; height: 50px; border: 1px solid #eee; text-align: center; cursor: pointer; font-weight: bold; font-size: 1.2rem; }
         .p-partecipa { background: #2ecc71 !important; color: white !important; }
         .today-cell { background: #d1ecf1; border: 2px solid #0c5460 !important; }
-        .tot-cell { text-align: center; font-weight: bold; background: #f8f9fa; min-width: 40px; font-size: 0.9rem; border-left: 1px solid #ccc; }
+        .tot-cell { text-align: center; font-weight: 900; background: #f8f9fa; min-width: 45px; font-size: 1rem; border-left: 2px solid #ddd; }
+        #status-auto { font-size: 1rem; color: #d35400; font-weight: 900; margin-bottom: 15px; min-height: 1.4rem; text-align: center; background: #fff3cd; padding: 5px 15px; border-radius: 20px; display: inline-block; }
 
-        #status-auto { font-size: 0.8rem; color: #d35400; font-weight: bold; margin-bottom: 10px; min-height: 1.2rem; text-align: center; }
-
-        .menu-container { display: flex; gap: 10px; margin: 10px 0; }
-        .btn-menu { flex: 1; padding: 25px 10px; font-weight: 900; font-size: 1.3rem; border-radius: 15px; color: white; border: none; cursor: pointer; text-transform: uppercase; }
+        .menu-container { display: flex; flex-direction: column; gap: 15px; margin: 15px; }
+        .btn-menu { width: 100%; padding: 40px 10px; font-weight: 900; font-size: 2rem; border-radius: 20px; color: white; border: none; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .btn-piccoli { background: #007bff; } .btn-grandi { background: #28a745; }
         .section-container { display: none; } .section-active { display: block; }
     </style>
@@ -54,36 +59,44 @@
 <body>
 
     <div class="header">
-        <img src="logo.png" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/400x100?text=LOGO'">
+        <img src="logo.png" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/400x120?text=LOGO'">
         <div class="controls-container">
             <button class="btn-action btn-home" onclick="vaiAllaHome()">🏠 HOME</button>
             <select id="select-mese" onchange="cambiaData()"></select>
             <select id="select-anno" onchange="cambiaData()"></select>
             <button class="btn-action btn-oggi" onclick="scrollOggi()">🎯</button>
         </div>
-        <div id="status-auto">Sistema Pronto</div>
+        <div style="text-align:center;"><div id="status-auto">Sistema Pronto</div></div>
         <div class="actions-container">
-            <button class="btn-action btn-pdf" onclick="esportaPDFLocale()">📄 PDF</button>
+            <button class="btn-action btn-pdf" onclick="scaricaPDFLocale()">📄 PDF</button>
             <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()">☁️ BACKUP</button>
             <button class="btn-action btn-open-drive" onclick="apriFileDrive()">📂 DRIVE</button>
             <button class="btn-action btn-admin" onclick="toggleAdmin()">⚙️ ATLETI</button>
         </div>
     </div>
 
-    <div id="admin-panel" style="display:none; padding:15px; background:white; border-radius:10px; margin: 0 5px 10px 5px; border:1px solid #ccc;">
-        <h3 style="margin-top:0">⚙️ Gestione Atleti</h3>
-        <input type="text" id="new-nome" placeholder="Nome Atleta" style="width:90%; margin-bottom:5px;">
-        <select id="new-cat" style="width:95%; margin-bottom:10px;">
-            <option value="GIOVANISSIMI">GIOVANISSIMI</option><option value="ESORDIENTI">ESORDIENTI</option>
-            <option value="R12">R12</option><option value="RAGAZZI">RAGAZZI</option><option value="ALLIEVI">ALLIEVI</option><option value="JUNIOR">JUNIOR</option><option value="SENIOR">SENIOR</option>
-        </select>
-        <button class="btn-action btn-open-drive" style="width:100%; justify-content:center" onclick="aggiungiAtleta()">✅ SALVA</button>
-        <div id="lista-atleti-admin" style="margin-top:10px;"></div>
+    <div id="admin-overlay">
+        <div id="admin-panel">
+            <span class="close-admin" onclick="toggleAdmin()">&times;</span>
+            <h2 class="admin-title">👤 Gestione Atleti</h2>
+            
+            <div style="background: #f0f4f8; padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+                <input type="text" id="new-nome" placeholder="NOME E COGNOME" style="width:100%; margin-bottom:10px; box-sizing: border-box; border: 2px solid #fff;">
+                <select id="new-cat" style="width:100%; margin-bottom:15px; border: 2px solid #fff;">
+                    <option value="GIOVANISSIMI">GIOVANISSIMI</option><option value="ESORDIENTI">ESORDIENTI</option>
+                    <option value="R12">R12</option><option value="RAGAZZI">RAGAZZI</option><option value="ALLIEVI">ALLIEVI</option><option value="JUNIOR">JUNIOR</option><option value="SENIOR">SENIOR</option>
+                </select>
+                <button class="btn-action btn-open-drive" style="width:100%; justify-content:center; padding:15px;" onclick="aggiungiAtleta()">+ AGGIUNGI ORA</button>
+            </div>
+
+            <div id="lista-atleti-admin" style="overflow-y: auto; flex-grow: 1; padding-right: 5px;">
+                </div>
+        </div>
     </div>
 
     <div class="menu-container" id="main-menu">
-        <button class="btn-menu btn-piccoli" onclick="mostraSezione('piccoli')">PICCOLI</button>
-        <button class="btn-menu btn-grandi" onclick="mostraSezione('grandi')">GRANDI</button>
+        <button class="btn-menu btn-piccoli" onclick="mostraSezione('piccoli')">CATEGORIE PICCOLI</button>
+        <button class="btn-menu btn-grandi" onclick="mostraSezione('grandi')">CATEGORIE GRANDI</button>
     </div>
 
     <div id="sez-piccoli" class="section-container">
@@ -96,7 +109,7 @@
 <script>
     const SB_URL = 'https://jiktdsvwerqstrlthwxu.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3Rkc3Z3ZXJxc3RybHRod3h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDkxMDEsImV4cCI6MjA4MzgyNTEwMX0.wmEnME6GaHXrvLoQH7MDijiTU4dZfoi9wOcrqs9fP10';
-    const WEB_APP_DRIVE_URL = "https://script.google.com/macros/s/AKfycbz1P4-Eg-gCpsw9p_xrfrRqQJjJ0djEPSJcc1F6eIiHTaamTYFaBCqlnr12D-km3J5o/exec"; 
+    const WEB_APP_DRIVE_URL = "https://script.google.com/macros/s/AKfycbwSDZTTurQjncmNAr7-bZNYMg6uxRewSf3tDTRuAICC2zMYFFpUZ9OGyex0LM8McHZ4/exec"; 
 
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
     let dataAttuale = new Date();
@@ -141,14 +154,12 @@
         const anno = dataAttuale.getFullYear(), mese = dataAttuale.getMonth();
         const giorniMese = new Date(anno, mese + 1, 0).getDate();
         const oggiStr = new Date().toLocaleDateString('en-CA');
-
         ["piccoli", "grandi"].forEach(tipo => {
             const table = document.getElementById(`tab-${tipo}`);
             let head = `<tr><th class="sticky-col">ATLETA</th>`;
             for(let i=1; i<=giorniMese; i++) head += `<th>${nomiGiorni[new Date(anno, mese, i).getDay()]}<br>${i}</th>`;
             head += `<th>TOT</th></tr>`;
             table.querySelector('thead').innerHTML = head;
-
             const cats = tipo === 'piccoli' ? CAT_PICCOLI : CAT_GRANDI;
             const filtrati = atletiCache.filter(a => cats.includes((a.categoria || "").trim().toUpperCase()));
             let body = "";
@@ -173,66 +184,52 @@
         el.classList.toggle('p-partecipa'); el.innerText = isP ? '' : '✔';
         const totCell = el.parentElement.querySelector('.tot-cell');
         totCell.innerText = parseInt(totCell.innerText) + (nuovoStato === 'partecipa' ? 1 : -1);
-        
         await supabaseClient.from('presenze').upsert({ atleta_id: aId, data: data, stato: nuovoStato }, { onConflict: 'atleta_id, data' });
-        
-        // AGGIORNAMENTO CACHE PER PDF
         const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-        if (nuovoStato === 'partecipa') {
-            if (idx > -1) presenzeCache[idx].stato = 'partecipa'; else presenzeCache.push({ atleta_id: aId, data: data, stato: 'partecipa' });
-        } else if (idx > -1) presenzeCache[idx].stato = 'non partecipa';
-
-        // AVVIO TIMER BACKUP
+        if (nuovoStato === 'partecipa') { if (idx > -1) presenzeCache[idx].stato = 'partecipa'; else presenzeCache.push({ atleta_id: aId, data: data, stato: 'partecipa' }); } else if (idx > -1) presenzeCache[idx].stato = 'non partecipa';
         avviaTimerBackup();
     }
 
     function avviaTimerBackup() {
-        clearInterval(timerBackup); 
-        secondiMancanti = 10;
+        clearInterval(timerBackup); secondiMancanti = 10;
         const status = document.getElementById('status-auto');
-        
-        timerBackup = setInterval(() => {
-            secondiMancanti--;
-            status.innerText = `⏳ Backup automatico tra ${secondiMancanti}s...`;
-            
-            if (secondiMancanti <= 0) {
-                clearInterval(timerBackup);
-                aggiornaBackupDrive();
-            }
-        }, 1000);
+        timerBackup = setInterval(() => { secondiMancanti--; status.innerText = `⏳ BACKUP IN ${secondiMancanti}s...`; if (secondiMancanti <= 0) { clearInterval(timerBackup); aggiornaBackupDrive(); } }, 1000);
     }
 
     async function aggiornaBackupDrive() {
         const status = document.getElementById('status-auto');
-        status.innerText = "☁️ Salvataggio su Drive...";
+        status.innerText = "☁️ GENERANDO PDF...";
         try {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('l', 'mm', 'a4');
-            const annoC = dataAttuale.getFullYear();
+            const { jsPDF } = window.jspdf; const doc = new jsPDF('l', 'mm', 'a4'); const annoC = dataAttuale.getFullYear();
             for (let m = 0; m < 12; m++) {
                 if (m > 0) doc.addPage();
                 const g = new Date(annoC, m + 1, 0).getDate();
-                const h = ["ATLETA", ...Array.from({length: g}, (_, i) => (i + 1).toString()), "TOT"];
-                doc.setFontSize(14); doc.text(`REGISTRO ${nomiMesi[m].toUpperCase()} ${annoC}`, 14, 12);
-                doc.autoTable({ head:[h], body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g), startY: 20, styles: { fontSize: 5 }, theme: 'grid' });
-                doc.autoTable({ head:[h], body: preparaDatiPDF(CAT_GRANDI, annoC, m, g), startY: doc.lastAutoTable.finalY + 10, styles: { fontSize: 5 }, theme: 'grid' });
+                const h = [["ATLETA", ...Array.from({length: g}, (_, i) => `${nomiGiorni[new Date(annoC, m, i + 1).getDay()]}\n${i + 1}`), "TOT"]];
+                doc.setFontSize(14); doc.setTextColor(52, 58, 64); doc.text(`REGISTRO PRESENZE - ${nomiMesi[m].toUpperCase()} ${annoC}`, 14, 12);
+                const colStyles = { 0: { halign: 'left', cellWidth: 32, fontStyle: 'bold', fillColor: [255, 255, 255] } };
+                const larghezzaGiorno = (297 - 32 - 15 - 28) / g;
+                for (let i = 1; i <= g; i++) colStyles[i] = { cellWidth: larghezzaGiorno };
+                colStyles[g + 1] = { cellWidth: 10, fillColor: [248, 249, 250], fontStyle: 'bold' };
+                const config = { head: h, startY: 18, theme: 'grid', styles: { fontSize: 5, cellPadding: 0.5, halign: 'center', lineColor: [221, 221, 221] }, headStyles: { fillColor: [52, 58, 64], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 4.5 }, columnStyles: colStyles, didParseCell: function(data) { if (data.section === 'body' && data.column.index > 0 && data.column.index <= g && data.cell.text[0] === '✔') { data.cell.styles.fillColor = [46, 204, 113]; data.cell.styles.textColor = [255, 255, 255]; } } };
+                doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g)});
+                doc.autoTable({...config, body: preparaDatiPDF(CAT_GRANDI, annoC, m, g), startY: doc.lastAutoTable.finalY + 8});
             }
             const b64 = doc.output('datauristring').split(',')[1];
+            status.innerText = "☁️ SALVATAGGIO DRIVE...";
             const resp = await fetch(WEB_APP_DRIVE_URL, { method: 'POST', body: JSON.stringify({ nomeFile: `Registro_${annoC}.pdf`, blob: b64 }) });
             const res = await resp.json();
-            if(res.fileUrl) {
-                localStorage.setItem('ultimo_pdf_url', res.fileUrl);
-                status.innerHTML = `✅ Backup OK! <a href="${res.fileUrl}" target="_blank">Apri File</a>`;
-            }
-        } catch(e) { status.innerText = "❌ Errore Backup Drive"; }
+            if(res.fileUrl) { localStorage.setItem('ultimo_pdf_url', res.fileUrl); status.innerHTML = `✅ BACKUP OK! <a href="${res.fileUrl}" target="_blank">APRI</a>`; }
+        } catch(e) { status.innerText = "❌ ERRORE BACKUP"; console.error(e); }
     }
+
+    function scaricaPDFLocale() { aggiornaBackupDrive(); }
 
     function preparaDatiPDF(cats, anno, mese, giorni) {
         return atletiCache.filter(a => cats.includes((a.categoria || "").trim().toUpperCase())).map(a => {
             let r = [a.nome.toUpperCase()], tot = 0;
             for(let d=1; d<=giorni; d++){
                 let dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                if(presenzeCache.find(x => x.atleta_id === a.id && x.data === dStr && x.stato === 'partecipa')){ r.push("X"); tot++; } else r.push("");
+                if(presenzeCache.find(x => x.atleta_id === a.id && x.data === dStr && x.stato === 'partecipa')){ r.push("✔"); tot++; } else r.push("");
             }
             r.push(tot); return r;
         });
@@ -244,9 +241,7 @@
         const target = active.querySelector('.today-cell');
         const wrapper = active.querySelector('.table-wrapper');
         const stickyWidth = active.querySelector('.sticky-col').offsetWidth; 
-        if (target && wrapper) {
-            wrapper.scrollTo({ left: target.offsetLeft - stickyWidth, behavior: 'smooth' });
-        }
+        if (target && wrapper) wrapper.scrollTo({ left: target.offsetLeft - stickyWidth, behavior: 'smooth' });
     }
 
     function mostraSezione(s) {
@@ -258,20 +253,46 @@
     }
 
     function vaiAllaHome() { sessionStorage.removeItem('last_sez'); location.reload(); }
-    function cambiaData() {
-        localStorage.setItem('p_mese', document.getElementById('select-mese').value);
-        localStorage.setItem('p_anno', document.getElementById('select-anno').value);
-        location.reload();
+    function cambiaData() { localStorage.setItem('p_mese', document.getElementById('select-mese').value); localStorage.setItem('p_anno', document.getElementById('select-anno').value); location.reload(); }
+    
+    function toggleAdmin() { 
+        const ov = document.getElementById('admin-overlay');
+        ov.style.display = ov.style.display === 'flex' ? 'none' : 'flex'; 
     }
-    function toggleAdmin() { const p = document.getElementById('admin-panel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
+
     async function aggiungiAtleta() {
-        const nome = document.getElementById('new-nome').value.trim(), cat = document.getElementById('new-cat').value;
-        if(nome) { await supabaseClient.from('atleti').insert([{ nome, categoria: cat }]); location.reload(); }
+        const inputNome = document.getElementById('new-nome');
+        const nome = inputNome.value.trim().toUpperCase();
+        const cat = document.getElementById('new-cat').value;
+        if(nome) {
+            document.getElementById('status-auto').innerText = "⏳ AGGIUNGO...";
+            await supabaseClient.from('atleti').insert([{ nome, categoria: cat }]);
+            inputNome.value = ""; await caricaDati();
+            document.getElementById('status-auto').innerText = "✅ AGGIUNTO";
+        }
     }
+
     function renderAdminList() {
-        document.getElementById('lista-atleti-admin').innerHTML = atletiCache.map(a => `<div style="display:flex; justify-content:space-between; padding:5px; border-bottom:1px solid #eee;"><span>${a.nome}</span><button onclick="eliminaAtleta(${a.id})" style="color:red; border:none; background:none;">X</button></div>`).join('');
+        document.getElementById('lista-atleti-admin').innerHTML = atletiCache.map(a => `
+            <div class="atleta-item">
+                <div class="atleta-info">
+                    <span class="atleta-name">${a.nome}</span>
+                    <span class="atleta-cat">${a.categoria}</span>
+                </div>
+                <button class="btn-del" onclick="eliminaAtleta(${a.id})">ELIMINA</button>
+            </div>
+        `).join('');
     }
-    async function eliminaAtleta(id) { if(confirm("Eliminare?")) { await supabaseClient.from('atleti').delete().eq('id', id); location.reload(); } }
+
+    async function eliminaAtleta(id) { 
+        if(confirm("ELIMINARE DEFINITIVAMENTE?")) { 
+            document.getElementById('status-auto').innerText = "⏳ ELIMINO...";
+            await supabaseClient.from('atleti').delete().eq('id', id); 
+            await caricaDati();
+            document.getElementById('status-auto').innerText = "✅ ELIMINATO";
+        } 
+    }
+
     function apriFileDrive() { const url = localStorage.getItem('ultimo_pdf_url'); if(url) window.open(url, '_blank'); else alert("Nessun backup trovato."); }
     window.onload = inizializza;
 </script>
