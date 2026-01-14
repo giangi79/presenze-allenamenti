@@ -24,13 +24,15 @@
         #status-auto { font-size: 0.9rem; font-weight: bold; margin-top: 10px; min-height: 1.5rem; color: #d35400; }
         #status-auto a { color: #007bff; text-decoration: underline; }
         
-        /* TABELLA */
+        /* TABELLA MODIFICATA */
         .table-wrapper { overflow: auto; max-height: 65vh; border: 1px solid #ccc; border-radius: 10px; background: white; position: relative; -webkit-overflow-scrolling: touch; }
         table { border-collapse: separate; border-spacing: 0; width: 100%; }
         thead tr { background: #343a40; }
         thead th { position: sticky; top: 0; background: #343a40 !important; color: white; z-index: 10; padding: 8px; font-size: 0.7rem; border: 1px solid #454d55; text-align: center; }
+        
+        /* Colonna Atleta Uniformata */
         .sticky-col-header { position: sticky; left: 0; background: #343a40 !important; color: white !important; z-index: 12; }
-        .sticky-col { position: sticky; left: 0; background: white !important; color: #333 !important; z-index: 11; border-right: 2px solid #007bff; min-width: 160px; padding: 10px; font-weight: bold; text-align: left !important; white-space: nowrap; }
+        .sticky-col { position: sticky; left: 0; background: white !important; color: #333 !important; z-index: 11; border-right: 2px solid #007bff; min-width: 120px; max-width: 120px; padding: 10px; font-weight: bold; text-align: left !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         .day-cell { min-width: 50px; height: 50px; border: 1px solid #ddd; text-align: center; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
         .p-partecipa { background: #2ecc71 !important; color: white !important; }
@@ -105,7 +107,6 @@
 <script>
     const SB_URL = 'https://jiktdsvwerqstrlthwxu.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3Rkc3Z3ZXJxc3RybHRod3h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDkxMDEsImV4cCI6MjA4MzgyNTEwMX0.wmEnME6GaHXrvLoQH7MDijiTU4dZfoi9wOcrqs9fP10';
-    // INSERISCI QUI IL NUOVO URL DELLA WEB APP DOPO LA DISTRIBUZIONE
     const WEB_APP_DRIVE_URL = "https://script.google.com/macros/s/AKfycbz1P4-Eg-gCpsw9p_xrfrRqQJjJ0djEPSJcc1F6eIiHTaamTYFaBCqlnr12D-km3J5o/exec"; 
 
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
@@ -257,13 +258,18 @@
         localStorage.setItem('p_anno', document.getElementById('select-anno').value);
         location.reload();
     }
+
     function scrollOggi() {
         const active = document.querySelector('.section-active');
         if (!active) return;
         const target = active.querySelector('.today-cell');
         const wrapper = active.querySelector('.table-wrapper');
-        if (target && wrapper) wrapper.scrollTo({ left: target.offsetLeft - (wrapper.clientWidth / 2), behavior: 'smooth' });
+        if (target && wrapper) {
+            const scrollPos = target.offsetLeft - (wrapper.clientWidth / 2) + (target.clientWidth / 2);
+            wrapper.scrollTo({ left: scrollPos, behavior: 'smooth' });
+        }
     }
+
     function renderAdminList() {
         document.getElementById('lista-atleti-admin').innerHTML = atletiCache.map(a => `
             <div class="atleta-card">
