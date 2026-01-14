@@ -11,7 +11,7 @@
     <style>
         body { font-family: 'Segoe UI', system-ui, sans-serif; padding: 15px; background: #eef2f7; color: #333; margin: 0; }
         .header { text-align: center; margin-bottom: 20px; position: relative; }
-        .logo-container { margin-bottom: 20px; min-height: 150px; display: flex; align-items: center; justify-content: center; }
+        .logo-container { margin-bottom: 15px; min-height: 100px; display: flex; align-items: center; justify-content: center; }
         .logo { max-width: 600px; max-height: 350px; width: auto; height: auto; border-radius: 12px; }
         
         .controls-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); flex-wrap: wrap; align-items: center; }
@@ -23,12 +23,12 @@
         .btn-drive { background: #4285F4; }
         .btn-admin-toggle { background: #6c757d; }
         
-        .btn-home { background: #ff9800; color: white; position: relative; overflow: hidden; }
+        .btn-home { background: #ff9800; color: white; position: relative; min-width: 100px; }
         .btn-home.active-pulse::after {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255,255,255,0.3); animation: pulse 1.5s infinite;
+            background: rgba(255,255,255,0.3); border-radius: 10px; animation: pulse 1.5s infinite;
         }
-        @keyframes pulse { 0% { opacity: 0; transform: scale(1); } 50% { opacity: 1; } 100% { opacity: 0; transform: scale(1.1); } }
+        @keyframes pulse { 0% { opacity: 0; transform: scale(1); } 50% { opacity: 1; } 100% { opacity: 0; transform: scale(1.05); } }
 
         .btn-oggi { background: #17a2b8; color: white; font-size: 1.5rem; width: 50px; height: 50px; padding: 0; display: flex; align-items: center; justify-content: center; line-height: 1; }
         .btn-oggi:active { transform: scale(1.1); }
@@ -49,12 +49,16 @@
 
         @media (max-width: 600px) {
             body { padding: 8px; }
-            .logo { max-height: 150px; }
+            .logo { max-height: 100px; max-width: 90%; }
+            .logo-container { min-height: 100px; margin-bottom: 10px; }
             .btn-menu { padding: 35px 15px !important; font-size: 1.5rem !important; }
             .day-cell { width: 55px; height: 55px; font-size: 1.3rem; } 
             .sticky-col { width: 130px; min-width: 130px; font-size: 0.85rem; }
-            .btn-action { flex: 1; padding: 15px 5px; font-size: 0.75rem; flex-direction: column; gap: 2px; }
-            .btn-oggi { width: 60px; height: 60px; font-size: 2rem; flex: none; }
+            .btn-action { flex: 1; padding: 12px 5px; font-size: 0.8rem; min-width: 80px; }
+            .btn-home { min-width: 90px; }
+            .btn-oggi { width: 50px; height: 50px; font-size: 1.8rem; flex: none; }
+            .controls-container { gap: 8px; padding: 10px; }
+            select { padding: 8px; font-size: 0.9rem; }
         }
 
         .menu-container { display: flex; gap: 15px; margin: 25px 0; }
@@ -295,7 +299,6 @@
         const sm = document.getElementById('select-mese'), sa = document.getElementById('select-anno');
         sm.innerHTML = ""; sa.innerHTML = "";
         nomiMesi.forEach((m, i) => sm.add(new Option(m, i)));
-        // ESTENSIONE FINO AL 2050
         for(let a=2025; a<=2050; a++) sa.add(new Option(a, a));
     }
 
