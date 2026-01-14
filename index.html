@@ -128,8 +128,28 @@
         dataAttuale = new Date(a, m, 1);
         popolaSelettori(m, a);
         await caricaDati();
+        sottoscriviRealtime(); // MODIFICA: Attivazione ascolto in tempo reale
         const lastSez = sessionStorage.getItem('last_sez');
         if (lastSez) mostraSezione(lastSez);
+    }
+
+    // MODIFICA: Funzione per ricevere aggiornamenti dagli altri dispositivi
+    function sottoscriviRealtime() {
+        supabaseClient
+            .channel('db-changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'presenze' }, async (payload) => {
+                // Quando qualcuno cambia una presenza, ricarichiamo e ridisegniamo
+                const { data: pres } = await supabaseClient.from('presenze').select('*')
+                    .gte('data', `${dataAttuale.getFullYear()}-01-01`)
+                    .lte('data', `${dataAttuale.getFullYear()}-12-31`);
+                presenzeCache = pres || [];
+                renderTabella();
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'atleti' }, async () => {
+                // Quando qualcuno aggiunge/elimina un atleta
+                await caricaDati();
+            })
+            .subscribe();
     }
 
     function popolaSelettori(m, a) {
