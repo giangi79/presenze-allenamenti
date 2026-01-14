@@ -24,15 +24,16 @@
         #status-auto { font-size: 0.9rem; font-weight: bold; margin-top: 10px; min-height: 1.5rem; color: #d35400; }
         #status-auto a { color: #007bff; text-decoration: underline; }
         
-        /* TABELLA MODIFICATA */
         .table-wrapper { overflow: auto; max-height: 65vh; border: 1px solid #ccc; border-radius: 10px; background: white; position: relative; -webkit-overflow-scrolling: touch; }
         table { border-collapse: separate; border-spacing: 0; width: 100%; }
-        thead tr { background: #343a40; }
-        thead th { position: sticky; top: 0; background: #343a40 !important; color: white; z-index: 10; padding: 8px; font-size: 0.7rem; border: 1px solid #454d55; text-align: center; }
         
-        /* Colonna Atleta Uniformata */
-        .sticky-col-header { position: sticky; left: 0; background: #343a40 !important; color: white !important; z-index: 12; }
-        .sticky-col { position: sticky; left: 0; background: white !important; color: #333 !important; z-index: 11; border-right: 2px solid #007bff; min-width: 120px; max-width: 120px; padding: 10px; font-weight: bold; text-align: left !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* HEADER COLORI UNIFORMI */
+        thead tr { background: #343a40; }
+        thead th { position: sticky; top: 0; background: #343a40 !important; color: white !important; z-index: 10; padding: 8px; font-size: 0.7rem; border: 1px solid #454d55; text-align: center; }
+        
+        /* COLONNA ATLETA - TESTO COMPLETO E COLORE FISSO */
+        .sticky-col-header { position: sticky; left: 0; background: #343a40 !important; color: white !important; z-index: 12; border-right: 2px solid #007bff; }
+        .sticky-col { position: sticky; left: 0; background: white !important; color: #333 !important; z-index: 11; border-right: 2px solid #007bff; min-width: 140px; width: auto; padding: 10px; font-weight: bold; text-align: left !important; white-space: nowrap; }
         
         .day-cell { min-width: 50px; height: 50px; border: 1px solid #ddd; text-align: center; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
         .p-partecipa { background: #2ecc71 !important; color: white !important; }
@@ -185,7 +186,6 @@
         const totCell = el.parentElement.querySelector('.tot-cell');
         totCell.innerText = parseInt(totCell.innerText) + (nuovoStato === 'partecipa' ? 1 : -1);
         await supabaseClient.from('presenze').upsert({ atleta_id: aId, data: data, stato: nuovoStato }, { onConflict: 'atleta_id, data' });
-        
         const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
         if (nuovoStato === 'partecipa') {
             if (idx > -1) presenzeCache[idx].stato = 'partecipa'; else presenzeCache.push({ atleta_id: aId, data: data, stato: 'partecipa' });
@@ -259,13 +259,17 @@
         location.reload();
     }
 
+    // FUNZIONE DI SCORRIMENTO CON OFFSET PER MOBILE
     function scrollOggi() {
         const active = document.querySelector('.section-active');
         if (!active) return;
         const target = active.querySelector('.today-cell');
         const wrapper = active.querySelector('.table-wrapper');
+        const stickyWidth = active.querySelector('.sticky-col').offsetWidth; 
+        
         if (target && wrapper) {
-            const scrollPos = target.offsetLeft - (wrapper.clientWidth / 2) + (target.clientWidth / 2);
+            // Calcolo: posizione cella - larghezza wrapper/2 + offset della colonna fissa per centrare nel resto dello schermo
+            const scrollPos = target.offsetLeft - (wrapper.clientWidth / 2) + (stickyWidth / 2);
             wrapper.scrollTo({ left: scrollPos, behavior: 'smooth' });
         }
     }
