@@ -21,6 +21,7 @@
         .btn-action { padding: 12px 20px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; color: white; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-pdf { background: #e74c3c; }
         .btn-drive { background: #4285F4; }
+        .btn-open-drive { background: #0f9d58; } /* Verde Google Drive */
         .btn-admin-toggle { background: #6c757d; }
         
         .btn-home { background: #ff9800; color: white; position: relative; min-width: 100px; }
@@ -54,8 +55,8 @@
             .btn-menu { padding: 35px 15px !important; font-size: 1.5rem !important; }
             .day-cell { width: 55px; height: 55px; font-size: 1.3rem; } 
             .sticky-col { width: 130px; min-width: 130px; font-size: 0.85rem; }
-            .btn-action { flex: 1; padding: 12px 5px; font-size: 0.8rem; min-width: 80px; }
-            .btn-home { min-width: 90px; }
+            .btn-action { flex: 1; padding: 12px 5px; font-size: 0.75rem; min-width: 75px; flex-direction: column; gap: 2px; }
+            .btn-home { min-width: 80px; }
             .btn-oggi { width: 50px; height: 50px; font-size: 1.8rem; flex: none; }
             .controls-container { gap: 8px; padding: 10px; }
             select { padding: 8px; font-size: 0.9rem; }
@@ -96,6 +97,7 @@
         <div class="actions-container">
             <button class="btn-action btn-pdf" onclick="esportaPDFLocale()">📄 PDF MESE</button>
             <button class="btn-action btn-drive" id="btn-drive" onclick="aggiornaBackupDrive()">☁️ PDF ANNO</button>
+            <button class="btn-action btn-open-drive" onclick="apriCartellaDrive()">📂 APRI DRIVE</button>
             <button class="btn-action btn-admin-toggle" onclick="toggleAdmin()">⚙️ ADMIN</button>
         </div>
         <div id="status-auto">Sistema pronto</div>
@@ -245,6 +247,13 @@
         } finally { 
             if(!isAuto) { btn.innerText = "☁️ PDF ANNO"; btn.disabled = false; } 
         }
+    }
+
+    // NUOVA FUNZIONE PER APRIRE DRIVE
+    function apriCartellaDrive() {
+        // Reindirizza l'utente allo script Google che gestisce i file.
+        // Se lo script non reindirizza automaticamente, puoi sostituire l'URL qui sotto con il link diretto alla tua cartella Drive.
+        window.open(WEB_APP_DRIVE_URL + "?action=open", "_blank");
     }
 
     function toggleAdmin() {
