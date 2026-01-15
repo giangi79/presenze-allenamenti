@@ -15,46 +15,79 @@
         body { font-family: 'Segoe UI', sans-serif; padding: 5px; background: #eef2f7; color: #333; }
         .header { text-align: center; margin-bottom: 10px; width: 100%; }
         
-        /* LOGO OTTIMIZZATO */
-        .logo { max-height: 80px; max-width: 90%; height: auto; border-radius: 10px; margin-bottom: 10px; }
+        .logo { max-height: 120px; max-width: 95%; height: auto; border-radius: 10px; margin-bottom: 5px; }
         
-        .controls-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 6px 15px rgba(0,0,0,0.08); flex-wrap: wrap; align-items: center; }
-        select, input { padding: 10px; border-radius: 10px; border: 2px solid #ddd; font-weight: 900; font-size: 1rem; color: #333; outline: none; }
+        .controls-container { display: flex; justify-content: center; gap: 5px; margin-bottom: 8px; background: white; padding: 8px; border-radius: 15px; box-shadow: 0 6px 15px rgba(0,0,0,0.08); flex-wrap: wrap; align-items: center; }
+        select, input { padding: 8px; border-radius: 10px; border: 2px solid #ddd; font-weight: 900; font-size: 0.9rem; color: #333; outline: none; }
         
-        .actions-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; padding: 0 5px; width: 100%; }
+        .actions-container { display: flex; justify-content: center; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; padding: 0 5px; width: 100%; }
         
-        .btn-action { padding: 12px 15px; border-radius: 12px; border: none; font-weight: 900; cursor: pointer; color: white; display: flex; align-items: center; gap: 5px; font-size: 0.9rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); text-transform: uppercase; transition: transform 0.1s; }
+        .btn-action { padding: 10px 12px; border-radius: 10px; border: none; font-weight: 900; cursor: pointer; color: white; display: flex; align-items: center; gap: 5px; font-size: 0.8rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); text-transform: uppercase; transition: transform 0.1s; }
         .btn-action:active { transform: scale(0.92); }
 
         .btn-pdf { background: #e74c3c; } .btn-drive { background: #4285F4; } .btn-open-drive { background: #34a853; } .btn-admin { background: #6c757d; } 
-        .btn-home { background: #ff9800; padding: 12px 20px; }
-        .btn-oggi { background: #17a2b8; width: 45px; height: 45px; justify-content: center; font-size: 1.5rem; border-radius: 12px; }
+        .btn-home { background: #ff9800; padding: 10px 15px; }
+        .btn-oggi { background: #17a2b8; width: 40px; height: 40px; justify-content: center; font-size: 1.2rem; border-radius: 10px; }
         
         #admin-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
         #admin-panel { background: white; width: 95%; max-width: 500px; padding: 20px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; max-height: 85vh; display: flex; flex-direction: column; }
         .close-admin { position: absolute; top: 15px; right: 15px; font-size: 2rem; cursor: pointer; color: #999; }
         
         .atleta-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; }
-        .atleta-name { font-weight: 900; color: #333; font-size: 0.9rem; }
-        .atleta-cat { font-size: 0.7rem; color: #007bff; font-weight: bold; text-transform: uppercase; }
+        .atleta-name { font-weight: 900; color: #333; font-size: 0.85rem; }
+        .atleta-cat { font-size: 0.65rem; color: #007bff; font-weight: bold; text-transform: uppercase; }
 
-        .table-wrapper { overflow: auto; max-height: 65vh; border: 1px solid #ccc; border-radius: 10px; background: white; position: relative; -webkit-overflow-scrolling: touch; }
-        table { border-collapse: separate; border-spacing: 0; width: 100%; }
-        thead th.sticky-col { position: sticky; left: 0; top: 0; z-index: 20 !important; background: #343a40 !important; color: white !important; padding-left: 10px; font-size: 0.8rem; }
-        thead th { position: sticky; top: 0; background: #343a40 !important; color: white !important; z-index: 10; padding: 8px; font-size: 0.65rem; border: 1px solid #454d55; text-align: center; }
-        .sticky-col { position: sticky; left: 0; background: white !important; z-index: 11; border-right: 3px solid #007bff; min-width: 130px; padding: 10px; font-weight: 900; font-size: 0.85rem; }
-        .day-cell { min-width: 45px; height: 45px; border: 1px solid #eee; text-align: center; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
+        /* NUOVA LOGICA TABELLA: LEGGIBILITÀ AUMENTATA */
+        .table-wrapper { overflow: auto; max-height: 70vh; border: 1px solid #ccc; border-radius: 10px; background: white; position: relative; -webkit-overflow-scrolling: touch; }
+        table { border-collapse: separate; border-spacing: 0; width: auto; min-width: 100%; }
+        
+        thead th.sticky-col { position: sticky; left: 0; top: 0; z-index: 25 !important; background: #343a40 !important; color: white !important; padding: 5px; font-size: 0.7rem; }
+        thead th { position: sticky; top: 0; background: #343a40 !important; color: white !important; z-index: 10; padding: 5px; font-size: 0.65rem; border: 1px solid #454d55; text-align: center; }
+        
+        .sticky-col { 
+            position: sticky; 
+            left: 0; 
+            background: white !important; 
+            z-index: 11; 
+            border-right: 3px solid #007bff; 
+            min-width: 110px; /* Spazio sufficiente per i nomi */
+            max-width: 110px;
+            padding: 8px 5px; 
+            font-weight: 900; 
+            font-size: 0.8rem; 
+            word-wrap: break-word; /* Forza il testo a capo */
+            overflow-wrap: break-word;
+            line-height: 1.1;
+            text-align: left;
+        }
+
+        .day-cell { 
+            width: 46px; 
+            min-width: 46px; 
+            height: 46px; 
+            border: 1px solid #eee; 
+            text-align: center; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 1.2rem; /* Segno di spunta più visibile */
+            padding: 0; 
+        }
+        
         .p-partecipa { background: #2ecc71 !important; color: white !important; }
         .today-cell { background: #d1ecf1; border: 2px solid #0c5460 !important; }
-        .tot-cell { text-align: center; font-weight: 900; background: #f8f9fa; min-width: 40px; font-size: 0.9rem; border-left: 2px solid #ddd; }
+        .tot-cell { text-align: center; font-weight: 900; background: #f8f9fa; width: 46px; min-width: 46px; font-size: 0.9rem; border-left: 2px solid #ddd; }
         
-        #status-auto { font-size: 0.9rem; color: #d35400; font-weight: 900; margin-bottom: 10px; background: #fff3cd; padding: 5px 12px; border-radius: 20px; display: inline-block; }
+        #status-auto { font-size: 0.8rem; color: #d35400; font-weight: 900; margin-bottom: 8px; background: #fff3cd; padding: 4px 10px; border-radius: 20px; display: inline-block; }
 
-        /* MENU HOME OTTIMIZZATO */
         .menu-container { display: flex; flex-direction: column; gap: 10px; padding: 10px; width: 100%; }
-        .btn-menu { width: 100%; padding: 30px 10px; font-weight: 900; font-size: 1.4rem; border-radius: 20px; color: white; border: none; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .btn-menu { width: 100%; padding: 25px 10px; font-weight: 900; font-size: 1.2rem; border-radius: 20px; color: white; border: none; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .btn-piccoli { background: #007bff; } .btn-grandi { background: #28a745; }
         .section-container { display: none; width: 100%; } .section-active { display: block; }
+
+        @media (min-width: 768px) {
+            .sticky-col { min-width: 180px; max-width: 180px; font-size: 0.9rem; }
+            .day-cell, .tot-cell { width: 50px; min-width: 50px; height: 50px; }
+        }
     </style>
 </head>
 <body>
@@ -62,7 +95,7 @@
     <div class="header">
         <img src="logo.png" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/400x120?text=LOGO'">
         <div class="controls-container">
-            <button class="btn-action btn-home" onclick="vaiAllaHome()">🏠 HOME</button>
+            <button class="btn-action btn-home" onclick="vaiAllaHome()">🏠</button>
             <select id="select-mese" onchange="cambiaData()"></select>
             <select id="select-anno" onchange="cambiaData()"></select>
             <button class="btn-action btn-oggi" onclick="scrollOggi()">🎯</button>
@@ -294,7 +327,7 @@
                     <span class="atleta-name">${a.nome}</span>
                     <span class="atleta-cat">${a.categoria}</span>
                 </div>
-                <button class="btn-del" onclick="eliminaAtleta(${a.id})">ELIMINA</button>
+                <button class="btn-del" style="background:#ff4444; color:white; border:none; padding:8px; border-radius:8px; font-weight:900;" onclick="eliminaAtleta(${a.id})">ELIMINA</button>
             </div>
         `).join('');
     }
