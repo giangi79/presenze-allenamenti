@@ -11,83 +11,39 @@
     <style>
         * { box-sizing: border-box; }
         html, body { overflow-x: hidden; width: 100%; position: relative; margin: 0; padding: 0; }
-
         body { font-family: 'Segoe UI', sans-serif; padding: 5px; background: #eef2f7; color: #333; }
         .header { text-align: center; margin-bottom: 10px; width: 100%; }
-        
         .logo { max-height: 120px; max-width: 95%; height: auto; border-radius: 10px; margin-bottom: 5px; }
-        
         .controls-container { display: flex; justify-content: center; gap: 5px; margin-bottom: 8px; background: white; padding: 8px; border-radius: 15px; box-shadow: 0 6px 15px rgba(0,0,0,0.08); flex-wrap: wrap; align-items: center; }
         select, input { padding: 8px; border-radius: 10px; border: 2px solid #ddd; font-weight: 900; font-size: 0.9rem; color: #333; outline: none; }
-        
         .actions-container { display: flex; justify-content: center; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; padding: 0 5px; width: 100%; }
-        
         .btn-action { padding: 10px 12px; border-radius: 10px; border: none; font-weight: 900; cursor: pointer; color: white; display: flex; align-items: center; gap: 5px; font-size: 0.8rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); text-transform: uppercase; transition: transform 0.1s; }
         .btn-action:active { transform: scale(0.92); }
-
-        .btn-pdf { background: #e74c3c; } .btn-drive { background: #4285F4; } .btn-open-drive { background: #34a853; } .btn-admin { background: #6c757d; } 
+        .btn-drive { background: #4285F4; } .btn-open-drive { background: #34a853; } .btn-admin { background: #6c757d; } 
         .btn-home { background: #ff9800; padding: 10px 15px; }
         .btn-oggi { background: #17a2b8; width: 40px; height: 40px; justify-content: center; font-size: 1.2rem; border-radius: 10px; }
-        
         #admin-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
         #admin-panel { background: white; width: 95%; max-width: 500px; padding: 20px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; max-height: 85vh; display: flex; flex-direction: column; }
         .close-admin { position: absolute; top: 15px; right: 15px; font-size: 2rem; cursor: pointer; color: #999; }
-        
         .atleta-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; }
+        .atleta-item.archiviato { opacity: 0.6; background: #e9ecef; }
         .atleta-name { font-weight: 900; color: #333; font-size: 0.85rem; }
         .atleta-cat { font-size: 0.65rem; color: #007bff; font-weight: bold; text-transform: uppercase; }
-
-        /* NUOVA LOGICA TABELLA: LEGGIBILITÀ AUMENTATA */
         .table-wrapper { overflow: auto; max-height: 70vh; border: 1px solid #ccc; border-radius: 10px; background: white; position: relative; -webkit-overflow-scrolling: touch; }
         table { border-collapse: separate; border-spacing: 0; width: auto; min-width: 100%; }
-        
         thead th.sticky-col { position: sticky; left: 0; top: 0; z-index: 25 !important; background: #343a40 !important; color: white !important; padding: 5px; font-size: 0.7rem; }
         thead th { position: sticky; top: 0; background: #343a40 !important; color: white !important; z-index: 10; padding: 5px; font-size: 0.65rem; border: 1px solid #454d55; text-align: center; }
-        
-        .sticky-col { 
-            position: sticky; 
-            left: 0; 
-            background: white !important; 
-            z-index: 11; 
-            border-right: 3px solid #007bff; 
-            min-width: 110px; /* Spazio sufficiente per i nomi */
-            max-width: 110px;
-            padding: 8px 5px; 
-            font-weight: 900; 
-            font-size: 0.8rem; 
-            word-wrap: break-word; /* Forza il testo a capo */
-            overflow-wrap: break-word;
-            line-height: 1.1;
-            text-align: left;
-        }
-
-        .day-cell { 
-            width: 46px; 
-            min-width: 46px; 
-            height: 46px; 
-            border: 1px solid #eee; 
-            text-align: center; 
-            cursor: pointer; 
-            font-weight: bold; 
-            font-size: 1.2rem; /* Segno di spunta più visibile */
-            padding: 0; 
-        }
-        
+        .sticky-col { position: sticky; left: 0; background: white !important; z-index: 11; border-right: 3px solid #007bff; min-width: 110px; max-width: 110px; padding: 8px 5px; font-weight: 900; font-size: 0.8rem; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.1; text-align: left; }
+        .day-cell { width: 46px; min-width: 46px; height: 46px; border: 1px solid #eee; text-align: center; cursor: pointer; font-weight: bold; font-size: 1.2rem; padding: 0; }
         .p-partecipa { background: #2ecc71 !important; color: white !important; }
         .today-cell { background: #d1ecf1; border: 2px solid #0c5460 !important; }
         .tot-cell { text-align: center; font-weight: 900; background: #f8f9fa; width: 46px; min-width: 46px; font-size: 0.9rem; border-left: 2px solid #ddd; }
-        
         #status-auto { font-size: 0.8rem; color: #d35400; font-weight: 900; margin-bottom: 8px; background: #fff3cd; padding: 4px 10px; border-radius: 20px; display: inline-block; }
-
         .menu-container { display: flex; flex-direction: column; gap: 10px; padding: 10px; width: 100%; }
         .btn-menu { width: 100%; padding: 25px 10px; font-weight: 900; font-size: 1.2rem; border-radius: 20px; color: white; border: none; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .btn-piccoli { background: #007bff; } .btn-grandi { background: #28a745; }
         .section-container { display: none; width: 100%; } .section-active { display: block; }
-
-        @media (min-width: 768px) {
-            .sticky-col { min-width: 180px; max-width: 180px; font-size: 0.9rem; }
-            .day-cell, .tot-cell { width: 50px; min-width: 50px; height: 50px; }
-        }
+        @media (min-width: 768px) { .sticky-col { min-width: 180px; max-width: 180px; font-size: 0.9rem; } .day-cell, .tot-cell { width: 50px; min-width: 50px; height: 50px; } }
     </style>
 </head>
 <body>
@@ -102,7 +58,6 @@
         </div>
         <div style="text-align:center;"><div id="status-auto">Sistema Pronto</div></div>
         <div class="actions-container">
-            <button class="btn-action btn-pdf" onclick="scaricaPDFLocale()">📄 PDF</button>
             <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()">☁️ BACKUP</button>
             <button class="btn-action btn-open-drive" onclick="apriFileDrive()">📂 DRIVE</button>
             <button class="btn-action btn-admin" onclick="toggleAdmin()">⚙️ ATLETI</button>
@@ -113,13 +68,20 @@
         <div id="admin-panel">
             <span class="close-admin" onclick="toggleAdmin()">&times;</span>
             <h2 class="admin-title">👤 Gestione Atleti</h2>
-            <div style="background: #f0f4f8; padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+            <div id="admin-form" style="background: #f0f4f8; padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+                <input type="hidden" id="edit-id">
                 <input type="text" id="new-nome" placeholder="NOME E COGNOME" style="width:100%; margin-bottom:10px; box-sizing: border-box; border: 2px solid #fff;">
                 <select id="new-cat" style="width:100%; margin-bottom:15px; border: 2px solid #fff;">
-                    <option value="GIOVANISSIMI">GIOVANISSIMI</option><option value="ESORDIENTI">ESORDIENTI</option>
-                    <option value="R12">R12</option><option value="RAGAZZI">RAGAZZI</option><option value="ALLIEVI">ALLIEVI</option><option value="JUNIOR">JUNIOR</option><option value="SENIOR">SENIOR</option>
+                    <option value="GIOVANISSIMI">GIOVANISSIMI</option>
+                    <option value="ESORDIENTI">ESORDIENTI</option>
+                    <option value="R12">R12</option>
+                    <option value="RAGAZZI">RAGAZZI</option>
+                    <option value="ALLIEVI">ALLIEVI</option>
+                    <option value="JUNIOR">JUNIOR</option>
+                    <option value="SENIOR">SENIOR</option>
                 </select>
-                <button class="btn-action btn-open-drive" style="width:100%; justify-content:center; padding:15px;" onclick="aggiungiAtleta()">+ AGGIUNGI ORA</button>
+                <button id="btn-save-atleta" class="btn-action btn-open-drive" style="width:100%; justify-content:center; padding:15px;" onclick="salvaAtleta()">+ AGGIUNGI ORA</button>
+                <button id="btn-cancel-edit" style="display:none; width:100%; margin-top:5px; background:transparent; border:none; color:#666; font-size:0.7rem; cursor:pointer;" onclick="resetForm()">ANNULLA MODIFICA</button>
             </div>
             <div id="lista-atleti-admin" style="overflow-y: auto; flex-grow: 1; padding-right: 5px;"></div>
         </div>
@@ -141,7 +103,6 @@
     const SB_URL = 'https://jiktdsvwerqstrlthwxu.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3Rkc3Z3ZXJxc3RybHRod3h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDkxMDEsImV4cCI6MjA4MzgyNTEwMX0.wmEnME6GaHXrvLoQH7MDijiTU4dZfoi9wOcrqs9fP10';
     const WEB_APP_DRIVE_URL = "https://script.google.com/macros/s/AKfycbzIh5rlIu30ul8KkijcCht1LCROZRd8i5UVDxmpkDmGLvRyRpYylzAEKmGzPqW_arM3Dg/exec"; 
-    
 
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
     let dataAttuale = new Date();
@@ -166,23 +127,15 @@
     }
 
     function sottoscriviRealtime() {
-        supabaseClient
-            .channel('db-changes')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'presenze' }, async (payload) => {
-                const { data: pres } = await supabaseClient.from('presenze').select('*')
-                    .gte('data', `${dataAttuale.getFullYear()}-01-01`)
-                    .lte('data', `${dataAttuale.getFullYear()}-12-31`);
-                presenzeCache = pres || [];
-                renderTabella();
-            })
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'atleti' }, async () => {
-                await caricaDati();
-            })
-            .subscribe();
+        supabaseClient.channel('db-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'presenze' }, async () => {
+            const { data: pres } = await supabaseClient.from('presenze').select('*').gte('data', `${dataAttuale.getFullYear()}-01-01`).lte('data', `${dataAttuale.getFullYear()}-12-31`);
+            presenzeCache = pres || []; renderTabella();
+        }).on('postgres_changes', { event: '*', schema: 'public', table: 'atleti' }, async () => { await caricaDati(); }).subscribe();
     }
 
     function popolaSelettori(m, a) {
         const sm = document.getElementById('select-mese'), sa = document.getElementById('select-anno');
+        sm.innerHTML = ""; sa.innerHTML = "";
         nomiMesi.forEach((nome, i) => sm.add(new Option(nome, i)));
         for(let i=2025; i<=2050; i++) sa.add(new Option(i, i));
         sm.value = m; sa.value = a;
@@ -191,12 +144,9 @@
     async function caricaDati() {
         const { data: atleti } = await supabaseClient.from('atleti').select('*').order('nome');
         atletiCache = atleti || [];
-        const { data: presenze } = await supabaseClient.from('presenze').select('*')
-            .gte('data', `${dataAttuale.getFullYear()}-01-01`)
-            .lte('data', `${dataAttuale.getFullYear()}-12-31`);
+        const { data: presenze } = await supabaseClient.from('presenze').select('*').gte('data', `${dataAttuale.getFullYear()}-01-01`).lte('data', `${dataAttuale.getFullYear()}-12-31`);
         presenzeCache = presenze || [];
-        renderTabella();
-        renderAdminList();
+        renderTabella(); renderAdminList();
     }
 
     function renderTabella() {
@@ -210,7 +160,7 @@
             head += `<th>TOT</th></tr>`;
             table.querySelector('thead').innerHTML = head;
             const cats = tipo === 'piccoli' ? CAT_PICCOLI : CAT_GRANDI;
-            const filtrati = atletiCache.filter(a => cats.includes((a.categoria || "").trim().toUpperCase()));
+            const filtrati = atletiCache.filter(a => cats.includes((a.categoria || "").trim().toUpperCase()) && (a.archiviato === false || a.archiviato === null));
             let body = "";
             filtrati.forEach(a => {
                 body += `<tr><td class="sticky-col">${a.nome.toUpperCase()}</td>`;
@@ -246,35 +196,69 @@
     }
 
     async function aggiornaBackupDrive() {
-        const status = document.getElementById('status-auto');
-        status.innerText = "☁️ GENERANDO PDF...";
+        const status = document.getElementById('status-auto'); status.innerText = "☁️ GENERANDO PDF...";
         try {
-            const { jsPDF } = window.jspdf; const doc = new jsPDF('l', 'mm', 'a4'); const annoC = dataAttuale.getFullYear();
+            const { jsPDF } = window.jspdf; 
+            const doc = new jsPDF('l', 'mm', 'a4'); 
+            const annoC = dataAttuale.getFullYear();
+            
             for (let m = 0; m < 12; m++) {
                 if (m > 0) doc.addPage();
                 const g = new Date(annoC, m + 1, 0).getDate();
                 const h = [["ATLETA", ...Array.from({length: g}, (_, i) => `${nomiGiorni[new Date(annoC, m, i + 1).getDay()]}\n${i + 1}`), "TOT"]];
-                doc.setFontSize(14); doc.setTextColor(52, 58, 64); doc.text(`REGISTRO PRESENZE - ${nomiMesi[m].toUpperCase()} ${annoC}`, 14, 12);
-                const colStyles = { 0: { halign: 'left', cellWidth: 32, fontStyle: 'bold', fillColor: [255, 255, 255] } };
-                const larghezzaGiorno = (297 - 32 - 15 - 28) / g;
+                
+                doc.setFontSize(14); 
+                doc.setTextColor(52, 58, 64); 
+                doc.text(`REGISTRO PRESENZE - ${nomiMesi[m].toUpperCase()} ${annoC}`, 14, 12);
+                
+                // OTTIMIZZAZIONE LARGHEZZE PER EVITARE "CONTENT COULD NOT FIT"
+                const colStyles = { 
+                    0: { halign: 'left', cellWidth: 30, fontStyle: 'bold', fillColor: [255, 255, 255] } 
+                };
+                // Margini 14mm sx + 14mm dx = 28mm. Disponibili 269mm.
+                const larghezzaGiorno = (269 - 30 - 10) / g;
                 for (let i = 1; i <= g; i++) colStyles[i] = { cellWidth: larghezzaGiorno };
-                colStyles[g + 1] = { cellWidth: 10, fillColor: [248, 249, 250], fontStyle: 'bold' };
-                const config = { head: h, startY: 18, theme: 'grid', styles: { fontSize: 5, cellPadding: 0.5, halign: 'center', lineColor: [221, 221, 221] }, headStyles: { fillColor: [52, 58, 64], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 4.5 }, columnStyles: colStyles, didParseCell: function(data) { if (data.section === 'body' && data.column.index > 0 && data.column.index <= g && data.cell.text[0] === '✔') { data.cell.styles.fillColor = [46, 204, 113]; data.cell.styles.textColor = [255, 255, 255]; } } };
+                colStyles[g + 1] = { cellWidth: 8, fillColor: [248, 249, 250], fontStyle: 'bold' };
+
+                const config = { 
+                    head: h, 
+                    startY: 18, 
+                    theme: 'grid', 
+                    tableWidth: 'wrap', // Forza la tabella a stare nel foglio
+                    styles: { fontSize: 5, cellPadding: 0.5, halign: 'center', overflow: 'hidden', lineColor: [221, 221, 221] }, 
+                    headStyles: { fillColor: [52, 58, 64], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 4.5 }, 
+                    columnStyles: colStyles, 
+                    didParseCell: function(data) { 
+                        if (data.section === 'body' && data.column.index > 0 && data.column.index <= g && data.cell.text[0] === '✔') { 
+                            data.cell.styles.fillColor = [46, 204, 113]; 
+                            data.cell.styles.textColor = [255, 255, 255] 
+                        } 
+                    } 
+                };
+                
                 doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g)});
                 doc.autoTable({...config, body: preparaDatiPDF(CAT_GRANDI, annoC, m, g), startY: doc.lastAutoTable.finalY + 8});
             }
+            
             const b64 = doc.output('datauristring').split(',')[1];
             status.innerText = "☁️ SALVATAGGIO DRIVE...";
             const resp = await fetch(WEB_APP_DRIVE_URL, { method: 'POST', body: JSON.stringify({ nomeFile: `Registro_${annoC}.pdf`, blob: b64 }) });
             const res = await resp.json();
-            if(res.fileUrl) { localStorage.setItem('ultimo_pdf_url', res.fileUrl); status.innerHTML = `✅ BACKUP OK! <a href="${res.fileUrl}" target="_blank">APRI</a>`; }
+            if(res.fileUrl) { 
+                localStorage.setItem('ultimo_pdf_url', res.fileUrl); 
+                status.innerHTML = `✅ BACKUP OK! <a href="${res.fileUrl}" target="_blank">APRI</a>`; 
+            }
         } catch(e) { status.innerText = "❌ ERRORE BACKUP"; console.error(e); }
     }
 
-    function scaricaPDFLocale() { aggiornaBackupDrive(); }
-
     function preparaDatiPDF(cats, anno, mese, giorni) {
-        return atletiCache.filter(a => cats.includes((a.categoria || "").trim().toUpperCase())).map(a => {
+        return atletiCache.filter(a => {
+            const inCat = cats.includes((a.categoria || "").trim().toUpperCase());
+            if (!inCat) return false;
+            if (a.archiviato === false || a.archiviato === null) return true;
+            const dInizio = `${anno}-${String(mese+1).padStart(2,'0')}-01`, dFine = `${anno}-${String(mese+1).padStart(2,'0')}-${giorni}`;
+            return presenzeCache.some(p => p.atleta_id === a.id && p.data >= dInizio && p.data <= dFine && p.stato === 'partecipa');
+        }).map(a => {
             let r = [a.nome.toUpperCase()], tot = 0;
             for(let d=1; d<=giorni; d++){
                 let dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
@@ -285,64 +269,97 @@
     }
 
     function scrollOggi() {
-        const active = document.querySelector('.section-active');
-        if (!active) return;
-        const target = active.querySelector('.today-cell');
-        const wrapper = active.querySelector('.table-wrapper');
+        const active = document.querySelector('.section-active'); if (!active) return;
+        const target = active.querySelector('.today-cell'); const wrapper = active.querySelector('.table-wrapper');
         const stickyWidth = active.querySelector('.sticky-col').offsetWidth; 
         if (target && wrapper) wrapper.scrollTo({ left: target.offsetLeft - stickyWidth, behavior: 'smooth' });
     }
 
     function mostraSezione(s) {
-        sessionStorage.setItem('last_sez', s);
-        document.getElementById('main-menu').style.display = 'none';
+        sessionStorage.setItem('last_sez', s); document.getElementById('main-menu').style.display = 'none';
         document.getElementById('sez-piccoli').className = s === 'piccoli' ? 'section-active' : 'section-container';
         document.getElementById('sez-grandi').className = s === 'grandi' ? 'section-active' : 'section-container';
         setTimeout(scrollOggi, 300);
     }
 
     function vaiAllaHome() { sessionStorage.removeItem('last_sez'); location.reload(); }
-    function cambiaData() { localStorage.setItem('p_mese', document.getElementById('select-mese').value); localStorage.setItem('p_anno', document.getElementById('select-anno').value); location.reload(); }
-    
-    function toggleAdmin() { 
-        const ov = document.getElementById('admin-overlay');
-        ov.style.display = ov.style.display === 'flex' ? 'none' : 'flex'; 
+    function cambiaData() { 
+        localStorage.setItem('p_mese', document.getElementById('select-mese').value); 
+        localStorage.setItem('p_anno', document.getElementById('select-anno').value); 
+        location.reload(); 
     }
+    function toggleAdmin() { const ov = document.getElementById('admin-overlay'); ov.style.display = ov.style.display === 'flex' ? 'none' : 'flex'; }
+    function apriFileDrive() { const url = localStorage.getItem('ultimo_pdf_url'); if(url) window.open(url, '_blank'); else alert("Nessun backup trovato."); }
 
-    async function aggiungiAtleta() {
-        const inputNome = document.getElementById('new-nome');
-        const nome = inputNome.value.trim().toUpperCase();
+    async function salvaAtleta() {
+        const id = document.getElementById('edit-id').value;
+        const nome = document.getElementById('new-nome').value.trim().toUpperCase();
         const cat = document.getElementById('new-cat').value;
         if(nome) {
-            document.getElementById('status-auto').innerText = "⏳ AGGIUNGO...";
-            await supabaseClient.from('atleti').insert([{ nome, categoria: cat }]);
-            inputNome.value = ""; await caricaDati();
-            document.getElementById('status-auto').innerText = "✅ AGGIUNTO";
+            document.getElementById('status-auto').innerText = "⏳ SALVATAGGIO...";
+            let res;
+            if(id) {
+                res = await supabaseClient.from('atleti').update({ nome, categoria: cat }).eq('id', id);
+            } else {
+                res = await supabaseClient.from('atleti').insert([{ nome, categoria: cat, archiviato: false }]);
+            }
+            if (res.error) { 
+                alert("Errore: " + res.error.message); 
+                document.getElementById('status-auto').innerText = "❌ ERRORE";
+            } else {
+                resetForm(); await caricaDati();
+                document.getElementById('status-auto').innerText = "✅ SALVATO";
+            }
         }
+    }
+
+    function preparaModifica(id, nome, cat) {
+        document.getElementById('edit-id').value = id;
+        document.getElementById('new-nome').value = nome;
+        document.getElementById('new-cat').value = cat;
+        document.getElementById('btn-save-atleta').innerText = "💾 AGGIORNA ATLETA";
+        document.getElementById('btn-cancel-edit').style.display = "block";
+        document.getElementById('new-nome').focus();
+    }
+
+    function resetForm() {
+        document.getElementById('edit-id').value = "";
+        document.getElementById('new-nome').value = "";
+        document.getElementById('new-cat').selectedIndex = 0;
+        document.getElementById('btn-save-atleta').innerText = "+ AGGIUNGI ORA";
+        document.getElementById('btn-cancel-edit').style.display = "none";
     }
 
     function renderAdminList() {
         document.getElementById('lista-atleti-admin').innerHTML = atletiCache.map(a => `
-            <div class="atleta-item">
+            <div class="atleta-item ${a.archiviato ? 'archiviato' : ''}">
                 <div class="atleta-info">
-                    <span class="atleta-name">${a.nome}</span>
+                    <span class="atleta-name">${a.nome} ${a.archiviato ? '(ARCHIVIATO)' : ''}</span>
                     <span class="atleta-cat">${a.categoria}</span>
                 </div>
-                <button class="btn-del" style="background:#ff4444; color:white; border:none; padding:8px; border-radius:8px; font-weight:900;" onclick="eliminaAtleta(${a.id})">ELIMINA</button>
+                <div style="display:flex; gap:3px; flex-wrap:wrap; justify-content:flex-end;">
+                    <button style="background:#4285F4; color:white; border:none; padding:6px 8px; border-radius:6px; font-weight:900; font-size:0.6rem;" 
+                        onclick="preparaModifica(${a.id}, '${a.nome}', '${a.categoria}')">MODIFICA</button>
+                    <button style="background:${a.archiviato ? '#34a853' : '#f39c12'}; color:white; border:none; padding:6px 8px; border-radius:6px; font-weight:900; font-size:0.6rem;" 
+                        onclick="setArchiviazione(${a.id}, ${!a.archiviato})">${a.archiviato ? 'RIPRISTINA' : 'ARCHIVIA'}</button>
+                    <button style="background:#ff4444; color:white; border:none; padding:6px 8px; border-radius:6px; font-weight:900; font-size:0.6rem;" 
+                        onclick="eliminaDefinitivo(${a.id})">X</button>
+                </div>
             </div>
         `).join('');
     }
 
-    async function eliminaAtleta(id) { 
-        if(confirm("ELIMINARE DEFINITIVAMENTE?")) { 
-            document.getElementById('status-auto').innerText = "⏳ ELIMINO...";
-            await supabaseClient.from('atleti').delete().eq('id', id); 
-            await caricaDati();
-            document.getElementById('status-auto').innerText = "✅ ELIMINATO";
+    async function setArchiviazione(id, stato) {
+        await supabaseClient.from('atleti').update({ archiviato: stato }).eq('id', id);
+        await caricaDati();
+    }
+
+    async function eliminaDefinitivo(id) { 
+        if(confirm("ATTENZIONE: Eliminando l'atleta sparirà da TUTTI i PDF futuri (anche mesi passati). Sicuro?")) { 
+            await supabaseClient.from('atleti').delete().eq('id', id); await caricaDati();
         } 
     }
 
-    function apriFileDrive() { const url = localStorage.getItem('ultimo_pdf_url'); if(url) window.open(url, '_blank'); else alert("Nessun backup trovato."); }
     window.onload = inizializza;
 </script>
 </body>
