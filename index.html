@@ -58,7 +58,7 @@
         #status-auto { font-size: 0.8rem; color: #d35400; font-weight: 900; margin-bottom: 8px; background: #fff3cd; padding: 4px 10px; border-radius: 20px; display: inline-block; }
         .menu-container { display: flex; flex-direction: column; gap: 10px; padding: 10px; width: 100%; }
         .btn-menu { width: 100%; padding: 25px 10px; font-weight: 900; font-size: 1.2rem; border-radius: 20px; color: white; border: none; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
-        .btn-piccoli { background: #007bff; } .btn-grandi { background: #28a745; }
+        .btn-cuccioli { background: #e91e63; } .btn-piccoli { background: #007bff; } .btn-grandi { background: #28a745; }
         .section-container { display: none; width: 100%; } .section-active { display: block; }
         @media (min-width: 768px) { .sticky-col { min-width: 180px; max-width: 180px; font-size: 0.9rem; } .day-cell, .tot-cell { width: 50px; min-width: 50px; height: 50px; } }
     </style>
@@ -89,6 +89,7 @@
                 <input type="hidden" id="edit-id">
                 <input type="text" id="new-nome" placeholder="NOME E COGNOME" style="width:100%; margin-bottom:10px; box-sizing: border-box; border: 2px solid #fff;">
                 <select id="new-cat" style="width:100%; margin-bottom:15px; border: 2px solid #fff;">
+                    <option value="CUCCIOLI">CUCCIOLI</option>
                     <option value="GIOVANISSIMI">GIOVANISSIMI</option>
                     <option value="ESORDIENTI">ESORDIENTI</option>
                     <option value="R12">R12</option>
@@ -105,10 +106,14 @@
     </div>
 
     <div class="menu-container" id="main-menu">
+        <button class="btn-menu btn-cuccioli" onclick="mostraSezione('cuccioli')">CATEGORIE CUCCIOLI</button>
         <button class="btn-menu btn-piccoli" onclick="mostraSezione('piccoli')">CATEGORIE PICCOLI</button>
         <button class="btn-menu btn-grandi" onclick="mostraSezione('grandi')">CATEGORIE GRANDI</button>
     </div>
 
+    <div id="sez-cuccioli" class="section-container">
+        <div class="table-wrapper"><table id="tab-cuccioli"><thead></thead><tbody></tbody></table></div>
+    </div>
     <div id="sez-piccoli" class="section-container">
         <div class="table-wrapper"><table id="tab-piccoli"><thead></thead><tbody></tbody></table></div>
     </div>
@@ -129,6 +134,7 @@
     
     const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
     const nomiGiorni = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
+    const CAT_CUCCIOLI = ['CUCCIOLI'];
     const CAT_PICCOLI = ['GIOVANISSIMI', 'ESORDIENTI'];
     const CAT_GRANDI = ['R12', 'RAGAZZI', 'ALLIEVI', 'JUNIOR', 'JUNIORES', 'SENIOR', 'ALLIEVE'];
 
@@ -170,13 +176,13 @@
         const anno = dataAttuale.getFullYear(), mese = dataAttuale.getMonth();
         const giorniMese = new Date(anno, mese + 1, 0).getDate();
         const oggiStr = new Date().toLocaleDateString('en-CA');
-        ["piccoli", "grandi"].forEach(tipo => {
+        ["cuccioli", "piccoli", "grandi"].forEach(tipo => {
             const table = document.getElementById(`tab-${tipo}`);
             let head = `<tr><th class="sticky-col">ATLETA</th>`;
             for(let i=1; i<=giorniMese; i++) head += `<th>${nomiGiorni[new Date(anno, mese, i).getDay()]}<br>${i}</th>`;
             head += `<th>TOT</th></tr>`;
             table.querySelector('thead').innerHTML = head;
-            const cats = tipo === 'piccoli' ? CAT_PICCOLI : CAT_GRANDI;
+            const cats = tipo === 'cuccioli' ? CAT_CUCCIOLI : (tipo === 'piccoli' ? CAT_PICCOLI : CAT_GRANDI);
             const filtrati = atletiCache.filter(a => cats.includes((a.categoria || "").trim().toUpperCase()) && (a.archiviato === false || a.archiviato === null));
             let body = "";
             filtrati.forEach(a => {
@@ -228,11 +234,9 @@
                 doc.setTextColor(52, 58, 64); 
                 doc.text(`REGISTRO PRESENZE - ${nomiMesi[m].toUpperCase()} ${annoC}`, 14, 12);
                 
-                // OTTIMIZZAZIONE LARGHEZZE PER EVITARE "CONTENT COULD NOT FIT"
                 const colStyles = { 
                     0: { halign: 'left', cellWidth: 30, fontStyle: 'bold', fillColor: [255, 255, 255] } 
                 };
-                // Margini 14mm sx + 14mm dx = 28mm. Disponibili 269mm.
                 const larghezzaGiorno = (269 - 30 - 10) / g;
                 for (let i = 1; i <= g; i++) colStyles[i] = { cellWidth: larghezzaGiorno };
                 colStyles[g + 1] = { cellWidth: 8, fillColor: [248, 249, 250], fontStyle: 'bold' };
@@ -241,7 +245,7 @@
                     head: h, 
                     startY: 18, 
                     theme: 'grid', 
-                    tableWidth: 'wrap', // Forza la tabella a stare nel foglio
+                    tableWidth: 'wrap',
                     styles: { fontSize: 5, cellPadding: 0.5, halign: 'center', overflow: 'hidden', lineColor: [221, 221, 221] }, 
                     headStyles: { fillColor: [52, 58, 64], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 4.5 }, 
                     columnStyles: colStyles, 
@@ -253,7 +257,8 @@
                     } 
                 };
                 
-                doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g)});
+                doc.autoTable({...config, body: preparaDatiPDF(CAT_CUCCIOLI, annoC, m, g)});
+                doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g), startY: doc.lastAutoTable.finalY + 8});
                 doc.autoTable({...config, body: preparaDatiPDF(CAT_GRANDI, annoC, m, g), startY: doc.lastAutoTable.finalY + 8});
             }
             
@@ -294,6 +299,7 @@
 
     function mostraSezione(s) {
         sessionStorage.setItem('last_sez', s); document.getElementById('main-menu').style.display = 'none';
+        document.getElementById('sez-cuccioli').className = s === 'cuccioli' ? 'section-active' : 'section-container';
         document.getElementById('sez-piccoli').className = s === 'piccoli' ? 'section-active' : 'section-container';
         document.getElementById('sez-grandi').className = s === 'grandi' ? 'section-active' : 'section-container';
         setTimeout(scrollOggi, 300);
