@@ -42,19 +42,31 @@
         #admin-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
         #admin-panel { background: white; width: 95%; max-width: 500px; padding: 20px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; max-height: 85vh; display: flex; flex-direction: column; }
         .close-admin { position: absolute; top: 15px; right: 15px; font-size: 2rem; cursor: pointer; color: #999; }
+        
+        /* Animazioni Pulsanti Pannello Atleti */
+        .atleta-item button { transition: all 0.2s ease; cursor: pointer; }
+        .atleta-item button:hover { filter: brightness(1.1); }
+        .atleta-item button:active { transform: scale(0.9); opacity: 0.8; }
+        #btn-save-atleta { transition: all 0.2s ease; }
+        #btn-save-atleta:hover { filter: brightness(1.05); }
+        #btn-save-atleta:active { transform: scale(0.96); }
+
         .atleta-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; }
         .atleta-item.archiviato { opacity: 0.6; background: #e9ecef; }
         .atleta-name { font-weight: 900; color: #333; font-size: 0.85rem; }
         .atleta-cat { font-size: 0.65rem; color: #007bff; font-weight: bold; text-transform: uppercase; }
-        .table-wrapper { overflow: auto; max-height: 70vh; border: 1px solid #ccc; border-radius: 10px; background: white; position: relative; -webkit-overflow-scrolling: touch; }
+        .table-wrapper { overflow: auto; max-height: 70vh; border: 1px solid #ccc; border-radius: 10px; background: white; position: relative; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; }
         table { border-collapse: separate; border-spacing: 0; width: auto; min-width: 100%; }
         thead th.sticky-col { position: sticky; left: 0; top: 0; z-index: 25 !important; background: #343a40 !important; color: white !important; padding: 5px; font-size: 0.7rem; }
         thead th { position: sticky; top: 0; background: #343a40 !important; color: white !important; z-index: 10; padding: 5px; font-size: 0.65rem; border: 1px solid #454d55; text-align: center; }
         .sticky-col { position: sticky; left: 0; background: white !important; z-index: 11; border-right: 3px solid #007bff; min-width: 110px; max-width: 110px; padding: 8px 5px; font-weight: 900; font-size: 0.8rem; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.1; text-align: left; }
-        .day-cell { width: 46px; min-width: 46px; height: 46px; border: 1px solid #eee; text-align: center; cursor: pointer; font-weight: bold; font-size: 1.2rem; padding: 0; }
+        .day-cell { width: 46px; min-width: 46px; height: 46px; border: 1px solid #eee; text-align: center; cursor: pointer; font-weight: bold; font-size: 1.2rem; padding: 0; -webkit-tap-highlight-color: transparent; }
         .p-partecipa { background: #2ecc71 !important; color: white !important; }
         .today-cell { background: #d1ecf1; border: 2px solid #0c5460 !important; }
-        .tot-cell { text-align: center; font-weight: 900; background: #f8f9fa; width: 46px; min-width: 46px; font-size: 0.9rem; border-left: 2px solid #ddd; }
+        
+        .tot-cell { position: sticky; right: 0; text-align: center; font-weight: 900; background: #f8f9fa !important; width: 46px; min-width: 46px; font-size: 0.9rem; border-left: 2px solid #ddd; z-index: 11; }
+        thead th:last-child { position: sticky; right: 0; z-index: 25 !important; background: #343a40 !important; }
+
         #status-auto { font-size: 0.8rem; color: #d35400; font-weight: 900; margin-bottom: 8px; background: #fff3cd; padding: 4px 10px; border-radius: 20px; display: inline-block; }
         .menu-container { display: flex; flex-direction: column; gap: 10px; padding: 10px; width: 100%; }
         .btn-menu { width: 100%; padding: 25px 10px; font-weight: 900; font-size: 1.2rem; border-radius: 20px; color: white; border: none; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
@@ -112,13 +124,13 @@
     </div>
 
     <div id="sez-cuccioli" class="section-container">
-        <div class="table-wrapper"><table id="tab-cuccioli"><thead></thead><tbody></tbody></table></div>
+        <div class="table-wrapper" onscroll="handleScroll()"><table id="tab-cuccioli"><thead></thead><tbody></tbody></table></div>
     </div>
     <div id="sez-piccoli" class="section-container">
-        <div class="table-wrapper"><table id="tab-piccoli"><thead></thead><tbody></tbody></table></div>
+        <div class="table-wrapper" onscroll="handleScroll()"><table id="tab-piccoli"><thead></thead><tbody></tbody></table></div>
     </div>
     <div id="sez-grandi" class="section-container">
-        <div class="table-wrapper"><table id="tab-grandi"><thead></thead><tbody></tbody></table></div>
+        <div class="table-wrapper" onscroll="handleScroll()"><table id="tab-grandi"><thead></thead><tbody></tbody></table></div>
     </div>
 
 <script>
@@ -131,12 +143,20 @@
     let atletiCache = [], presenzeCache = [];
     let timerBackup = null;
     let secondiMancanti = 10;
+    let isScrolling = false;
+    let scrollTimeout;
     
     const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
     const nomiGiorni = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
     const CAT_CUCCIOLI = ['CUCCIOLI'];
     const CAT_PICCOLI = ['GIOVANISSIMI', 'ESORDIENTI'];
     const CAT_GRANDI = ['R12', 'RAGAZZI', 'ALLIEVI', 'JUNIOR', 'JUNIORES', 'SENIOR', 'ALLIEVE'];
+
+    function handleScroll() {
+        isScrolling = true;
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => { isScrolling = false; }, 150);
+    }
 
     async function inizializza() {
         const m = localStorage.getItem('p_mese') || dataAttuale.getMonth();
@@ -201,6 +221,7 @@
     }
 
     async function togglePresenza(el, aId, data) {
+        if (isScrolling) return; 
         const isP = el.classList.contains('p-partecipa');
         const nuovoStato = isP ? 'non partecipa' : 'partecipa';
         el.classList.toggle('p-partecipa'); el.innerText = isP ? '' : '✔';
