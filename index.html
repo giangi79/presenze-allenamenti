@@ -39,6 +39,8 @@
         .btn-drive { background: #4285F4; } .btn-open-drive { background: #34a853; } .btn-admin { background: #6c757d; } 
         .btn-home { background: #ff9800; padding: 10px 15px; }
         .btn-oggi { background: #17a2b8; width: 40px; height: 40px; justify-content: center; font-size: 1.2rem; border-radius: 10px; }
+        .btn-backup-auto { background: #f39c12; } /* Arancione quando disabilitato */
+        .btn-backup-auto.attivo { background: #2ecc71; } /* Verde quando attivo */
         #admin-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
         #admin-panel { background: white; width: 95%; max-width: 500px; padding: 20px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; max-height: 85vh; display: flex; flex-direction: column; }
         .close-admin { position: absolute; top: 15px; right: 15px; font-size: 2rem; cursor: pointer; color: #999; }
@@ -143,6 +145,8 @@
         <div class="actions-container">
             <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()">☁️ BACKUP</button>
             <button class="btn-action btn-open-drive" onclick="apriFileDrive()">📂 DRIVE</button>
+            <!-- Nuovo pulsante per disattivare backup automatico -->
+            <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto">▶️ AUTO ON</button>
             <button class="btn-action btn-admin" onclick="toggleAdmin()">⚙️ ATLETI</button>
         </div>
     </div>
@@ -218,6 +222,9 @@
     let isLongPress = false;
     const LONG_PRESS_DURATION = 500; // 500ms per considerarlo un long press
     let currentCellData = null; // Memorizza i dati della cella corrente per l'input
+    
+    // Aggiungi questa variabile per gestione backup automatico
+    let backupAutomaticoAttivo = true;
     
     const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
     const nomiGiorni = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
@@ -385,7 +392,11 @@
         }
         
         updateTotalCell(el);
-        avviaTimerBackup();
+        
+        // Avvia timer backup solo se è attivo
+        if (backupAutomaticoAttivo) {
+            avviaTimerBackup();
+        }
     }
 
     function showNumberInput(el, aId, data) {
@@ -440,7 +451,11 @@
             }
             
             updateTotalCell(el);
-            avviaTimerBackup();
+            
+            // Avvia timer backup solo se è attivo
+            if (backupAutomaticoAttivo) {
+                avviaTimerBackup();
+            }
         }
         
         document.getElementById('number-input-overlay').style.display = 'none';
@@ -466,9 +481,47 @@
     }
 
     function avviaTimerBackup() {
+        // Se il backup automatico è disattivato, esci
+        if (!backupAutomaticoAttivo) {
+            return;
+        }
+        
         clearInterval(timerBackup); secondiMancanti = 10;
         const status = document.getElementById('status-auto');
         timerBackup = setInterval(() => { secondiMancanti--; status.innerText = `⏳ BACKUP IN ${secondiMancanti}s...`; if (secondiMancanti <= 0) { clearInterval(timerBackup); aggiornaBackupDrive(); } }, 1000);
+    }
+
+    // Funzione per gestire il toggle del backup automatico
+    function toggleBackupAutomatico() {
+        backupAutomaticoAttivo = !backupAutomaticoAttivo;
+        const btn = document.getElementById('btn-backup-auto');
+        const status = document.getElementById('status-auto');
+        
+        if (backupAutomaticoAttivo) {
+            btn.innerHTML = "▶️ AUTO ON";
+            btn.classList.add('attivo');
+            status.innerText = "✅ Backup automatico ATTIVATO";
+            
+            // Se c'è un timer in corso, resetta il conteggio
+            if (secondiMancanti < 10 && timerBackup) {
+                clearInterval(timerBackup);
+                secondiMancanti = 10;
+                status.innerText = "Sistema Pronto";
+            }
+        } else {
+            btn.innerHTML = "⏸️ AUTO OFF";
+            btn.classList.remove('attivo');
+            status.innerText = "⏸️ Backup automatico DISATTIVATO";
+            
+            // Ferma il timer se è in corso
+            if (timerBackup) {
+                clearInterval(timerBackup);
+                timerBackup = null;
+            }
+        }
+        
+        // Salva lo stato nel localStorage per persistenza
+        localStorage.setItem('backup_auto_attivo', backupAutomaticoAttivo);
     }
 
     async function aggiornaBackupDrive() {
@@ -657,6 +710,22 @@
     }
 
     window.onload = inizializza;
+    
+    // Carica lo stato del backup automatico dal localStorage all'inizializzazione
+    window.addEventListener('DOMContentLoaded', function() {
+        const savedState = localStorage.getItem('backup_auto_attivo');
+        if (savedState !== null) {
+            backupAutomaticoAttivo = savedState === 'true';
+            const btn = document.getElementById('btn-backup-auto');
+            if (backupAutomaticoAttivo) {
+                btn.innerHTML = "▶️ AUTO ON";
+                btn.classList.add('attivo');
+            } else {
+                btn.innerHTML = "⏸️ AUTO OFF";
+                btn.classList.remove('attivo');
+            }
+        }
+    });
 </script>
 </body>
 </html>
