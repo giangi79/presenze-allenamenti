@@ -1,11 +1,12 @@
 {
   "name": "Registro Presenze 2050",
-  "short_name": "Presenze",
-  "description": "Gestionale Presenze Atleti",
-  "start_url": "index.html",
+  "short_name": "Registro",
+  "description": "Registro presenze atleti",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#eef2f7",
   "theme_color": "#343a40",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icon-192.png",
@@ -18,6 +19,17 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "scope": "/",
+  "categories": ["productivity", "sports"],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Schermata principale"
     }
   ]
 }
