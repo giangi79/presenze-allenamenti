@@ -60,7 +60,7 @@
         thead th.sticky-col { position: sticky; left: 0; top: 0; z-index: 25 !important; background: #343a40 !important; color: white !important; padding: 5px; font-size: 0.7rem; }
         thead th { position: sticky; top: 0; background: #343a40 !important; color: white !important; z-index: 10; padding: 5px; font-size: 0.65rem; border: 1px solid #454d55; text-align: center; }
         .sticky-col { position: sticky; left: 0; background: white !important; z-index: 11; border-right: 3px solid #007bff; min-width: 110px; max-width: 110px; padding: 8px 5px; font-weight: 900; font-size: 0.8rem; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.1; text-align: left; }
-        .day-cell { width: 46px; min-width: 46px; height: 46px; border: 1px solid #eee; text-align: center; cursor: pointer; font-weight: bold; font-size: 1.2rem; padding: 0; -webkit-tap-highlight-color: transparent; }
+        .day-cell { width: 46px; min-width: 46px; height: 46px; border: 1px solid #eee; text-align: center; cursor: pointer; font-weight: bold; font-size: 1.2rem; padding: 0; -webkit-tap-highlight-color: transparent; position: relative; }
         .p-partecipa { background: #2ecc71 !important; color: white !important; }
         .today-cell { background: #d1ecf1; border: 2px solid #0c5460 !important; }
         
@@ -72,6 +72,60 @@
         .btn-menu { width: 100%; padding: 25px 10px; font-weight: 900; font-size: 1.2rem; border-radius: 20px; color: white; border: none; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
         .btn-cuccioli { background: #e91e63; } .btn-piccoli { background: #007bff; } .btn-grandi { background: #28a745; }
         .section-container { display: none; width: 100%; } .section-active { display: block; }
+        
+        /* Stile per l'input numerico */
+        .number-input-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .number-input-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 250px;
+        }
+        .number-input {
+            width: 100%;
+            font-size: 2rem;
+            text-align: center;
+            border: 3px solid #2ecc71;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .input-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .input-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            color: white;
+        }
+        .input-btn.confirm {
+            background: #2ecc71;
+        }
+        .input-btn.cancel {
+            background: #e74c3c;
+        }
+        .input-btn.clear {
+            background: #f39c12;
+        }
+        
         @media (min-width: 768px) { .sticky-col { min-width: 180px; max-width: 180px; font-size: 0.9rem; } .day-cell, .tot-cell { width: 50px; min-width: 50px; height: 50px; } }
     </style>
 </head>
@@ -117,6 +171,19 @@
         </div>
     </div>
 
+    <!-- Overlay per input numerico -->
+    <div id="number-input-overlay" class="number-input-overlay" style="display: none;">
+        <div class="number-input-container">
+            <h3 style="margin-top:0;">Inserisci numero</h3>
+            <input type="number" id="number-input" class="number-input" min="0" max="999" value="1">
+            <div class="input-buttons">
+                <button class="input-btn clear" onclick="clearNumberInput()">PULISCI</button>
+                <button class="input-btn cancel" onclick="cancelNumberInput()">ANNULLA</button>
+                <button class="input-btn confirm" onclick="confirmNumberInput()">OK</button>
+            </div>
+        </div>
+    </div>
+
     <div class="menu-container" id="main-menu">
         <button class="btn-menu btn-cuccioli" onclick="mostraSezione('cuccioli')">CATEGORIE CUCCIOLI</button>
         <button class="btn-menu btn-piccoli" onclick="mostraSezione('piccoli')">CATEGORIE PICCOLI</button>
@@ -145,6 +212,12 @@
     let secondiMancanti = 10;
     let isScrolling = false;
     let scrollTimeout;
+    
+    // Variabili per gestione long press
+    let longPressTimer = null;
+    let isLongPress = false;
+    const LONG_PRESS_DURATION = 500; // 500ms per considerarlo un long press
+    let currentCellData = null; // Memorizza i dati della cella corrente per l'input
     
     const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
     const nomiGiorni = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
@@ -210,9 +283,25 @@
                 let totMese = 0;
                 for(let i=1; i<=giorniMese; i++) {
                     const dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
-                    const p = presenzeCache.find(x => x.atleta_id === a.id && x.data === dStr && x.stato === 'partecipa');
-                    if(p) totMese++;
-                    body += `<td class="day-cell ${p?'p-partecipa':''} ${dStr===oggiStr?'today-cell':''}" onclick="togglePresenza(this, ${a.id}, '${dStr}')">${p?'✔':''}</td>`;
+                    const p = presenzeCache.find(x => x.atleta_id === a.id && x.data === dStr);
+                    // Controlla se c'è un numero salvato
+                    const hasNumber = p && p.stato && p.stato.includes('numero:');
+                    const numberValue = hasNumber ? p.stato.split(':')[1] : '';
+                    
+                    // Se c'è un numero, la cella deve essere verde e mostrare il numero
+                    const isGreen = p && (p.stato === 'partecipa' || hasNumber);
+                    if(isGreen) totMese++;
+                    
+                    body += `<td class="day-cell ${isGreen?'p-partecipa':''} ${dStr===oggiStr?'today-cell':''}" 
+                        onmousedown="startLongPress(this, ${a.id}, '${dStr}')" 
+                        onmouseup="endLongPress(this, ${a.id}, '${dStr}')" 
+                        onmouseleave="cancelLongPress()"
+                        ontouchstart="startLongPress(this, ${a.id}, '${dStr}')" 
+                        ontouchend="endLongPress(this, ${a.id}, '${dStr}')" 
+                        ontouchcancel="cancelLongPress()"
+                        onclick="handleCellClick(event, this, ${a.id}, '${dStr}')">
+                        ${hasNumber ? numberValue : (isGreen ? '✔' : '')}
+                    </td>`;
                 }
                 body += `<td class="tot-cell">${totMese}</td></tr>`;
             });
@@ -220,17 +309,160 @@
         });
     }
 
-    async function togglePresenza(el, aId, data) {
-        if (isScrolling) return; 
-        const isP = el.classList.contains('p-partecipa');
-        const nuovoStato = isP ? 'non partecipa' : 'partecipa';
-        el.classList.toggle('p-partecipa'); el.innerText = isP ? '' : '✔';
-        const totCell = el.parentElement.querySelector('.tot-cell');
-        totCell.innerText = parseInt(totCell.innerText) + (nuovoStato === 'partecipa' ? 1 : -1);
-        await supabaseClient.from('presenze').upsert({ atleta_id: aId, data: data, stato: nuovoStato }, { onConflict: 'atleta_id, data' });
+    // Gestione long press
+    function startLongPress(el, aId, data) {
+        currentCellData = { el, aId, data };
+        longPressTimer = setTimeout(() => {
+            isLongPress = true;
+            showNumberInput(el, aId, data);
+        }, LONG_PRESS_DURATION);
+    }
+
+    function endLongPress() {
+        if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+        }
+    }
+
+    function cancelLongPress() {
+        if (longPressTimer) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+        }
+    }
+
+    function handleCellClick(event, el, aId, data) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        if (isScrolling) return;
+        if (isLongPress) {
+            isLongPress = false;
+            return;
+        }
+        
+        // Toggle normale presenza
+        toggleCellState(el, aId, data);
+    }
+
+    async function toggleCellState(el, aId, data) {
+        const currentText = el.innerText.trim();
+        const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
+        
+        // Se c'è già un numero, il click normale cancella tutto
+        if (p && p.stato && p.stato.includes('numero:')) {
+            await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
+            el.classList.remove('p-partecipa');
+            el.innerText = '';
+        } else if (p && p.stato === 'partecipa') {
+            // Se è già verde con ✔, diventa bianco
+            await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
+            el.classList.remove('p-partecipa');
+            el.innerText = '';
+        } else {
+            // Altrimenti diventa verde con ✔
+            await supabaseClient.from('presenze').upsert({ 
+                atleta_id: aId, 
+                data: data, 
+                stato: 'partecipa' 
+            }, { onConflict: 'atleta_id, data' });
+            el.classList.add('p-partecipa');
+            el.innerText = '✔';
+        }
+        
+        // Aggiorna cache
         const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-        if (nuovoStato === 'partecipa') { if (idx > -1) presenzeCache[idx].stato = 'partecipa'; else presenzeCache.push({ atleta_id: aId, data: data, stato: 'partecipa' }); } else if (idx > -1) presenzeCache[idx].stato = 'non partecipa';
+        if (el.classList.contains('p-partecipa')) {
+            const stato = currentText && !['✔', ''].includes(currentText) ? `numero:${currentText}` : 'partecipa';
+            if (idx > -1) {
+                presenzeCache[idx].stato = stato;
+            } else {
+                presenzeCache.push({ atleta_id: aId, data: data, stato: stato });
+            }
+        } else if (idx > -1) {
+            presenzeCache.splice(idx, 1);
+        }
+        
+        updateTotalCell(el);
         avviaTimerBackup();
+    }
+
+    function showNumberInput(el, aId, data) {
+        currentCellData = { el, aId, data };
+        
+        // Controlla se c'è già un numero
+        const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
+        let currentValue = '';
+        if (p && p.stato && p.stato.includes('numero:')) {
+            currentValue = p.stato.split(':')[1];
+        }
+        
+        document.getElementById('number-input').value = currentValue;
+        document.getElementById('number-input-overlay').style.display = 'flex';
+        document.getElementById('number-input').focus();
+        document.getElementById('number-input').select();
+    }
+
+    function clearNumberInput() {
+        document.getElementById('number-input').value = '';
+    }
+
+    function cancelNumberInput() {
+        document.getElementById('number-input-overlay').style.display = 'none';
+        currentCellData = null;
+    }
+
+    async function confirmNumberInput() {
+        const input = document.getElementById('number-input');
+        const numberValue = input.value.trim();
+        
+        if (currentCellData && numberValue !== '') {
+            const { el, aId, data } = currentCellData;
+            
+            // Salva il numero come "numero:VALORE" nello stato
+            await supabaseClient.from('presenze').upsert({ 
+                atleta_id: aId, 
+                data: data, 
+                stato: `numero:${numberValue}`
+            }, { onConflict: 'atleta_id, data' });
+            
+            // Aggiorna visuale
+            el.classList.add('p-partecipa');
+            el.innerText = numberValue;
+            
+            // Aggiorna cache
+            const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
+            if (idx > -1) {
+                presenzeCache[idx].stato = `numero:${numberValue}`;
+            } else {
+                presenzeCache.push({ atleta_id: aId, data: data, stato: `numero:${numberValue}` });
+            }
+            
+            updateTotalCell(el);
+            avviaTimerBackup();
+        }
+        
+        document.getElementById('number-input-overlay').style.display = 'none';
+        currentCellData = null;
+    }
+
+    function updateTotalCell(el) {
+        const row = el.parentElement;
+        if (!row) return;
+        
+        const totCell = row.querySelector('.tot-cell');
+        if (!totCell) return;
+        
+        let total = 0;
+        const dayCells = row.querySelectorAll('.day-cell');
+        dayCells.forEach(cell => {
+            if (cell.classList.contains('p-partecipa')) {
+                total++;
+            }
+        });
+        
+        totCell.innerText = total;
     }
 
     function avviaTimerBackup() {
@@ -271,9 +503,15 @@
                     headStyles: { fillColor: [52, 58, 64], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 4.5 }, 
                     columnStyles: colStyles, 
                     didParseCell: function(data) { 
-                        if (data.section === 'body' && data.column.index > 0 && data.column.index <= g && data.cell.text[0] === '✔') { 
-                            data.cell.styles.fillColor = [46, 204, 113]; 
-                            data.cell.styles.textColor = [255, 255, 255] 
+                        if (data.section === 'body' && data.column.index > 0 && data.column.index <= g && data.cell.text[0] !== '') { 
+                            // Controlla se è un numero
+                            if (data.cell.text[0] !== '✔' && !isNaN(parseInt(data.cell.text[0]))) {
+                                data.cell.styles.fillColor = [46, 204, 113]; // Verde per numeri
+                                data.cell.styles.textColor = [255, 255, 255];
+                            } else if (data.cell.text[0] === '✔') {
+                                data.cell.styles.fillColor = [46, 204, 113]; // Verde per ✔
+                                data.cell.styles.textColor = [255, 255, 255];
+                            }
                         } 
                     } 
                 };
@@ -300,12 +538,26 @@
             if (!inCat) return false;
             if (a.archiviato === false || a.archiviato === null) return true;
             const dInizio = `${anno}-${String(mese+1).padStart(2,'0')}-01`, dFine = `${anno}-${String(mese+1).padStart(2,'0')}-${giorni}`;
-            return presenzeCache.some(p => p.atleta_id === a.id && p.data >= dInizio && p.data <= dFine && p.stato === 'partecipa');
+            return presenzeCache.some(p => p.atleta_id === a.id && p.data >= dInizio && p.data <= dFine && (p.stato === 'partecipa' || p.stato.includes('numero:')));
         }).map(a => {
             let r = [a.nome.toUpperCase()], tot = 0;
             for(let d=1; d<=giorni; d++){
                 let dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                if(presenzeCache.find(x => x.atleta_id === a.id && x.data === dStr && x.stato === 'partecipa')){ r.push("✔"); tot++; } else r.push("");
+                const p = presenzeCache.find(x => x.atleta_id === a.id && x.data === dStr);
+                if(p) {
+                    if (p.stato === 'partecipa') {
+                        r.push("✔");
+                        tot++;
+                    } else if (p.stato && p.stato.includes('numero:')) {
+                        const num = p.stato.split(':')[1];
+                        r.push(num);
+                        tot++;
+                    } else {
+                        r.push("");
+                    }
+                } else {
+                    r.push("");
+                }
             }
             r.push(tot); return r;
         });
