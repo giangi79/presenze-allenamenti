@@ -41,6 +41,9 @@
         .btn-oggi { background: #17a2b8; width: 40px; height: 40px; justify-content: center; font-size: 1.2rem; border-radius: 10px; }
         .btn-backup-auto { background: #f39c12; } /* Arancione quando disabilitato */
         .btn-backup-auto.attivo { background: #2ecc71; } /* Verde quando attivo */
+        .btn-numeric-input { background: #8e44ad; } /* Viola per input numerico */
+        .btn-numeric-input.attivo { background: #9b59b6; } /* Viola più chiaro quando attivo */
+        
         #admin-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
         #admin-panel { background: white; width: 95%; max-width: 500px; padding: 20px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; max-height: 85vh; display: flex; flex-direction: column; }
         .close-admin { position: absolute; top: 15px; right: 15px; font-size: 2rem; cursor: pointer; color: #999; }
@@ -145,7 +148,9 @@
         <div class="actions-container">
             <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()">☁️ BACKUP</button>
             <button class="btn-action btn-open-drive" onclick="apriFileDrive()">📂 DRIVE</button>
-            <!-- Nuovo pulsante per disattivare backup automatico -->
+            <!-- Pulsante per input numerico -->
+            <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input">🔢 NUM OFF</button>
+            <!-- Pulsante per disattivare backup automatico -->
             <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto">▶️ AUTO ON</button>
             <button class="btn-action btn-admin" onclick="toggleAdmin()">⚙️ ATLETI</button>
         </div>
@@ -226,6 +231,9 @@
     // Aggiungi questa variabile per gestione backup automatico
     let backupAutomaticoAttivo = true;
     
+    // Variabile per gestione input numerico
+    let numericInputAttivo = false;
+    
     const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
     const nomiGiorni = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
     const CAT_CUCCIOLI = ['CUCCIOLI'];
@@ -247,6 +255,9 @@
         sottoscriviRealtime();
         const lastSez = sessionStorage.getItem('last_sez');
         if (lastSez) mostraSezione(lastSez);
+        
+        // Carica lo stato dell'input numerico
+        caricaStatoNumericInput();
     }
 
     function sottoscriviRealtime() {
@@ -299,13 +310,17 @@
                     const isGreen = p && (p.stato === 'partecipa' || hasNumber);
                     if(isGreen) totMese++;
                     
+                    // Aggiunge event listener solo se l'input numerico è attivo
+                    const longPressAttrs = numericInputAttivo ? 
+                        `onmousedown="startLongPress(this, ${a.id}, '${dStr}')" 
+                         onmouseup="endLongPress(this, ${a.id}, '${dStr}')" 
+                         onmouseleave="cancelLongPress()"
+                         ontouchstart="startLongPress(this, ${a.id}, '${dStr}')" 
+                         ontouchend="endLongPress(this, ${a.id}, '${dStr}')" 
+                         ontouchcancel="cancelLongPress()"` : '';
+                    
                     body += `<td class="day-cell ${isGreen?'p-partecipa':''} ${dStr===oggiStr?'today-cell':''}" 
-                        onmousedown="startLongPress(this, ${a.id}, '${dStr}')" 
-                        onmouseup="endLongPress(this, ${a.id}, '${dStr}')" 
-                        onmouseleave="cancelLongPress()"
-                        ontouchstart="startLongPress(this, ${a.id}, '${dStr}')" 
-                        ontouchend="endLongPress(this, ${a.id}, '${dStr}')" 
-                        ontouchcancel="cancelLongPress()"
+                        ${longPressAttrs}
                         onclick="handleCellClick(event, this, ${a.id}, '${dStr}')">
                         ${hasNumber ? numberValue : (isGreen ? '✔' : '')}
                     </td>`;
@@ -316,8 +331,53 @@
         });
     }
 
+    // Funzione per abilitare/disabilitare l'input numerico
+    function toggleNumericInput() {
+        numericInputAttivo = !numericInputAttivo;
+        const btn = document.getElementById('btn-numeric-input');
+        const status = document.getElementById('status-auto');
+        
+        if (numericInputAttivo) {
+            btn.innerHTML = "🔢 NUM ON";
+            btn.classList.add('attivo');
+            status.innerText = "✅ Input numerico ATTIVATO - Usa long press per inserire numeri";
+            
+            // Ricarica la tabella per aggiungere gli event listener
+            renderTabella();
+        } else {
+            btn.innerHTML = "🔢 NUM OFF";
+            btn.classList.remove('attivo');
+            status.innerText = "⏸️ Input numerico DISATTIVATO";
+            
+            // Ricarica la tabella per rimuovere gli event listener
+            renderTabella();
+        }
+        
+        // Salva lo stato nel localStorage per persistenza
+        localStorage.setItem('numeric_input_attivo', numericInputAttivo);
+    }
+
+    // Carica lo stato dell'input numerico dal localStorage
+    function caricaStatoNumericInput() {
+        const savedState = localStorage.getItem('numeric_input_attivo');
+        if (savedState !== null) {
+            numericInputAttivo = savedState === 'true';
+            const btn = document.getElementById('btn-numeric-input');
+            if (numericInputAttivo) {
+                btn.innerHTML = "🔢 NUM ON";
+                btn.classList.add('attivo');
+            } else {
+                btn.innerHTML = "🔢 NUM OFF";
+                btn.classList.remove('attivo');
+            }
+        }
+    }
+
     // Gestione long press
     function startLongPress(el, aId, data) {
+        // Esci se l'input numerico non è attivo
+        if (!numericInputAttivo) return;
+        
         currentCellData = { el, aId, data };
         longPressTimer = setTimeout(() => {
             isLongPress = true;
@@ -400,6 +460,9 @@
     }
 
     function showNumberInput(el, aId, data) {
+        // Esci se l'input numerico non è attivo
+        if (!numericInputAttivo) return;
+        
         currentCellData = { el, aId, data };
         
         // Controlla se c'è già un numero
