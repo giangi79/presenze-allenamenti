@@ -6,20 +6,33 @@
     <title>Registro Presenze 2050</title>
 
     <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Presenze">
-<link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Presenze">
+    <link rel="apple-touch-icon" href="icon-192.png">
 
     <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#343a40">
-<link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="theme-color" content="#343a40">
+    <link rel="apple-touch-icon" href="icon-192.png">
 
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(() => console.log("PWA pronta!"));
-  }
-</script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('sw.js')
+            .then(function(registration) {
+              console.log('Service Worker registrato con successo:', registration.scope);
+              
+              // Verifica se siamo in modalità standalone (PWA installata)
+              if (window.matchMedia('(display-mode: standalone)').matches || 
+                  window.navigator.standalone === true) {
+                console.log('App aperta come PWA installata');
+              }
+            })
+            .catch(function(error) {
+              console.log('Registrazione Service Worker fallita:', error);
+            });
+        });
+      }
+    </script>
 
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -135,6 +148,16 @@
     </style>
 </head>
 <body>
+
+    <noscript>
+        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 9999; padding: 20px; text-align: center; display: flex; justify-content: center; align-items: center;">
+            <div style="max-width: 400px;">
+                <h2>⚠️ JavaScript è richiesto</h2>
+                <p>Questa applicazione richiede JavaScript per funzionare. Abilita JavaScript nel tuo browser e ricarica la pagina.</p>
+                <button onclick="window.location.reload()" style="background: #4285F4; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 20px;">Ricarica pagina</button>
+            </div>
+        </div>
+    </noscript>
 
     <div class="header">
         <img src="logo.png" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/400x120?text=LOGO'">
@@ -258,6 +281,12 @@
         
         // Carica lo stato dell'input numerico
         caricaStatoNumericInput();
+        
+        // Nascondi il messaggio noscript se siamo qui
+        const noscriptDiv = document.querySelector('noscript div');
+        if (noscriptDiv) {
+            noscriptDiv.style.display = 'none';
+        }
     }
 
     function sottoscriviRealtime() {
@@ -276,11 +305,17 @@
     }
 
     async function caricaDati() {
-        const { data: atleti } = await supabaseClient.from('atleti').select('*').order('nome');
-        atletiCache = atleti || [];
-        const { data: presenze } = await supabaseClient.from('presenze').select('*').gte('data', `${dataAttuale.getFullYear()}-01-01`).lte('data', `${dataAttuale.getFullYear()}-12-31`);
-        presenzeCache = presenze || [];
-        renderTabella(); renderAdminList();
+        try {
+            const { data: atleti } = await supabaseClient.from('atleti').select('*').order('nome');
+            atletiCache = atleti || [];
+            const { data: presenze } = await supabaseClient.from('presenze').select('*').gte('data', `${dataAttuale.getFullYear()}-01-01`).lte('data', `${dataAttuale.getFullYear()}-12-31`);
+            presenzeCache = presenze || [];
+            renderTabella(); 
+            renderAdminList();
+        } catch (error) {
+            console.error('Errore caricamento dati:', error);
+            document.getElementById('status-auto').innerText = "❌ Errore di connessione";
+        }
     }
 
     function renderTabella() {
@@ -289,6 +324,8 @@
         const oggiStr = new Date().toLocaleDateString('en-CA');
         ["cuccioli", "piccoli", "grandi"].forEach(tipo => {
             const table = document.getElementById(`tab-${tipo}`);
+            if (!table) return;
+            
             let head = `<tr><th class="sticky-col">ATLETA</th>`;
             for(let i=1; i<=giorniMese; i++) head += `<th>${nomiGiorni[new Date(anno, mese, i).getDay()]}<br>${i}</th>`;
             head += `<th>TOT</th></tr>`;
@@ -743,7 +780,10 @@
     }
 
     function renderAdminList() {
-        document.getElementById('lista-atleti-admin').innerHTML = atletiCache.map(a => `
+        const container = document.getElementById('lista-atleti-admin');
+        if (!container) return;
+        
+        container.innerHTML = atletiCache.map(a => `
             <div class="atleta-item ${a.archiviato ? 'archiviato' : ''}">
                 <div class="atleta-info">
                     <span class="atleta-name">${a.nome} ${a.archiviato ? '(ARCHIVIATO)' : ''}</span>
@@ -751,7 +791,7 @@
                 </div>
                 <div style="display:flex; gap:3px; flex-wrap:wrap; justify-content:flex-end;">
                     <button style="background:#4285F4; color:white; border:none; padding:6px 8px; border-radius:6px; font-weight:900; font-size:0.6rem;" 
-                        onclick="preparaModifica(${a.id}, '${a.nome}', '${a.categoria}')">MODIFICA</button>
+                        onclick="preparaModifica(${a.id}, '${a.nome.replace(/'/g, "\\'")}', '${a.categoria}')">MODIFICA</button>
                     <button style="background:${a.archiviato ? '#34a853' : '#f39c12'}; color:white; border:none; padding:6px 8px; border-radius:6px; font-weight:900; font-size:0.6rem;" 
                         onclick="setArchiviazione(${a.id}, ${!a.archiviato})">${a.archiviato ? 'RIPRISTINA' : 'ARCHIVIA'}</button>
                     <button style="background:#ff4444; color:white; border:none; padding:6px 8px; border-radius:6px; font-weight:900; font-size:0.6rem;" 
