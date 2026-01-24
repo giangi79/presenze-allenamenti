@@ -5,145 +5,409 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Registro Presenze 2050</title>
 
-    <!-- Meta per iOS -->
+    <!-- === META PWA iOS === -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Registro Presenze">
     <meta name="format-detection" content="telephone=no">
     <meta name="mobile-web-app-capable" content="yes">
     
-    <!-- Icone iOS -->
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="icon-192.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="icon-192.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="icon-192.png">
+    <!-- === ICONE iOS === -->
+    <link rel="apple-touch-icon" href="./icon-192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./icon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icon-192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="./icon-192.png">
     
-    <!-- Manifest per Android e iOS -->
-    <link rel="manifest" href="manifest.json">
+    <!-- === MANIFEST Android === -->
+    <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#343a40">
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
 
-    <!-- Service Worker -->
+    <!-- === SERVICE WORKER === -->
     <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('sw.js')
-            .then(function(registration) {
-              console.log('Service Worker registrato con successo:', registration.scope);
-            })
-            .catch(function(error) {
-              console.log('Registrazione Service Worker fallita:', error);
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(function(registration) {
+                        console.log('✅ Service Worker registrato:', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('❌ Service Worker errore:', error);
+                    });
             });
-        });
-      }
+        }
     </script>
 
-    <!-- Icona favicon -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    
-    <!-- Librerie esterne -->
+    <!-- === LIBRERIE ESTERNE === -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
+    <!-- === STILI CSS === -->
     <style>
-        * { box-sizing: border-box; }
-        html, body { overflow-x: hidden; width: 100%; position: relative; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 5px; background: #eef2f7; color: #333; -webkit-tap-highlight-color: transparent; }
-        .header { text-align: center; margin-bottom: 10px; width: 100%; }
-        .logo { max-height: 120px; max-width: 95%; height: auto; border-radius: 10px; margin-bottom: 5px; }
-        .controls-container { display: flex; justify-content: center; gap: 5px; margin-bottom: 8px; background: white; padding: 8px; border-radius: 15px; box-shadow: 0 6px 15px rgba(0,0,0,0.08); flex-wrap: wrap; align-items: center; }
-        select, input { padding: 8px; border-radius: 10px; border: 2px solid #ddd; font-weight: 900; font-size: 0.9rem; color: #333; outline: none; background: white; }
-        .actions-container { display: flex; justify-content: center; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; padding: 0 5px; width: 100%; }
-        .btn-action { padding: 10px 12px; border-radius: 10px; border: none; font-weight: 900; cursor: pointer; color: white; display: flex; align-items: center; gap: 5px; font-size: 0.8rem; box-shadow: 0 4px 8px rgba(0,0,0,0.15); text-transform: uppercase; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+        /* RESET */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { width: 100%; height: 100%; overflow-x: hidden; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: #eef2f7; 
+            color: #333;
+            padding: 10px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* HEADER */
+        .header { text-align: center; margin-bottom: 15px; }
+        .logo { 
+            max-height: 120px; 
+            max-width: 95%; 
+            height: auto; 
+            border-radius: 12px; 
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        /* CONTROLLI */
+        .controls-container { 
+            display: flex; 
+            justify-content: center; 
+            gap: 8px; 
+            margin-bottom: 12px; 
+            background: white; 
+            padding: 12px; 
+            border-radius: 16px; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08); 
+            flex-wrap: wrap; 
+            align-items: center; 
+        }
+        
+        select, input { 
+            padding: 10px; 
+            border-radius: 10px; 
+            border: 2px solid #ddd; 
+            font-weight: bold; 
+            font-size: 15px; 
+            color: #333; 
+            outline: none; 
+            background: white;
+            min-width: 120px;
+        }
+        
+        /* PULSANTI AZIONE */
+        .actions-container { 
+            display: flex; 
+            justify-content: center; 
+            gap: 8px; 
+            margin-bottom: 15px; 
+            flex-wrap: wrap; 
+            padding: 0 10px; 
+        }
+        
+        .btn-action { 
+            padding: 12px 16px; 
+            border-radius: 12px; 
+            border: none; 
+            font-weight: 900; 
+            cursor: pointer; 
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            font-size: 14px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+            text-transform: uppercase; 
+            transition: all 0.2s; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        
         .btn-action:active { transform: scale(0.95); opacity: 0.9; }
-        .btn-drive { background: #4285F4; } .btn-open-drive { background: #34a853; } .btn-admin { background: #6c757d; } 
-        .btn-home { background: #ff9800; padding: 10px 15px; }
-        .btn-oggi { background: #17a2b8; width: 40px; height: 40px; justify-content: center; font-size: 1.2rem; border-radius: 10px; }
+        .btn-drive { background: #4285F4; } 
+        .btn-open-drive { background: #34a853; } 
+        .btn-admin { background: #6c757d; } 
+        .btn-home { background: #ff9800; padding: 12px 18px; }
+        .btn-oggi { 
+            background: #17a2b8; 
+            width: 45px; 
+            height: 45px; 
+            justify-content: center; 
+            font-size: 20px; 
+            border-radius: 12px; 
+        }
         .btn-backup-auto { background: #f39c12; }
         .btn-backup-auto.attivo { background: #2ecc71; }
         .btn-numeric-input { background: #8e44ad; }
         .btn-numeric-input.attivo { background: #9b59b6; }
-        .btn-install { background: linear-gradient(135deg, #4285F4, #34a853); position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: none; animation: pulse 2s infinite; }
         
-        #admin-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 1000; justify-content: center; align-items: center; }
-        #admin-panel { background: white; width: 95%; max-width: 500px; padding: 20px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative; max-height: 85vh; display: flex; flex-direction: column; }
-        .close-admin { position: absolute; top: 15px; right: 15px; font-size: 2rem; cursor: pointer; color: #999; }
+        /* PULSANTE INSTALLAZIONE */
+        .btn-install { 
+            background: linear-gradient(135deg, #4285F4, #34a853); 
+            position: fixed; 
+            bottom: 25px; 
+            right: 25px; 
+            z-index: 9999; 
+            display: none; 
+            animation: pulse 2s infinite;
+            padding: 15px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            box-shadow: 0 8px 25px rgba(66, 133, 244, 0.5);
+        }
         
-        .atleta-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 12px; margin-bottom: 8px; border: 1px solid #eee; }
-        .atleta-item.archiviato { opacity: 0.6; background: #e9ecef; }
-        .atleta-name { font-weight: 900; color: #333; font-size: 0.85rem; }
-        .atleta-cat { font-size: 0.65rem; color: #007bff; font-weight: bold; text-transform: uppercase; }
-        .table-wrapper { overflow: auto; max-height: 70vh; border: 1px solid #ccc; border-radius: 10px; background: white; position: relative; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; }
-        table { border-collapse: separate; border-spacing: 0; width: auto; min-width: 100%; }
-        thead th.sticky-col { position: sticky; left: 0; top: 0; z-index: 25 !important; background: #343a40 !important; color: white !important; padding: 5px; font-size: 0.7rem; }
-        thead th { position: sticky; top: 0; background: #343a40 !important; color: white !important; z-index: 10; padding: 5px; font-size: 0.65rem; border: 1px solid #454d55; text-align: center; }
-        .sticky-col { position: sticky; left: 0; background: white !important; z-index: 11; border-right: 3px solid #007bff; min-width: 110px; max-width: 110px; padding: 8px 5px; font-weight: 900; font-size: 0.8rem; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.1; text-align: left; }
-        .day-cell { width: 46px; min-width: 46px; height: 46px; border: 1px solid #eee; text-align: center; cursor: pointer; font-weight: bold; font-size: 1.2rem; padding: 0; -webkit-tap-highlight-color: transparent; position: relative; user-select: none; }
-        .p-partecipa { background: #2ecc71 !important; color: white !important; }
-        .today-cell { background: #d1ecf1; border: 2px solid #0c5460 !important; }
+        /* STATUS */
+        #status-auto { 
+            font-size: 14px; 
+            color: #d35400; 
+            font-weight: 900; 
+            margin-bottom: 10px; 
+            background: #fff3cd; 
+            padding: 8px 15px; 
+            border-radius: 20px; 
+            display: inline-block;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
         
-        .tot-cell { position: sticky; right: 0; text-align: center; font-weight: 900; background: #f8f9fa !important; width: 46px; min-width: 46px; font-size: 0.9rem; border-left: 2px solid #ddd; z-index: 11; }
-        thead th:last-child { position: sticky; right: 0; z-index: 25 !important; background: #343a40 !important; }
-
-        #status-auto { font-size: 0.8rem; color: #d35400; font-weight: 900; margin-bottom: 8px; background: #fff3cd; padding: 4px 10px; border-radius: 20px; display: inline-block; }
-        .menu-container { display: flex; flex-direction: column; gap: 10px; padding: 10px; width: 100%; }
-        .btn-menu { width: 100%; padding: 25px 10px; font-weight: 900; font-size: 1.2rem; border-radius: 20px; color: white; border: none; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 20px rgba(0,0,0,0.1); transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
-        .btn-menu:active { transform: scale(0.98); opacity: 0.9; }
-        .btn-cuccioli { background: #e91e63; } .btn-piccoli { background: #007bff; } .btn-grandi { background: #28a745; }
-        .section-container { display: none; width: 100%; } .section-active { display: block; }
+        /* MENU CATEGORIE */
+        .menu-container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            padding: 15px; 
+            width: 100%; 
+        }
         
-        /* Input numerico */
+        .btn-menu { 
+            width: 100%; 
+            padding: 30px 15px; 
+            font-weight: 900; 
+            font-size: 18px; 
+            border-radius: 20px; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
+            transition: all 0.2s; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn-menu:active { transform: scale(0.98); }
+        .btn-cuccioli { background: #e91e63; } 
+        .btn-piccoli { background: #007bff; } 
+        .btn-grandi { background: #28a745; }
+        
+        /* TABELLA */
+        .section-container { display: none; width: 100%; } 
+        .section-active { display: block; }
+        
+        .table-wrapper { 
+            overflow: auto; 
+            max-height: 70vh; 
+            border: 1px solid #ccc; 
+            border-radius: 12px; 
+            background: white; 
+            position: relative; 
+            -webkit-overflow-scrolling: touch; 
+            touch-action: pan-x pan-y;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        table { 
+            border-collapse: separate; 
+            border-spacing: 0; 
+            width: auto; 
+            min-width: 100%; 
+        }
+        
+        thead th { 
+            position: sticky; 
+            top: 0; 
+            background: #343a40 !important; 
+            color: white !important; 
+            z-index: 10; 
+            padding: 8px; 
+            font-size: 13px; 
+            border: 1px solid #454d55; 
+            text-align: center; 
+            white-space: nowrap;
+        }
+        
+        thead th.sticky-col { 
+            position: sticky; 
+            left: 0; 
+            top: 0; 
+            z-index: 25 !important; 
+            background: #343a40 !important;
+            min-width: 130px;
+        }
+        
+        .sticky-col { 
+            position: sticky; 
+            left: 0; 
+            background: white !important; 
+            z-index: 11; 
+            border-right: 3px solid #007bff; 
+            min-width: 130px; 
+            max-width: 130px; 
+            padding: 10px 8px; 
+            font-weight: 900; 
+            font-size: 14px; 
+            word-wrap: break-word; 
+            overflow-wrap: break-word; 
+            line-height: 1.2; 
+            text-align: left; 
+        }
+        
+        .day-cell { 
+            width: 50px; 
+            min-width: 50px; 
+            height: 50px; 
+            border: 1px solid #eee; 
+            text-align: center; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 20px; 
+            padding: 0; 
+            -webkit-tap-highlight-color: transparent; 
+            position: relative; 
+            user-select: none;
+            transition: background 0.2s;
+        }
+        
+        .p-partecipa { 
+            background: #2ecc71 !important; 
+            color: white !important; 
+        }
+        
+        .today-cell { 
+            background: #d1ecf1; 
+            border: 2px solid #0c5460 !important; 
+        }
+        
+        .tot-cell { 
+            position: sticky; 
+            right: 0; 
+            text-align: center; 
+            font-weight: 900; 
+            background: #f8f9fa !important; 
+            width: 50px; 
+            min-width: 50px; 
+            font-size: 16px; 
+            border-left: 2px solid #ddd; 
+            z-index: 11; 
+        }
+        
+        thead th:last-child { 
+            position: sticky; 
+            right: 0; 
+            z-index: 25 !important; 
+            background: #343a40 !important; 
+        }
+        
+        /* PANNELLO ADMIN */
+        #admin-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.7); 
+            backdrop-filter: blur(5px); 
+            -webkit-backdrop-filter: blur(5px); 
+            z-index: 1000; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        
+        #admin-panel { 
+            background: white; 
+            width: 95%; 
+            max-width: 500px; 
+            padding: 25px; 
+            border-radius: 20px; 
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3); 
+            position: relative; 
+            max-height: 85vh; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        .close-admin { 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            font-size: 28px; 
+            cursor: pointer; 
+            color: #999; 
+            background: #f0f0f0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* INPUT NUMERICO */
         .number-input-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
         }
+        
         .number-input-container {
             background: white;
-            padding: 20px;
-            border-radius: 15px;
+            padding: 25px;
+            border-radius: 20px;
             text-align: center;
-            min-width: 250px;
+            min-width: 280px;
             max-width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
+        
         .number-input {
             width: 100%;
-            font-size: 2rem;
+            font-size: 32px;
             text-align: center;
             border: 3px solid #2ecc71;
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 15px;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px 0;
             font-weight: bold;
+            background: #f8f9fa;
         }
+        
         .input-buttons {
             display: flex;
             gap: 10px;
             justify-content: center;
             flex-wrap: wrap;
         }
+        
         .input-btn {
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
             border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
             color: white;
             flex: 1;
-            min-width: 80px;
+            min-width: 90px;
+            font-size: 16px;
         }
+        
         .input-btn.confirm { background: #2ecc71; }
         .input-btn.cancel { background: #e74c3c; }
         .input-btn.clear { background: #f39c12; }
         
-        /* Banner installazione */
+        /* BANNER INSTALLAZIONE */
         #install-banner {
             position: fixed;
             bottom: 0;
@@ -151,100 +415,112 @@
             right: 0;
             background: linear-gradient(135deg, #4285F4, #34a853);
             color: white;
-            padding: 15px;
+            padding: 20px;
             z-index: 9998;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.2);
             display: none;
         }
         
-        /* Animation */
+        /* ANIMAZIONI */
         @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4); }
-            50% { transform: scale(1.05); box-shadow: 0 8px 25px rgba(66, 133, 244, 0.6); }
-            100% { transform: scale(1); box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4); }
+            0% { transform: scale(1); box-shadow: 0 8px 25px rgba(66, 133, 244, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 12px 30px rgba(66, 133, 244, 0.7); }
+            100% { transform: scale(1); box-shadow: 0 8px 25px rgba(66, 133, 244, 0.5); }
         }
         
-        @media (min-width: 768px) { 
-            .sticky-col { min-width: 180px; max-width: 180px; font-size: 0.9rem; } 
-            .day-cell, .tot-cell { width: 50px; min-width: 50px; height: 50px; } 
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sticky-col { min-width: 110px; max-width: 110px; font-size: 13px; }
+            .day-cell, .tot-cell { width: 45px; min-width: 45px; height: 45px; font-size: 18px; }
+            .btn-action { padding: 10px 12px; font-size: 12px; }
+            .btn-menu { padding: 25px 10px; font-size: 16px; }
         }
         
-        /* iOS specific adjustments */
+        @media (min-width: 1024px) {
+            .sticky-col { min-width: 180px; max-width: 180px; font-size: 15px; }
+            .day-cell, .tot-cell { width: 55px; min-width: 55px; height: 55px; font-size: 22px; }
+        }
+        
+        /* iOS SAFE AREA */
         @supports (-webkit-touch-callout: none) {
-            .btn-action, .btn-menu {
-                cursor: pointer;
-            }
             body {
+                padding-top: env(safe-area-inset-top);
                 padding-bottom: env(safe-area-inset-bottom);
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
             }
         }
     </style>
 </head>
 <body>
 
-    <noscript>
-        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 9999; padding: 20px; text-align: center; display: flex; justify-content: center; align-items: center;">
-            <div style="max-width: 400px;">
-                <h2>⚠️ JavaScript è richiesto</h2>
-                <p>Questa applicazione richiede JavaScript per funzionare.</p>
-                <button onclick="window.location.reload()" style="background: #4285F4; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 20px;">Ricarica pagina</button>
-            </div>
-        </div>
-    </noscript>
-
-    <!-- Banner installazione -->
+    <!-- === BANNER INSTALLAZIONE === -->
     <div id="install-banner">
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <div style="flex: 1;">
-                <div style="font-weight: bold; font-size: 16px; margin-bottom: 5px;">
+                <div style="font-weight: bold; font-size: 18px; margin-bottom: 5px;">
                     <span style="margin-right: 10px;">📱</span>INSTALLA L'APP
                 </div>
-                <div style="font-size: 12px; opacity: 0.9;">
+                <div style="font-size: 14px; opacity: 0.9;">
                     Aggiungi alla schermata Home per un accesso rapido
                 </div>
             </div>
             <div>
-                <button onclick="showInstallInstructions()" style="background: white; color: #4285F4; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; margin-right: 10px;">
+                <button onclick="showInstallInstructions()" style="background: white; color: #4285F4; border: none; padding: 12px 24px; border-radius: 25px; font-weight: bold; cursor: pointer; margin-right: 10px; font-size: 14px;">
                     COME FARE
                 </button>
-                <button onclick="hideInstallBanner()" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.3); padding: 10px 15px; border-radius: 20px; cursor: pointer;">
-                    ✕
+                <button onclick="hideInstallBanner()" style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.4); padding: 12px 18px; border-radius: 25px; cursor: pointer; font-size: 14px;">
+                    ✕ CHIUDI
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- === HEADER === -->
     <div class="header">
-        <img src="logo.png" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/400x120?text=REGISTRO+PRESENZE'">
+        <!-- LOGO con fallback SVG -->
+        <img src="./logo.png" alt="Logo Registro Presenze" class="logo" 
+             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQzYTQwIiByeD0iMTAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+R1JVUFBPIDIwNTA8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9IjFlbSI+UkVHSVNUUk8gUFJFU0VOWkU8L3RleHQ+PC9zdmc+'">
+        
+        <!-- CONTROLLI DATA -->
         <div class="controls-container">
-            <button class="btn-action btn-home" onclick="vaiAllaHome()">🏠</button>
+            <button class="btn-action btn-home" onclick="vaiAllaHome()" title="Home">🏠</button>
             <select id="select-mese" onchange="cambiaData()"></select>
             <select id="select-anno" onchange="cambiaData()"></select>
-            <button class="btn-action btn-oggi" onclick="scrollOggi()">🎯</button>
+            <button class="btn-action btn-oggi" onclick="scrollOggi()" title="Vai a oggi">🎯</button>
         </div>
+        
+        <!-- STATUS -->
         <div style="text-align:center;">
-            <div id="status-auto">Sistema Pronto</div>
+            <div id="status-auto">✅ Sistema Pronto</div>
         </div>
+        
+        <!-- PULSANTI AZIONE -->
         <div class="actions-container">
-            <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()">☁️ BACKUP</button>
-            <button class="btn-action btn-open-drive" onclick="apriFileDrive()">📂 DRIVE</button>
-            <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input">🔢 NUM OFF</button>
-            <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto">▶️ AUTO ON</button>
-            <button class="btn-action btn-admin" onclick="toggleAdmin()">⚙️ ATLETI</button>
+            <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()" title="Crea backup PDF">☁️ BACKUP</button>
+            <button class="btn-action btn-open-drive" onclick="apriFileDrive()" title="Apri ultimo backup">📂 DRIVE</button>
+            <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input" title="Input numerico">🔢 NUM OFF</button>
+            <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto" title="Backup automatico">▶️ AUTO ON</button>
+            <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti">⚙️ ATLETI</button>
         </div>
     </div>
 
-    <!-- Pulsante installazione mobile -->
-    <button class="btn-action btn-install" id="install-button" onclick="showInstallInstructions()">📱 INSTALLA APP</button>
+    <!-- === PULSANTE INSTALLAZIONE MOBILE === -->
+    <button class="btn-action btn-install" id="install-button" onclick="showInstallInstructions()" title="Installa app">📱 INSTALLA APP</button>
 
+    <!-- === PANNELLO ADMIN (GESTIONE ATLETI) === -->
     <div id="admin-overlay">
         <div id="admin-panel">
             <span class="close-admin" onclick="toggleAdmin()">&times;</span>
-            <h2 class="admin-title">👤 Gestione Atleti</h2>
-            <div id="admin-form" style="background: #f0f4f8; padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+            <h2 style="margin-bottom: 20px; color: #343a40;">👤 GESTIONE ATLETI</h2>
+            
+            <div id="admin-form" style="background: #f8f9fa; padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 2px solid #e9ecef;">
                 <input type="hidden" id="edit-id">
-                <input type="text" id="new-nome" placeholder="NOME E COGNOME" style="width:100%; margin-bottom:10px; box-sizing: border-box; border: 2px solid #fff; padding: 10px; border-radius: 8px; font-size: 16px;">
-                <select id="new-cat" style="width:100%; margin-bottom:15px; border: 2px solid #fff; padding: 10px; border-radius: 8px; font-size: 16px;">
+                
+                <input type="text" id="new-nome" placeholder="NOME E COGNOME" 
+                       style="width:100%; margin-bottom:15px; padding: 12px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; outline: none;">
+                
+                <select id="new-cat" style="width:100%; margin-bottom:20px; padding: 12px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; outline: none;">
                     <option value="CUCCIOLI">CUCCIOLI</option>
                     <option value="GIOVANISSIMI">GIOVANISSIMI</option>
                     <option value="ESORDIENTI">ESORDIENTI</option>
@@ -254,18 +530,31 @@
                     <option value="JUNIOR">JUNIOR</option>
                     <option value="SENIOR">SENIOR</option>
                 </select>
-                <button id="btn-save-atleta" class="btn-action btn-open-drive" style="width:100%; justify-content:center; padding:15px; font-size: 16px;" onclick="salvaAtleta()">+ AGGIUNGI ORA</button>
-                <button id="btn-cancel-edit" style="display:none; width:100%; margin-top:5px; background:transparent; border:none; color:#666; font-size:0.7rem; cursor:pointer;" onclick="resetForm()">ANNULLA MODIFICA</button>
+                
+                <button id="btn-save-atleta" class="btn-action" 
+                        style="width:100%; justify-content:center; padding: 15px; font-size: 16px; background: #34a853;" 
+                        onclick="salvaAtleta()">
+                    ➕ AGGIUNGI ATLETA
+                </button>
+                
+                <button id="btn-cancel-edit" 
+                        style="display:none; width:100%; margin-top:10px; background:transparent; border:none; color:#666; font-size:14px; cursor:pointer; padding: 10px;" 
+                        onclick="resetForm()">
+                    ❌ ANNULLA MODIFICA
+                </button>
             </div>
-            <div id="lista-atleti-admin" style="overflow-y: auto; flex-grow: 1; padding-right: 5px;"></div>
+            
+            <!-- LISTA ATLETI -->
+            <div id="lista-atleti-admin" style="overflow-y: auto; flex-grow: 1; padding-right: 10px;"></div>
         </div>
     </div>
 
-    <!-- Overlay per input numerico -->
+    <!-- === OVERLAY INPUT NUMERICO === -->
     <div id="number-input-overlay" class="number-input-overlay" style="display: none;">
         <div class="number-input-container">
-            <h3 style="margin-top:0;">Inserisci numero</h3>
-            <input type="number" id="number-input" class="number-input" min="0" max="999" value="1" pattern="[0-9]*" inputmode="numeric">
+            <h3 style="margin: 0 0 20px 0; color: #343a40;">🔢 INSERISCI NUMERO</h3>
+            <input type="number" id="number-input" class="number-input" min="0" max="999" value="1" 
+                   pattern="[0-9]*" inputmode="numeric" autofocus>
             <div class="input-buttons">
                 <button class="input-btn clear" onclick="clearNumberInput()">PULISCI</button>
                 <button class="input-btn cancel" onclick="cancelNumberInput()">ANNULLA</button>
@@ -274,28 +563,55 @@
         </div>
     </div>
 
+    <!-- === MENU PRINCIPALE CATEGORIE === -->
     <div class="menu-container" id="main-menu">
-        <button class="btn-menu btn-cuccioli" onclick="mostraSezione('cuccioli')">CATEGORIE CUCCIOLI</button>
-        <button class="btn-menu btn-piccoli" onclick="mostraSezione('piccoli')">CATEGORIE PICCOLI</button>
-        <button class="btn-menu btn-grandi" onclick="mostraSezione('grandi')">CATEGORIE GRANDI</button>
+        <button class="btn-menu btn-cuccioli" onclick="mostraSezione('cuccioli')">
+            🧸 CATEGORIE CUCCIOLI
+        </button>
+        <button class="btn-menu btn-piccoli" onclick="mostraSezione('piccoli')">
+            👦 CATEGORIE PICCOLI
+        </button>
+        <button class="btn-menu btn-grandi" onclick="mostraSezione('grandi')">
+            🏃 CATEGORIE GRANDI
+        </button>
     </div>
 
+    <!-- === SEZIONI TABELLE === -->
     <div id="sez-cuccioli" class="section-container">
-        <div class="table-wrapper" onscroll="handleScroll()"><table id="tab-cuccioli"><thead></thead><tbody></tbody></table></div>
+        <div class="table-wrapper" onscroll="handleScroll()">
+            <table id="tab-cuccioli">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
+    
     <div id="sez-piccoli" class="section-container">
-        <div class="table-wrapper" onscroll="handleScroll()"><table id="tab-piccoli"><thead></thead><tbody></tbody></table></div>
+        <div class="table-wrapper" onscroll="handleScroll()">
+            <table id="tab-piccoli">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
+    
     <div id="sez-grandi" class="section-container">
-        <div class="table-wrapper" onscroll="handleScroll()"><table id="tab-grandi"><thead></thead><tbody></tbody></table></div>
+        <div class="table-wrapper" onscroll="handleScroll()">
+            <table id="tab-grandi">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
+<!-- === JAVASCRIPT === -->
 <script>
-    // Configurazione Supabase
+    // =================== CONFIGURAZIONE ===================
     const SB_URL = 'https://jiktdsvwerqstrlthwxu.supabase.co';
     const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3Rkc3Z3ZXJxc3RybHRod3h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDkxMDEsImV4cCI6MjA4MzgyNTEwMX0.wmEnME6GaHXrvLoQH7MDijiTU4dZfoi9wOcrqs9fP10';
-    const WEB_APP_DRIVE_URL = "https://script.google.com/macros/s/AKfycbx1mEyj7Ul-XjAS1EwIZybiHDc2ti1TLe9fY22nTpxK_W0eAgOWwcSEltvoerB6YuB8WQ/exec"; 
+    const WEB_APP_DRIVE_URL = "https://script.google.com/macros/s/AKfycbx1mEyj7Ul-XjAS1EwIZybiHDc2ti1TLe9fY22nTpxK_W0eAgOWwcSEltvoerB6YuB8WQ/exec";
 
+    // =================== VARIABILI GLOBALI ===================
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
     let dataAttuale = new Date();
     let atletiCache = [], presenzeCache = [];
@@ -304,45 +620,48 @@
     let isScrolling = false;
     let scrollTimeout;
     
-    // Variabili per gestione long press
+    // Gestione long press
     let longPressTimer = null;
     let isLongPress = false;
     const LONG_PRESS_DURATION = 500;
     let currentCellData = null;
     
-    // Variabili di stato
+    // Stato app
     let backupAutomaticoAttivo = true;
     let numericInputAttivo = false;
     let deferredPrompt = null;
     
-    const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+    // Costanti
+    const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", 
+                      "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
     const nomiGiorni = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
     const CAT_CUCCIOLI = ['CUCCIOLI'];
     const CAT_PICCOLI = ['GIOVANISSIMI', 'ESORDIENTI'];
     const CAT_GRANDI = ['R12', 'RAGAZZI', 'ALLIEVI', 'JUNIOR', 'JUNIORES', 'SENIOR', 'ALLIEVE'];
-
+    
     // Rileva dispositivo
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     const isAndroid = /Android/.test(navigator.userAgent);
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                         window.navigator.standalone;
 
-    // ========== FUNZIONI PWA INSTALLAZIONE ==========
+    // =================== FUNZIONI INSTALLAZIONE PWA ===================
     
     function showInstallInstructions() {
         let message = '';
         if (isIOS) {
-            message = '📱 PER INSTALLARE SU iOS:\n\n' +
+            message = '📱 PER INSTALLARE SU iPhone/iPad:\n\n' +
                      '1. Tocca il pulsante "Condividi" (📤)\n' +
                      '2. Scorri verso il basso\n' +
                      '3. Tocca "Aggiungi alla schermata Home"\n' +
                      '4. Tocca "Aggiungi" in alto a destra';
         } else if (isAndroid) {
-            message = '📱 PER INSTALLARE SU ANDROID:\n\n' +
+            message = '📱 PER INSTALLARE SU Android:\n\n' +
                      '1. Tocca i tre puntini in alto a destra\n' +
                      '2. Seleziona "Installa app" o "Aggiungi alla schermata Home"\n' +
                      '3. Tocca "Installa" o "Aggiungi"';
         } else {
-            message = '📱 PER INSTALLARE SU MOBILE:\n\n' +
+            message = '📱 PER INSTALLARE L\'APP:\n\n' +
                      '1. Usa Chrome o Safari sul tuo telefono\n' +
                      '2. Cerca "Aggiungi alla schermata Home"\n' +
                      '3. Segui le istruzioni sullo schermo';
@@ -359,28 +678,31 @@
     }
     
     function showInstallButton() {
-        if (!isStandalone && !localStorage.getItem('hideInstallBanner')) {
-            const installBtn = document.getElementById('install-button');
-            if (installBtn) {
-                installBtn.style.display = 'flex';
-                
-                // Nascondi dopo 60 secondi
-                setTimeout(() => {
-                    installBtn.style.display = 'none';
-                }, 60000);
-            }
+        // Non mostrare se già installata o utente ha chiuso
+        if (isStandalone || localStorage.getItem('hideInstallBanner') === 'true') {
+            return;
+        }
+        
+        const installBtn = document.getElementById('install-button');
+        const banner = document.getElementById('install-banner');
+        
+        if (installBtn) {
+            installBtn.style.display = 'flex';
             
-            // Mostra anche il banner per iOS/Android
-            if (isIOS || isAndroid) {
-                const banner = document.getElementById('install-banner');
-                if (banner) {
-                    banner.style.display = 'block';
-                }
-            }
+            // Nascondi dopo 60 secondi
+            setTimeout(() => {
+                installBtn.style.display = 'none';
+                if (banner) banner.style.display = 'none';
+            }, 60000);
+        }
+        
+        // Mostra banner per iOS/Android
+        if ((isIOS || isAndroid) && banner) {
+            banner.style.display = 'block';
         }
     }
     
-    // ========== FUNZIONI PRINCIPALI ==========
+    // =================== FUNZIONI PRINCIPALI ===================
     
     function handleScroll() {
         isScrolling = true;
@@ -389,76 +711,153 @@
     }
 
     async function inizializza() {
+        console.log('🚀 Inizializzazione applicazione...');
+        
+        // Carica data salvata
         const m = localStorage.getItem('p_mese') || dataAttuale.getMonth();
         const a = localStorage.getItem('p_anno') || dataAttuale.getFullYear();
         dataAttuale = new Date(a, m, 1);
+        
         popolaSelettori(m, a);
         await caricaDati();
         sottoscriviRealtime();
+        
+        // Ripristina sezione precedente
         const lastSez = sessionStorage.getItem('last_sez');
         if (lastSez) mostraSezione(lastSez);
         
+        // Carica preferenze
         caricaStatoNumericInput();
+        caricaStatoBackupAuto();
         
-        // Mostra pulsante installazione dopo 3 secondi
+        // Mostra pulsante installazione
         setTimeout(showInstallButton, 3000);
+        
+        console.log('✅ Applicazione inizializzata');
     }
 
     function sottoscriviRealtime() {
-        supabaseClient.channel('db-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'presenze' }, async () => {
-            const { data: pres } = await supabaseClient.from('presenze').select('*').gte('data', `${dataAttuale.getFullYear()}-01-01`).lte('data', `${dataAttuale.getFullYear()}-12-31`);
-            presenzeCache = pres || []; renderTabella();
-        }).on('postgres_changes', { event: '*', schema: 'public', table: 'atleti' }, async () => { await caricaDati(); }).subscribe();
+        supabaseClient.channel('db-changes')
+            .on('postgres_changes', 
+                { event: '*', schema: 'public', table: 'presenze' }, 
+                async () => {
+                    const { data: pres } = await supabaseClient.from('presenze')
+                        .select('*')
+                        .gte('data', `${dataAttuale.getFullYear()}-01-01`)
+                        .lte('data', `${dataAttuale.getFullYear()}-12-31`);
+                    presenzeCache = pres || []; 
+                    renderTabella();
+                })
+            .on('postgres_changes', 
+                { event: '*', schema: 'public', table: 'atleti' }, 
+                async () => { 
+                    await caricaDati(); 
+                })
+            .subscribe();
     }
 
     function popolaSelettori(m, a) {
-        const sm = document.getElementById('select-mese'), sa = document.getElementById('select-anno');
-        sm.innerHTML = ""; sa.innerHTML = "";
-        nomiMesi.forEach((nome, i) => sm.add(new Option(nome, i)));
-        for(let i=2025; i<=2050; i++) sa.add(new Option(i, i));
-        sm.value = m; sa.value = a;
+        const sm = document.getElementById('select-mese');
+        const sa = document.getElementById('select-anno');
+        
+        sm.innerHTML = ""; 
+        sa.innerHTML = "";
+        
+        // Mesi
+        nomiMesi.forEach((nome, i) => {
+            sm.add(new Option(nome, i));
+        });
+        
+        // Anni (2024-2050)
+        for(let i = 2024; i <= 2050; i++) {
+            sa.add(new Option(i, i));
+        }
+        
+        sm.value = m; 
+        sa.value = a;
     }
 
     async function caricaDati() {
         try {
-            const { data: atleti } = await supabaseClient.from('atleti').select('*').order('nome');
+            document.getElementById('status-auto').innerText = "⏳ Caricamento dati...";
+            
+            // Carica atleti
+            const { data: atleti, error: errorAtleti } = await supabaseClient
+                .from('atleti')
+                .select('*')
+                .order('nome');
+                
+            if (errorAtleti) throw errorAtleti;
             atletiCache = atleti || [];
-            const { data: presenze } = await supabaseClient.from('presenze').select('*').gte('data', `${dataAttuale.getFullYear()}-01-01`).lte('data', `${dataAttuale.getFullYear()}-12-31`);
+            
+            // Carica presenze anno corrente
+            const { data: presenze, error: errorPresenze } = await supabaseClient
+                .from('presenze')
+                .select('*')
+                .gte('data', `${dataAttuale.getFullYear()}-01-01`)
+                .lte('data', `${dataAttuale.getFullYear()}-12-31`);
+                
+            if (errorPresenze) throw errorPresenze;
             presenzeCache = presenze || [];
+            
+            // Render
             renderTabella(); 
             renderAdminList();
+            
+            document.getElementById('status-auto').innerText = "✅ Sistema Pronto";
+            
         } catch (error) {
-            console.error('Errore caricamento dati:', error);
+            console.error('❌ Errore caricamento dati:', error);
             document.getElementById('status-auto').innerText = "❌ Errore di connessione";
         }
     }
 
     function renderTabella() {
-        const anno = dataAttuale.getFullYear(), mese = dataAttuale.getMonth();
+        const anno = dataAttuale.getFullYear();
+        const mese = dataAttuale.getMonth();
         const giorniMese = new Date(anno, mese + 1, 0).getDate();
         const oggiStr = new Date().toLocaleDateString('en-CA');
+        
+        // Per ogni categoria
         ["cuccioli", "piccoli", "grandi"].forEach(tipo => {
             const table = document.getElementById(`tab-${tipo}`);
             if (!table) return;
             
+            // HEADER
             let head = `<tr><th class="sticky-col">ATLETA</th>`;
-            for(let i=1; i<=giorniMese; i++) head += `<th>${nomiGiorni[new Date(anno, mese, i).getDay()]}<br>${i}</th>`;
+            for(let i = 1; i <= giorniMese; i++) {
+                const giorno = new Date(anno, mese, i);
+                head += `<th>${nomiGiorni[giorno.getDay()]}<br>${i}</th>`;
+            }
             head += `<th>TOT</th></tr>`;
             table.querySelector('thead').innerHTML = head;
-            const cats = tipo === 'cuccioli' ? CAT_CUCCIOLI : (tipo === 'piccoli' ? CAT_PICCOLI : CAT_GRANDI);
-            const filtrati = atletiCache.filter(a => cats.includes((a.categoria || "").trim().toUpperCase()) && (a.archiviato === false || a.archiviato === null));
+            
+            // BODY
+            const cats = tipo === 'cuccioli' ? CAT_CUCCIOLI : 
+                        (tipo === 'piccoli' ? CAT_PICCOLI : CAT_GRANDI);
+            
+            const filtrati = atletiCache.filter(a => 
+                cats.includes((a.categoria || "").trim().toUpperCase()) && 
+                (a.archiviato === false || a.archiviato === null)
+            );
+            
             let body = "";
             filtrati.forEach(a => {
-                body += `<tr><td class="sticky-col">${a.nome.toUpperCase()}</td>`;
+                body += `<tr><td class="sticky-col" title="${a.categoria}">${a.nome.toUpperCase()}</td>`;
                 let totMese = 0;
-                for(let i=1; i<=giorniMese; i++) {
+                
+                for(let i = 1; i <= giorniMese; i++) {
                     const dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
                     const p = presenzeCache.find(x => x.atleta_id === a.id && x.data === dStr);
+                    
+                    // Controlla se c'è un numero
                     const hasNumber = p && p.stato && p.stato.includes('numero:');
                     const numberValue = hasNumber ? p.stato.split(':')[1] : '';
                     const isGreen = p && (p.stato === 'partecipa' || hasNumber);
+                    
                     if(isGreen) totMese++;
                     
+                    // Long press attributes se input numerico attivo
                     const longPressAttrs = numericInputAttivo ? 
                         `onmousedown="startLongPress(this, ${a.id}, '${dStr}')" 
                          onmouseup="endLongPress(this, ${a.id}, '${dStr}')" 
@@ -469,16 +868,20 @@
                     
                     body += `<td class="day-cell ${isGreen?'p-partecipa':''} ${dStr===oggiStr?'today-cell':''}" 
                         ${longPressAttrs}
-                        onclick="handleCellClick(event, this, ${a.id}, '${dStr}')">
+                        onclick="handleCellClick(event, this, ${a.id}, '${dStr}')"
+                        title="${dStr}">
                         ${hasNumber ? numberValue : (isGreen ? '✔' : '')}
                     </td>`;
                 }
                 body += `<td class="tot-cell">${totMese}</td></tr>`;
             });
+            
             table.querySelector('tbody').innerHTML = body;
         });
     }
 
+    // =================== INPUT NUMERICO ===================
+    
     function toggleNumericInput() {
         numericInputAttivo = !numericInputAttivo;
         const btn = document.getElementById('btn-numeric-input');
@@ -487,7 +890,7 @@
         if (numericInputAttivo) {
             btn.innerHTML = "🔢 NUM ON";
             btn.classList.add('attivo');
-            status.innerText = "✅ Input numerico ATTIVATO - Usa long press per inserire numeri";
+            status.innerText = "✅ Input numerico ATTIVATO - Long press per numeri";
         } else {
             btn.innerHTML = "🔢 NUM OFF";
             btn.classList.remove('attivo');
@@ -497,7 +900,7 @@
         renderTabella();
         localStorage.setItem('numeric_input_attivo', numericInputAttivo);
     }
-
+    
     function caricaStatoNumericInput() {
         const savedState = localStorage.getItem('numeric_input_attivo');
         if (savedState !== null) {
@@ -512,8 +915,9 @@
             }
         }
     }
-
-    // Gestione long press
+    
+    // =================== GESTIONE LONG PRESS ===================
+    
     function startLongPress(el, aId, data) {
         if (!numericInputAttivo) return;
         
@@ -523,21 +927,21 @@
             showNumberInput(el, aId, data);
         }, LONG_PRESS_DURATION);
     }
-
+    
     function endLongPress() {
         if (longPressTimer) {
             clearTimeout(longPressTimer);
             longPressTimer = null;
         }
     }
-
+    
     function cancelLongPress() {
         if (longPressTimer) {
             clearTimeout(longPressTimer);
             longPressTimer = null;
         }
     }
-
+    
     function handleCellClick(event, el, aId, data) {
         event.preventDefault();
         event.stopPropagation();
@@ -550,20 +954,25 @@
         
         toggleCellState(el, aId, data);
     }
-
+    
     async function toggleCellState(el, aId, data) {
         const currentText = el.innerText.trim();
         const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
         
+        // Se c'è già un numero, cancella tutto
         if (p && p.stato && p.stato.includes('numero:')) {
             await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
             el.classList.remove('p-partecipa');
             el.innerText = '';
-        } else if (p && p.stato === 'partecipa') {
+        } 
+        // Se è già presente (✔), rimuovi
+        else if (p && p.stato === 'partecipa') {
             await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
             el.classList.remove('p-partecipa');
             el.innerText = '';
-        } else {
+        } 
+        // Altrimenti aggiungi presenza
+        else {
             await supabaseClient.from('presenze').upsert({ 
                 atleta_id: aId, 
                 data: data, 
@@ -573,6 +982,7 @@
             el.innerText = '✔';
         }
         
+        // Aggiorna cache locale
         const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
         if (el.classList.contains('p-partecipa')) {
             const stato = currentText && !['✔', ''].includes(currentText) ? `numero:${currentText}` : 'partecipa';
@@ -587,17 +997,19 @@
         
         updateTotalCell(el);
         
+        // Backup automatico
         if (backupAutomaticoAttivo) {
             avviaTimerBackup();
         }
     }
-
+    
     function showNumberInput(el, aId, data) {
         if (!numericInputAttivo) return;
         
         currentCellData = { el, aId, data };
         const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
         let currentValue = '';
+        
         if (p && p.stato && p.stato.includes('numero:')) {
             currentValue = p.stato.split(':')[1];
         }
@@ -607,16 +1019,16 @@
         document.getElementById('number-input').focus();
         document.getElementById('number-input').select();
     }
-
+    
     function clearNumberInput() {
         document.getElementById('number-input').value = '';
     }
-
+    
     function cancelNumberInput() {
         document.getElementById('number-input-overlay').style.display = 'none';
         currentCellData = null;
     }
-
+    
     async function confirmNumberInput() {
         const input = document.getElementById('number-input');
         const numberValue = input.value.trim();
@@ -650,7 +1062,7 @@
         document.getElementById('number-input-overlay').style.display = 'none';
         currentCellData = null;
     }
-
+    
     function updateTotalCell(el) {
         const row = el.parentElement;
         if (!row) return;
@@ -668,12 +1080,16 @@
         
         totCell.innerText = total;
     }
-
+    
+    // =================== BACKUP AUTOMATICO ===================
+    
     function avviaTimerBackup() {
         if (!backupAutomaticoAttivo) return;
         
-        clearInterval(timerBackup); secondiMancanti = 10;
+        clearInterval(timerBackup); 
+        secondiMancanti = 10;
         const status = document.getElementById('status-auto');
+        
         timerBackup = setInterval(() => { 
             secondiMancanti--; 
             status.innerText = `⏳ BACKUP IN ${secondiMancanti}s...`; 
@@ -683,7 +1099,7 @@
             } 
         }, 1000);
     }
-
+    
     function toggleBackupAutomatico() {
         backupAutomaticoAttivo = !backupAutomaticoAttivo;
         const btn = document.getElementById('btn-backup-auto');
@@ -694,6 +1110,7 @@
             btn.classList.add('attivo');
             status.innerText = "✅ Backup automatico ATTIVATO";
             
+            // Reset timer se attivo
             if (secondiMancanti < 10 && timerBackup) {
                 clearInterval(timerBackup);
                 secondiMancanti = 10;
@@ -704,6 +1121,7 @@
             btn.classList.remove('attivo');
             status.innerText = "⏸️ Backup automatico DISATTIVATO";
             
+            // Ferma timer
             if (timerBackup) {
                 clearInterval(timerBackup);
                 timerBackup = null;
@@ -712,206 +1130,8 @@
         
         localStorage.setItem('backup_auto_attivo', backupAutomaticoAttivo);
     }
-
-    async function aggiornaBackupDrive() {
-        const status = document.getElementById('status-auto'); status.innerText = "☁️ GENERANDO PDF...";
-        try {
-            const { jsPDF } = window.jspdf; 
-            const doc = new jsPDF('l', 'mm', 'a4'); 
-            const annoC = dataAttuale.getFullYear();
-            
-            for (let m = 0; m < 12; m++) {
-                if (m > 0) doc.addPage();
-                const g = new Date(annoC, m + 1, 0).getDate();
-                const h = [["ATLETA", ...Array.from({length: g}, (_, i) => `${nomiGiorni[new Date(annoC, m, i + 1).getDay()]}\n${i + 1}`), "TOT"]];
-                
-                doc.setFontSize(14); 
-                doc.setTextColor(52, 58, 64); 
-                doc.text(`REGISTRO PRESENZE - ${nomiMesi[m].toUpperCase()} ${annoC}`, 14, 12);
-                
-                const colStyles = { 
-                    0: { halign: 'left', cellWidth: 30, fontStyle: 'bold', fillColor: [255, 255, 255] } 
-                };
-                const larghezzaGiorno = (269 - 30 - 10) / g;
-                for (let i = 1; i <= g; i++) colStyles[i] = { cellWidth: larghezzaGiorno };
-                colStyles[g + 1] = { cellWidth: 8, fillColor: [248, 249, 250], fontStyle: 'bold' };
-
-                const config = { 
-                    head: h, 
-                    startY: 18, 
-                    theme: 'grid', 
-                    tableWidth: 'wrap',
-                    styles: { fontSize: 5, cellPadding: 0.5, halign: 'center', overflow: 'hidden', lineColor: [221, 221, 221] }, 
-                    headStyles: { fillColor: [52, 58, 64], textColor: [255, 255, 255], fontStyle: 'bold', fontSize: 4.5 }, 
-                    columnStyles: colStyles, 
-                    didParseCell: function(data) { 
-                        if (data.section === 'body' && data.column.index > 0 && data.column.index <= g && data.cell.text[0] !== '') { 
-                            if (data.cell.text[0] !== '✔' && !isNaN(parseInt(data.cell.text[0]))) {
-                                data.cell.styles.fillColor = [46, 204, 113];
-                                data.cell.styles.textColor = [255, 255, 255];
-                            } else if (data.cell.text[0] === '✔') {
-                                data.cell.styles.fillColor = [46, 204, 113];
-                                data.cell.styles.textColor = [255, 255, 255];
-                            }
-                        } 
-                    } 
-                };
-                
-                doc.autoTable({...config, body: preparaDatiPDF(CAT_CUCCIOLI, annoC, m, g)});
-                doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g), startY: doc.lastAutoTable.finalY + 8});
-                doc.autoTable({...config, body: preparaDatiPDF(CAT_GRANDI, annoC, m, g), startY: doc.lastAutoTable.finalY + 8});
-            }
-            
-            const b64 = doc.output('datauristring').split(',')[1];
-            status.innerText = "☁️ SALVATAGGIO DRIVE...";
-            const resp = await fetch(WEB_APP_DRIVE_URL, { method: 'POST', body: JSON.stringify({ nomeFile: `Registro_${annoC}.pdf`, blob: b64 }) });
-            const res = await resp.json();
-            if(res.fileUrl) { 
-                localStorage.setItem('ultimo_pdf_url', res.fileUrl); 
-                status.innerHTML = `✅ BACKUP OK! <a href="${res.fileUrl}" target="_blank">APRI</a>`; 
-            }
-        } catch(e) { status.innerText = "❌ ERRORE BACKUP"; console.error(e); }
-    }
-
-    function preparaDatiPDF(cats, anno, mese, giorni) {
-        return atletiCache.filter(a => {
-            const inCat = cats.includes((a.categoria || "").trim().toUpperCase());
-            if (!inCat) return false;
-            if (a.archiviato === false || a.archiviato === null) return true;
-            const dInizio = `${anno}-${String(mese+1).padStart(2,'0')}-01`, dFine = `${anno}-${String(mese+1).padStart(2,'0')}-${giorni}`;
-            return presenzeCache.some(p => p.atleta_id === a.id && p.data >= dInizio && p.data <= dFine && (p.stato === 'partecipa' || p.stato.includes('numero:')));
-        }).map(a => {
-            let r = [a.nome.toUpperCase()], tot = 0;
-            for(let d=1; d<=giorni; d++){
-                let dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                const p = presenzeCache.find(x => x.atleta_id === a.id && x.data === dStr);
-                if(p) {
-                    if (p.stato === 'partecipa') {
-                        r.push("✔");
-                        tot++;
-                    } else if (p.stato && p.stato.includes('numero:')) {
-                        const num = p.stato.split(':')[1];
-                        r.push(num);
-                        tot++;
-                    } else {
-                        r.push("");
-                    }
-                } else {
-                    r.push("");
-                }
-            }
-            r.push(tot); return r;
-        });
-    }
-
-    function scrollOggi() {
-        const active = document.querySelector('.section-active'); if (!active) return;
-        const target = active.querySelector('.today-cell'); const wrapper = active.querySelector('.table-wrapper');
-        const stickyWidth = active.querySelector('.sticky-col').offsetWidth; 
-        if (target && wrapper) wrapper.scrollTo({ left: target.offsetLeft - stickyWidth, behavior: 'smooth' });
-    }
-
-    function mostraSezione(s) {
-        sessionStorage.setItem('last_sez', s); document.getElementById('main-menu').style.display = 'none';
-        document.getElementById('sez-cuccioli').className = s === 'cuccioli' ? 'section-active' : 'section-container';
-        document.getElementById('sez-piccoli').className = s === 'piccoli' ? 'section-active' : 'section-container';
-        document.getElementById('sez-grandi').className = s === 'grandi' ? 'section-active' : 'section-container';
-        setTimeout(scrollOggi, 300);
-    }
-
-    function vaiAllaHome() { sessionStorage.removeItem('last_sez'); location.reload(); }
-    function cambiaData() { 
-        localStorage.setItem('p_mese', document.getElementById('select-mese').value); 
-        localStorage.setItem('p_anno', document.getElementById('select-anno').value); 
-        location.reload(); 
-    }
-    function toggleAdmin() { const ov = document.getElementById('admin-overlay'); ov.style.display = ov.style.display === 'flex' ? 'none' : 'flex'; }
-    function apriFileDrive() { const url = localStorage.getItem('ultimo_pdf_url'); if(url) window.open(url, '_blank'); else alert("Nessun backup trovato."); }
-
-    async function salvaAtleta() {
-        const id = document.getElementById('edit-id').value;
-        const nome = document.getElementById('new-nome').value.trim().toUpperCase();
-        const cat = document.getElementById('new-cat').value;
-        if(nome) {
-            document.getElementById('status-auto').innerText = "⏳ SALVATAGGIO...";
-            let res;
-            if(id) {
-                res = await supabaseClient.from('atleti').update({ nome, categoria: cat }).eq('id', id);
-            } else {
-                res = await supabaseClient.from('atleti').insert([{ nome, categoria: cat, archiviato: false }]);
-            }
-            if (res.error) { 
-                alert("Errore: " + res.error.message); 
-                document.getElementById('status-auto').innerText = "❌ ERRORE";
-            } else {
-                resetForm(); await caricaDati();
-                document.getElementById('status-auto').innerText = "✅ SALVATO";
-            }
-        }
-    }
-
-    function preparaModifica(id, nome, cat) {
-        document.getElementById('edit-id').value = id;
-        document.getElementById('new-nome').value = nome;
-        document.getElementById('new-cat').value = cat;
-        document.getElementById('btn-save-atleta').innerText = "💾 AGGIORNA ATLETA";
-        document.getElementById('btn-cancel-edit').style.display = "block";
-        document.getElementById('new-nome').focus();
-    }
-
-    function resetForm() {
-        document.getElementById('edit-id').value = "";
-        document.getElementById('new-nome').value = "";
-        document.getElementById('new-cat').selectedIndex = 0;
-        document.getElementById('btn-save-atleta').innerText = "+ AGGIUNGI ORA";
-        document.getElementById('btn-cancel-edit').style.display = "none";
-    }
-
-    function renderAdminList() {
-        const container = document.getElementById('lista-atleti-admin');
-        if (!container) return;
-        
-        container.innerHTML = atletiCache.map(a => `
-            <div class="atleta-item ${a.archiviato ? 'archiviato' : ''}">
-                <div class="atleta-info">
-                    <span class="atleta-name">${a.nome} ${a.archiviato ? '(ARCHIVIATO)' : ''}</span>
-                    <span class="atleta-cat">${a.categoria}</span>
-                </div>
-                <div style="display:flex; gap:3px; flex-wrap:wrap; justify-content:flex-end;">
-                    <button style="background:#4285F4; color:white; border:none; padding:6px 8px; border-radius:6px; font-weight:900; font-size:0.6rem;" 
-                        onclick="preparaModifica(${a.id}, '${a.nome.replace(/'/g, "\\'")}', '${a.categoria}')">MODIFICA</button>
-                    <button style="background:${a.archiviato ? '#34a853' : '#f39c12'}; color:white; border:none; padding:6px 8px; border-radius:6px; font-weight:900; font-size:0.6rem;" 
-                        onclick="setArchiviazione(${a.id}, ${!a.archiviato})">${a.archiviato ? 'RIPRISTINA' : 'ARCHIVIA'}</button>
-                    <button style="background:#ff4444; color:white; border:none; padding:6px 8px; border-radius:6px; font-weight:900; font-size:0.6rem;" 
-                        onclick="eliminaDefinitivo(${a.id})">X</button>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    async function setArchiviazione(id, stato) {
-        await supabaseClient.from('atleti').update({ archiviato: stato }).eq('id', id);
-        await caricaDati();
-    }
-
-    async function eliminaDefinitivo(id) { 
-        if(confirm("ATTENZIONE: Eliminando l'atleta sparirà da TUTTI i PDF futuri (anche mesi passati). Sicuro?")) { 
-            await supabaseClient.from('atleti').delete().eq('id', id); await caricaDati();
-        } 
-    }
-
-    // Evento per installazione Android
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        showInstallButton();
-    });
-
-    // Inizializzazione
-    window.onload = inizializza;
     
-    // Carica stato backup automatico
-    window.addEventListener('DOMContentLoaded', function() {
+    function caricaStatoBackupAuto() {
         const savedState = localStorage.getItem('backup_auto_attivo');
         if (savedState !== null) {
             backupAutomaticoAttivo = savedState === 'true';
@@ -924,7 +1144,358 @@
                 btn.classList.remove('attivo');
             }
         }
+    }
+    
+    // =================== BACKUP PDF ===================
+    
+    async function aggiornaBackupDrive() {
+        const status = document.getElementById('status-auto'); 
+        status.innerText = "📄 GENERAZIONE PDF...";
+        
+        try {
+            const { jsPDF } = window.jspdf; 
+            const doc = new jsPDF('l', 'mm', 'a4'); 
+            const annoC = dataAttuale.getFullYear();
+            
+            for (let m = 0; m < 12; m++) {
+                if (m > 0) doc.addPage();
+                const g = new Date(annoC, m + 1, 0).getDate();
+                
+                // Header tabella
+                const header = [["ATLETA", ...Array.from({length: g}, (_, i) => 
+                    `${nomiGiorni[new Date(annoC, m, i + 1).getDay()]}\n${i + 1}`), "TOT"]];
+                
+                // Titolo pagina
+                doc.setFontSize(16); 
+                doc.setTextColor(52, 58, 64); 
+                doc.text(`REGISTRO PRESENZE - ${nomiMesi[m].toUpperCase()} ${annoC}`, 14, 12);
+                
+                // Stili colonne
+                const colStyles = { 
+                    0: { halign: 'left', cellWidth: 35, fontStyle: 'bold' } 
+                };
+                const larghezzaGiorno = (260 - 35 - 10) / g;
+                for (let i = 1; i <= g; i++) colStyles[i] = { cellWidth: larghezzaGiorno };
+                colStyles[g + 1] = { cellWidth: 10, fillColor: [248, 249, 250], fontStyle: 'bold' };
+
+                // Config PDF
+                const config = { 
+                    head: header, 
+                    startY: 20, 
+                    theme: 'grid', 
+                    tableWidth: 'wrap',
+                    styles: { 
+                        fontSize: 6, 
+                        cellPadding: 1, 
+                        halign: 'center', 
+                        overflow: 'linebreak',
+                        lineColor: [200, 200, 200] 
+                    }, 
+                    headStyles: { 
+                        fillColor: [52, 58, 64], 
+                        textColor: [255, 255, 255], 
+                        fontStyle: 'bold', 
+                        fontSize: 5.5 
+                    }, 
+                    columnStyles: colStyles, 
+                    didParseCell: function(data) { 
+                        if (data.section === 'body' && data.column.index > 0 && 
+                            data.column.index <= g && data.cell.text[0] !== '') { 
+                            if (data.cell.text[0] !== '✔' && !isNaN(parseInt(data.cell.text[0]))) {
+                                data.cell.styles.fillColor = [46, 204, 113];
+                                data.cell.styles.textColor = [255, 255, 255];
+                            } else if (data.cell.text[0] === '✔') {
+                                data.cell.styles.fillColor = [46, 204, 113];
+                                data.cell.styles.textColor = [255, 255, 255];
+                            }
+                        } 
+                    } 
+                };
+                
+                // Aggiungi tabelle per categoria
+                doc.autoTable({...config, body: preparaDatiPDF(CAT_CUCCIOLI, annoC, m, g)});
+                doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g), 
+                              startY: doc.lastAutoTable.finalY + 10});
+                doc.autoTable({...config, body: preparaDatiPDF(CAT_GRANDI, annoC, m, g), 
+                              startY: doc.lastAutoTable.finalY + 10});
+            }
+            
+            // Converti in base64
+            const b64 = doc.output('datauristring').split(',')[1];
+            status.innerText = "☁️ SALVATAGGIO SU DRIVE...";
+            
+            // Invia a Google Drive
+            const resp = await fetch(WEB_APP_DRIVE_URL, { 
+                method: 'POST', 
+                body: JSON.stringify({ 
+                    nomeFile: `Registro_Presenze_${annoC}.pdf`, 
+                    blob: b64 
+                }) 
+            });
+            
+            const res = await resp.json();
+            if(res.fileUrl) { 
+                localStorage.setItem('ultimo_pdf_url', res.fileUrl); 
+                status.innerHTML = `✅ BACKUP COMPLETATO! <a href="${res.fileUrl}" target="_blank" style="color: #4285F4; font-weight: bold;">APRI PDF</a>`; 
+            } else {
+                throw new Error('Nessun URL restituito');
+            }
+            
+        } catch(e) { 
+            status.innerText = "❌ ERRORE DURANTE IL BACKUP"; 
+            console.error('Backup error:', e); 
+        }
+    }
+    
+    function preparaDatiPDF(cats, anno, mese, giorni) {
+        return atletiCache.filter(a => {
+            const inCat = cats.includes((a.categoria || "").trim().toUpperCase());
+            if (!inCat) return false;
+            
+            // Mostra anche atleti archiviati se hanno presenze
+            if (a.archiviato === false || a.archiviato === null) return true;
+            
+            const dInizio = `${anno}-${String(mese+1).padStart(2,'0')}-01`;
+            const dFine = `${anno}-${String(mese+1).padStart(2,'0')}-${giorni}`;
+            
+            return presenzeCache.some(p => 
+                p.atleta_id === a.id && 
+                p.data >= dInizio && 
+                p.data <= dFine && 
+                (p.stato === 'partecipa' || p.stato.includes('numero:'))
+            );
+        }).map(a => {
+            let riga = [a.nome.toUpperCase()], tot = 0;
+            
+            for(let d = 1; d <= giorni; d++) {
+                const dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const p = presenzeCache.find(x => x.atleta_id === a.id && x.data === dStr);
+                
+                if(p) {
+                    if (p.stato === 'partecipa') {
+                        riga.push("✔");
+                        tot++;
+                    } else if (p.stato && p.stato.includes('numero:')) {
+                        const num = p.stato.split(':')[1];
+                        riga.push(num);
+                        tot++;
+                    } else {
+                        riga.push("");
+                    }
+                } else {
+                    riga.push("");
+                }
+            }
+            riga.push(tot); 
+            return riga;
+        });
+    }
+    
+    // =================== NAVIGAZIONE ===================
+    
+    function scrollOggi() {
+        const active = document.querySelector('.section-active'); 
+        if (!active) return;
+        
+        const target = active.querySelector('.today-cell'); 
+        const wrapper = active.querySelector('.table-wrapper');
+        const stickyWidth = active.querySelector('.sticky-col').offsetWidth; 
+        
+        if (target && wrapper) {
+            wrapper.scrollTo({ 
+                left: target.offsetLeft - stickyWidth, 
+                behavior: 'smooth' 
+            });
+        }
+    }
+    
+    function mostraSezione(s) {
+        sessionStorage.setItem('last_sez', s); 
+        document.getElementById('main-menu').style.display = 'none';
+        
+        // Mostra sezione selezionata
+        document.getElementById('sez-cuccioli').className = 
+            (s === 'cuccioli') ? 'section-active' : 'section-container';
+        document.getElementById('sez-piccoli').className = 
+            (s === 'piccoli') ? 'section-active' : 'section-container';
+        document.getElementById('sez-grandi').className = 
+            (s === 'grandi') ? 'section-active' : 'section-container';
+        
+        // Scroll a oggi dopo 300ms
+        setTimeout(scrollOggi, 300);
+    }
+    
+    function vaiAllaHome() { 
+        sessionStorage.removeItem('last_sez'); 
+        location.reload(); 
+    }
+    
+    function cambiaData() { 
+        localStorage.setItem('p_mese', document.getElementById('select-mese').value); 
+        localStorage.setItem('p_anno', document.getElementById('select-anno').value); 
+        location.reload(); 
+    }
+    
+    function toggleAdmin() { 
+        const ov = document.getElementById('admin-overlay'); 
+        ov.style.display = (ov.style.display === 'flex') ? 'none' : 'flex'; 
+    }
+    
+    function apriFileDrive() { 
+        const url = localStorage.getItem('ultimo_pdf_url'); 
+        if(url) {
+            window.open(url, '_blank');
+        } else {
+            alert("Nessun backup trovato. Genera prima un backup.");
+        }
+    }
+    
+    // =================== GESTIONE ATLETI ===================
+    
+    async function salvaAtleta() {
+        const id = document.getElementById('edit-id').value;
+        const nome = document.getElementById('new-nome').value.trim().toUpperCase();
+        const cat = document.getElementById('new-cat').value;
+        
+        if(!nome) {
+            alert("Inserisci il nome dell'atleta");
+            return;
+        }
+        
+        document.getElementById('status-auto').innerText = "⏳ Salvataggio atleta...";
+        let res;
+        
+        try {
+            if(id) {
+                // Modifica atleta esistente
+                res = await supabaseClient
+                    .from('atleti')
+                    .update({ nome, categoria: cat })
+                    .eq('id', id);
+            } else {
+                // Nuovo atleta
+                res = await supabaseClient
+                    .from('atleti')
+                    .insert([{ 
+                        nome, 
+                        categoria: cat, 
+                        archiviato: false,
+                        created_at: new Date().toISOString()
+                    }]);
+            }
+            
+            if (res.error) throw res.error;
+            
+            resetForm(); 
+            await caricaDati();
+            document.getElementById('status-auto').innerText = "✅ Atleta salvato";
+            
+        } catch(error) { 
+            alert("Errore: " + error.message); 
+            document.getElementById('status-auto').innerText = "❌ Errore salvataggio";
+        }
+    }
+    
+    function preparaModifica(id, nome, cat) {
+        document.getElementById('edit-id').value = id;
+        document.getElementById('new-nome').value = nome;
+        document.getElementById('new-cat').value = cat;
+        document.getElementById('btn-save-atleta').innerText = "💾 AGGIORNA ATLETA";
+        document.getElementById('btn-cancel-edit').style.display = "block";
+        document.getElementById('new-nome').focus();
+    }
+    
+    function resetForm() {
+        document.getElementById('edit-id').value = "";
+        document.getElementById('new-nome').value = "";
+        document.getElementById('new-cat').selectedIndex = 0;
+        document.getElementById('btn-save-atleta').innerText = "➕ AGGIUNGI ATLETA";
+        document.getElementById('btn-cancel-edit').style.display = "none";
+    }
+    
+    function renderAdminList() {
+        const container = document.getElementById('lista-atleti-admin');
+        if (!container) return;
+        
+        if (atletiCache.length === 0) {
+            container.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">Nessun atleta registrato</div>';
+            return;
+        }
+        
+        container.innerHTML = atletiCache.map(a => `
+            <div class="atleta-item ${a.archiviato ? 'archiviato' : ''}">
+                <div class="atleta-info">
+                    <span class="atleta-name">${a.nome} ${a.archiviato ? '(ARCHIVIATO)' : ''}</span>
+                    <span class="atleta-cat">${a.categoria}</span>
+                </div>
+                <div style="display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end;">
+                    <button style="background:#4285F4; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;" 
+                        onclick="preparaModifica(${a.id}, '${a.nome.replace(/'/g, "\\'")}', '${a.categoria}')">
+                        MODIFICA
+                    </button>
+                    <button style="background:${a.archiviato ? '#34a853' : '#f39c12'}; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;" 
+                        onclick="setArchiviazione(${a.id}, ${!a.archiviato})">
+                        ${a.archiviato ? 'RIPRISTINA' : 'ARCHIVIA'}
+                    </button>
+                    <button style="background:#e74c3c; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;" 
+                        onclick="eliminaDefinitivo(${a.id})">
+                        ELIMINA
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    async function setArchiviazione(id, stato) {
+        try {
+            await supabaseClient
+                .from('atleti')
+                .update({ archiviato: stato })
+                .eq('id', id);
+                
+            await caricaDati();
+            document.getElementById('status-auto').innerText = 
+                stato ? "✅ Atleta archiviato" : "✅ Atleta ripristinato";
+                
+        } catch(error) {
+            alert("Errore: " + error.message);
+        }
+    }
+    
+    async function eliminaDefinitivo(id) { 
+        const atleta = atletiCache.find(a => a.id === id);
+        if (!atleta) return;
+        
+        if(confirm(`ATTENZIONE: Eliminando "${atleta.nome}" sparirà da TUTTI i PDF futuri e passati.\n\nSei sicuro di voler procedere?`)) { 
+            try {
+                await supabaseClient.from('atleti').delete().eq('id', id); 
+                await caricaDati();
+                document.getElementById('status-auto').innerText = "✅ Atleta eliminato";
+            } catch(error) {
+                alert("Errore durante l'eliminazione: " + error.message);
+            }
+        } 
+    }
+    
+    // =================== EVENT LISTENERS ===================
+    
+    // Evento per installazione Android
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        showInstallButton();
     });
+    
+    // Inizializzazione app
+    window.onload = inizializza;
+    
+    // Verifica se siamo in modalità PWA
+    if (isStandalone) {
+        console.log('📱 App aperta come PWA installata');
+        document.getElementById('install-button').style.display = 'none';
+        document.getElementById('install-banner').style.display = 'none';
+    }
+    
 </script>
 </body>
 </html>
