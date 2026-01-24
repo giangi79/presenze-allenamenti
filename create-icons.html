@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generatore Icone PWA</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .container { display: flex; flex-wrap: wrap; gap: 20px; margin: 20px 0; }
+        canvas { border: 1px solid #ccc; display: block; }
+        button { padding: 10px 20px; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px; }
+        .icon-info { text-align: center; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h2>🎨 Generatore Icone PWA</h2>
+    <p>Clicca "Genera Icone" per creare tutte le icone necessarie</p>
+    
+    <button onclick="generateAllIcons()">🎯 GENERA TUTTE LE ICONE</button>
+    <button onclick="downloadSingleIcon(512)">📥 Solo icona 512x512</button>
+    <button onclick="downloadSingleIcon(192)">📥 Solo icona 192x192</button>
+    
+    <div class="container" id="previewContainer"></div>
+    
+    <script>
+        const sizes = [512, 384, 192, 152, 144, 128, 96, 72, 32, 16];
+        const container = document.getElementById('previewContainer');
+        
+        function drawIcon(ctx, size) {
+            // Sfondo
+            ctx.fillStyle = '#343a40';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Cerchio centrale
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size * 0.35, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Testo "RP"
+            ctx.fillStyle = '#343a40';
+            ctx.font = `bold ${size * 0.35}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('RP', size/2, size/2);
+            
+            // Bordo
+            ctx.strokeStyle = '#007bff';
+            ctx.lineWidth = size * 0.02;
+            ctx.strokeRect(size * 0.1, size * 0.1, size * 0.8, size * 0.8);
+        }
+        
+        function generateAllIcons() {
+            sizes.forEach(size => {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                canvas.id = `canvas-${size}`;
+                
+                const ctx = canvas.getContext('2d');
+                drawIcon(ctx, size);
+                
+                // Anteprima
+                const preview = document.createElement('div');
+                preview.style.display = 'inline-block';
+                preview.style.margin = '10px';
+                preview.style.textAlign = 'center';
+                
+                const label = document.createElement('div');
+                label.textContent = `${size}x${size}`;
+                label.style.marginTop = '5px';
+                label.style.fontSize = '12px';
+                
+                // Riduci per anteprima
+                const previewCanvas = document.createElement('canvas');
+                previewCanvas.width = 64;
+                previewCanvas.height = 64;
+                const previewCtx = previewCanvas.getContext('2d');
+                previewCtx.drawImage(canvas, 0, 0, 64, 64);
+                
+                preview.appendChild(previewCanvas);
+                preview.appendChild(label);
+                container.appendChild(preview);
+                
+                // Download
+                downloadIcon(size, canvas);
+            });
+            
+            // Crea favicon.ico
+            createFavicon();
+            
+            alert('✅ Tutte le icone generate e scaricate!');
+        }
+        
+        function downloadIcon(size, canvas) {
+            const link = document.createElement('a');
+            link.download = `icon-${size}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        function downloadSingleIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            drawIcon(ctx, size);
+            
+            const link = document.createElement('a');
+            link.download = `icon-${size}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        function createFavicon() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            drawIcon(ctx, 32);
+            
+            const link = document.createElement('a');
+            link.download = 'favicon.ico';
+            link.href = canvas.toDataURL('image/x-icon');
+            link.click();
+        }
+    </script>
+</body>
+</html>
