@@ -12,31 +12,26 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="mobile-web-app-capable" content="yes">
     
-    <!-- === ICONE iOS === -->
-    <link rel="apple-touch-icon" href="./icon-192.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="./icon-192.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="./icon-192.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="./icon-192.png">
-    
-    <!-- === MANIFEST Android === -->
-    <link rel="manifest" href="./manifest.json">
+    <!-- === META PWA ANDROID/CHROME === -->
     <meta name="theme-color" content="#343a40">
-    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <meta name="msapplication-TileColor" content="#343a40">
+    <meta name="msapplication-TileImage" content="icon-144.png">
+    
+    <!-- === MANIFEST PWA === -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <!-- === ICONE iOS === -->
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icon-192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="icon-192.png">
+    
+    <!-- === META DESCRIPTION === -->
+    <meta name="description" content="Registro digitale presenze atleti - Gruppo Sportivo 2050">
 
-    <!-- === SERVICE WORKER === -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(function(registration) {
-                        console.log('✅ Service Worker registrato:', registration.scope);
-                    })
-                    .catch(function(error) {
-                        console.log('❌ Service Worker errore:', error);
-                    });
-            });
-        }
-    </script>
+    <!-- === SERVICE WORKER REGISTRATION (Spostato in fondo) === -->
+    <!-- Rimuovi lo script duplicato qui, lo mettiamo in fondo -->
 
     <!-- === LIBRERIE ESTERNE === -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -480,7 +475,7 @@
     <div class="header">
         <!-- LOGO con fallback SVG -->
         <img src="./logo.png" alt="Logo Registro Presenze" class="logo" 
-             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQzYTQwIiByeD0iMTAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+R1JVUFBPIDIwNTA8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9IjFlbSI+UkVHSVNUUk8gUFJFU0VOWkU8L3RleHQ+PC9zdmc+'">
+             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQzYTQwIiByeD0iMTAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj9sYXN0IGRheT8/bWlkZGxlIiBkeT0iLjNlbSI+R1JVUFBPIDIwNTA8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9IjFlbSI+UkVHSVNUUk8gUFJFU0VOWkU8L3RleHQ+PC9zdmc+'">
         
         <!-- CONTROLLI DATA -->
         <div class="controls-container">
@@ -506,7 +501,7 @@
     </div>
 
     <!-- === PULSANTE INSTALLAZIONE MOBILE === -->
-    <button class="btn-action btn-install" id="install-button" onclick="showInstallInstructions()" title="Installa app">📱 INSTALLA APP</button>
+    <button class="btn-action btn-install" id="install-button" onclick="promptInstall()" title="Installa app">📱 INSTALLA APP</button>
 
     <!-- === PANNELLO ADMIN (GESTIONE ATLETI) === -->
     <div id="admin-overlay">
@@ -604,7 +599,7 @@
         </div>
     </div>
 
-<!-- === JAVASCRIPT === -->
+<!-- === JAVASCRIPT PRINCIPALE + PWA === -->
 <script>
     // =================== CONFIGURAZIONE ===================
     const SB_URL = 'https://jiktdsvwerqstrlthwxu.supabase.co';
@@ -647,6 +642,7 @@
 
     // =================== FUNZIONI INSTALLAZIONE PWA ===================
     
+    // Funzione per mostrare le istruzioni di installazione
     function showInstallInstructions() {
         let message = '';
         if (isIOS) {
@@ -671,6 +667,33 @@
         hideInstallBanner();
     }
     
+    // Funzione per mostrare il prompt di installazione
+    function promptInstall() {
+        if (!deferredPrompt) {
+            showInstallInstructions();
+            return;
+        }
+        
+        // Mostra il prompt di installazione
+        deferredPrompt.prompt();
+        
+        // Attendi la scelta dell'utente
+        deferredPrompt.userChoice.then((choiceResult) => {
+            console.log('Scelta utente:', choiceResult.outcome);
+            
+            if (choiceResult.outcome === 'accepted') {
+                console.log('✅ Utente ha accettato l\'installazione');
+                document.getElementById('install-button').style.display = 'none';
+                document.getElementById('install-banner').style.display = 'none';
+            } else {
+                console.log('❌ Utente ha rifiutato l\'installazione');
+            }
+            
+            // Resetta deferredPrompt
+            deferredPrompt = null;
+        });
+    }
+    
     function hideInstallBanner() {
         document.getElementById('install-banner').style.display = 'none';
         document.getElementById('install-button').style.display = 'none';
@@ -686,7 +709,7 @@
         const installBtn = document.getElementById('install-button');
         const banner = document.getElementById('install-banner');
         
-        if (installBtn) {
+        if (deferredPrompt && installBtn) {
             installBtn.style.display = 'flex';
             
             // Nascondi dopo 60 secondi
@@ -697,9 +720,64 @@
         }
         
         // Mostra banner per iOS/Android
-        if ((isIOS || isAndroid) && banner) {
+        if ((isIOS || isAndroid) && banner && !isStandalone) {
             banner.style.display = 'block';
         }
+    }
+    
+    // Evento che si attiva quando il browser può mostrare il banner di installazione
+    window.addEventListener('beforeinstallprompt', (e) => {
+        console.log('🚀 beforeinstallprompt event catturato');
+        
+        // Previeni il comportamento predefinito
+        e.preventDefault();
+        
+        // Salva l'evento per usarlo dopo
+        deferredPrompt = e;
+        
+        // Mostra il pulsante di installazione
+        showInstallButton();
+    });
+    
+    // Evento quando l'app viene installata
+    window.addEventListener('appinstalled', () => {
+        console.log('🎉 App installata con successo!');
+        
+        // Nascondi i pulsanti di installazione
+        document.getElementById('install-button').style.display = 'none';
+        document.getElementById('install-banner').style.display = 'none';
+        
+        deferredPrompt = null;
+        
+        // Messaggio di conferma
+        alert('🎉 App installata con successo! Ora puoi aprirla dalla schermata home.');
+    });
+    
+    // =================== REGISTRAZIONE SERVICE WORKER ===================
+    
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then((registration) => {
+                    console.log('✅ Service Worker registrato:', registration.scope);
+                    
+                    // Controlla se c'è un aggiornamento del Service Worker
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        console.log('🔄 Nuova versione del Service Worker trovata');
+                        
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('🔄 Nuova versione disponibile! Ricarica per aggiornare.');
+                                // Opzionale: mostra un banner per chiedere all'utente di ricaricare
+                            }
+                        });
+                    });
+                })
+                .catch((error) => {
+                    console.error('❌ Errore registrazione Service Worker:', error);
+                });
+        });
     }
     
     // =================== FUNZIONI PRINCIPALI ===================
@@ -1477,24 +1555,17 @@
         } 
     }
     
-    // =================== EVENT LISTENERS ===================
+    // =================== VERIFICA SE PWA INSTALLATA ===================
     
-    // Evento per installazione Android
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        showInstallButton();
-    });
-    
-    // Inizializzazione app
-    window.onload = inizializza;
-    
-    // Verifica se siamo in modalità PWA
     if (isStandalone) {
         console.log('📱 App aperta come PWA installata');
         document.getElementById('install-button').style.display = 'none';
         document.getElementById('install-banner').style.display = 'none';
     }
+    
+    // =================== INIZIALIZZAZIONE APP ===================
+    
+    window.onload = inizializza;
     
 </script>
 </body>
