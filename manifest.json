@@ -2,7 +2,7 @@
   "name": "Registro Presenze 2050",
   "short_name": "Registro",
   "description": "Registro presenze atleti",
-  "start_url": "/",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#eef2f7",
   "theme_color": "#343a40",
