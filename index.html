@@ -653,7 +653,9 @@
     let secondiMancanti = 10;
     let isScrolling = false;
     let scrollTimeout;
-    let attesaAggiornamento = false; // 🟢 VARIABILE CHIAVE PER RISOLVERE IL PROBLEMA
+    
+    // 🟢 NUOVA VARIABILE: timestamp ultimo aggiornamento manuale
+    let ultimoAggiornamentoManuale = 0;
     
     // Gestione long press
     let longPressTimer = null;
@@ -827,25 +829,137 @@
         console.log('✅ Applicazione inizializzata');
     }
 
+    // 🟢 NUOVA VERSIONE: Sottoscrizione Realtime INTELLIGENTE
     function sottoscriviRealtime() {
-        supabaseClient.channel('db-changes')
+        // Canale per le PRESENZE
+        supabaseClient.channel('presenze-realtime')
             .on('postgres_changes', 
                 { event: '*', schema: 'public', table: 'presenze' }, 
                 async (payload) => {
-                    console.log('🔄 Cambiamento rilevato in presenze:', payload);
-                    // 🟢 IMPORTANTE: Se stiamo già aggiornando, ignoriamo l'evento Realtime
-                    if (!attesaAggiornamento) {
-                        await ricaricaPresenze();
-                    } else {
-                        console.log('⏸️ Ignoro evento Realtime perché sto già aggiornando');
+                    console.log('🔄 Cambiamento Realtime presenze:', payload.eventType, payload.new?.atleta_id);
+                    
+                    const ora = Date.now();
+                    
+                    // 🟢 IGNORA EVENTI GENERATI DALLO STESSO UTENTE (ultimi 500ms)
+                    if (ora - ultimoAggiornamentoManuale < 500) {
+                        console.log('⏸️ Evento ignorato (generato da questo client)');
+                        return;
                     }
+                    
+                    // 🟢 AGGIORNA SOLO LA CELLA INTERESSATA
+                    aggiornaCellaDaPayload(payload);
                 })
+            .subscribe();
+
+        // Canale per gli ATLETI (ricarica completa)
+        supabaseClient.channel('atleti-realtime')
             .on('postgres_changes', 
                 { event: '*', schema: 'public', table: 'atleti' }, 
                 async () => { 
+                    console.log('🔄 Cambiamento atleti, ricarico...');
                     await caricaDati(); 
                 })
             .subscribe();
+    }
+
+    // 🟢 NUOVA FUNZIONE: Aggiorna cella specifica dal payload Realtime
+    function aggiornaCellaDaPayload(payload) {
+        const { eventType, new: nuovo, old: vecchio } = payload;
+        
+        // Determina quale record usare
+        const record = eventType === 'DELETE' ? vecchio : nuovo;
+        if (!record) return;
+        
+        const { atleta_id, data, stato } = record;
+        
+        // Trova la riga dell'atleta in tutte le tabelle visibili
+        document.querySelectorAll('.section-active table tbody tr').forEach(row => {
+            const atletaId = row.dataset.atletaId;
+            if (parseInt(atletaId) === atleta_id) {
+                // Trova la cella del giorno specifico
+                const cells = row.querySelectorAll('.day-cell');
+                const giorno = parseInt(data.split('-')[2]) - 1;
+                
+                if (cells[giorno]) {
+                    const cell = cells[giorno];
+                    
+                    if (eventType === 'DELETE') {
+                        // Rimuovi presenza
+                        cell.classList.remove('p-partecipa');
+                        cell.innerText = '';
+                    } else {
+                        // Aggiungi o aggiorna presenza
+                        cell.classList.add('p-partecipa');
+                        
+                        if (stato.includes('numero:')) {
+                            cell.innerText = stato.split(':')[1];
+                        } else {
+                            cell.innerText = '✔';
+                        }
+                    }
+                    
+                    // Aggiorna totale riga
+                    aggiornaTotaleRiga(row);
+                }
+            }
+        });
+        
+        // Aggiorna anche la cache
+        if (eventType === 'DELETE') {
+            presenzeCache = presenzeCache.filter(p => 
+                !(p.atleta_id === vecchio.atleta_id && p.data === vecchio.data)
+            );
+        } else if (eventType === 'INSERT' || eventType === 'UPDATE') {
+            const idx = presenzeCache.findIndex(p => 
+                p.atleta_id === nuovo.atleta_id && p.data === nuovo.data
+            );
+            
+            if (idx >= 0) {
+                presenzeCache[idx] = nuovo;
+            } else {
+                presenzeCache.push(nuovo);
+            }
+        }
+    }
+
+    function aggiornaTotaleRiga(row) {
+        const totCell = row.querySelector('.tot-cell');
+        if (!totCell) return;
+        
+        const dayCells = row.querySelectorAll('.day-cell');
+        let total = 0;
+        
+        dayCells.forEach(cell => {
+            if (cell.classList.contains('p-partecipa')) {
+                total++;
+            }
+        });
+        
+        totCell.innerText = total;
+    }
+
+    async function caricaDati() {
+        try {
+            document.getElementById('status-auto').innerText = "⏳ Caricamento dati...";
+            
+            const { data: atleti, error: errorAtleti } = await supabaseClient
+                .from('atleti')
+                .select('*')
+                .order('nome');
+                
+            if (errorAtleti) throw errorAtleti;
+            atletiCache = atleti || [];
+            
+            await ricaricaPresenze();
+            
+            renderAdminList();
+            
+            document.getElementById('status-auto').innerText = "✅ Sistema Pronto";
+            
+        } catch (error) {
+            console.error('❌ Errore caricamento dati:', error);
+            document.getElementById('status-auto').innerText = "❌ Errore di connessione";
+        }
     }
 
     async function ricaricaPresenze() {
@@ -875,30 +989,6 @@
         
         sm.value = m; 
         sa.value = a;
-    }
-
-    async function caricaDati() {
-        try {
-            document.getElementById('status-auto').innerText = "⏳ Caricamento dati...";
-            
-            const { data: atleti, error: errorAtleti } = await supabaseClient
-                .from('atleti')
-                .select('*')
-                .order('nome');
-                
-            if (errorAtleti) throw errorAtleti;
-            atletiCache = atleti || [];
-            
-            await ricaricaPresenze();
-            
-            renderAdminList();
-            
-            document.getElementById('status-auto').innerText = "✅ Sistema Pronto";
-            
-        } catch (error) {
-            console.error('❌ Errore caricamento dati:', error);
-            document.getElementById('status-auto').innerText = "❌ Errore di connessione";
-        }
     }
 
     function renderTabella() {
@@ -1040,8 +1130,8 @@
     }
     
     async function toggleCellState(el, aId, data) {
-        // 🟢 IMPOSTA FLAG PER EVITARE DOPPI AGGIORNAMENTI
-        attesaAggiornamento = true;
+        // 🟢 REGISTRA TEMPO AGGIORNAMENTO MANUALE
+        ultimoAggiornamentoManuale = Date.now();
         
         const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
         
@@ -1055,11 +1145,9 @@
                     .eq('data', data);
                 
                 if (!error) {
-                    // 🟢 AGGIORNA UI IMMEDIATAMENTE
                     el.classList.remove('p-partecipa');
                     el.innerText = '';
                     
-                    // Aggiorna cache
                     const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
                     if (idx > -1) presenzeCache.splice(idx, 1);
                 }
@@ -1073,11 +1161,9 @@
                     .eq('data', data);
                 
                 if (!error) {
-                    // 🟢 AGGIORNA UI IMMEDIATAMENTE
                     el.classList.remove('p-partecipa');
                     el.innerText = '';
                     
-                    // Aggiorna cache
                     const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
                     if (idx > -1) presenzeCache.splice(idx, 1);
                 }
@@ -1093,11 +1179,9 @@
                     }, { onConflict: 'atleta_id, data' });
                 
                 if (!error) {
-                    // 🟢 AGGIORNA UI IMMEDIATAMENTE
                     el.classList.add('p-partecipa');
                     el.innerText = '✔';
                     
-                    // Aggiorna cache
                     const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
                     const newPresenza = { atleta_id: aId, data: data, stato: 'partecipa' };
                     
@@ -1110,7 +1194,8 @@
             }
             
             // 🟢 AGGIORNA TOTALE
-            updateTotalCell(el);
+            const row = el.closest('tr');
+            if (row) aggiornaTotaleRiga(row);
             
             if (backupAutomaticoAttivo) {
                 avviaTimerBackup();
@@ -1119,12 +1204,6 @@
         } catch (error) {
             console.error('Errore nel toggle presenza:', error);
             document.getElementById('status-auto').innerText = "❌ Errore nel salvataggio";
-        } finally {
-            // 🟢 RIMUOVI FLAG DOPO 1 SECONDO PER PERMETTERE EVENTUALI AGGIORNAMENTI REALTIME
-            setTimeout(() => {
-                attesaAggiornamento = false;
-                console.log('✅ Flag aggiornamento resettato');
-            }, 1000);
         }
     }
     
@@ -1161,8 +1240,8 @@
         if (currentCellData && numberValue !== '') {
             const { el, aId, data } = currentCellData;
             
-            // 🟢 IMPOSTA FLAG
-            attesaAggiornamento = true;
+            // 🟢 REGISTRA TEMPO AGGIORNAMENTO MANUALE
+            ultimoAggiornamentoManuale = Date.now();
             
             try {
                 const { error } = await supabaseClient
@@ -1174,11 +1253,9 @@
                     }, { onConflict: 'atleta_id, data' });
                 
                 if (!error) {
-                    // 🟢 AGGIORNA UI IMMEDIATAMENTE
                     el.classList.add('p-partecipa');
                     el.innerText = numberValue;
                     
-                    // Aggiorna cache
                     const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
                     const newPresenza = { atleta_id: aId, data: data, stato: `numero:${numberValue}` };
                     
@@ -1188,7 +1265,8 @@
                         presenzeCache.push(newPresenza);
                     }
                     
-                    updateTotalCell(el);
+                    const row = el.closest('tr');
+                    if (row) aggiornaTotaleRiga(row);
                     
                     if (backupAutomaticoAttivo) {
                         avviaTimerBackup();
@@ -1197,36 +1275,11 @@
             } catch (error) {
                 console.error('Errore nel salvataggio numero:', error);
                 document.getElementById('status-auto').innerText = "❌ Errore nel salvataggio";
-            } finally {
-                // 🟢 RIMUOVI FLAG
-                setTimeout(() => {
-                    attesaAggiornamento = false;
-                    console.log('✅ Flag aggiornamento resettato');
-                }, 1000);
             }
         }
         
         document.getElementById('number-input-overlay').style.display = 'none';
         currentCellData = null;
-    }
-    
-    function updateTotalCell(el) {
-        const row = el.closest('tr');
-        if (!row) return;
-        
-        const totCell = row.querySelector('.tot-cell');
-        if (!totCell) return;
-        
-        const dayCells = row.querySelectorAll('.day-cell');
-        let total = 0;
-        
-        dayCells.forEach(cell => {
-            if (cell.classList.contains('p-partecipa')) {
-                total++;
-            }
-        });
-        
-        totCell.innerText = total;
     }
     
     // =================== BACKUP AUTOMATICO ===================
