@@ -1191,7 +1191,7 @@
         toggleCellState(el, aId, data);
     }
     
-    // 🟢 FUNZIONE CORRETTA PER IL SALVATAGGIO
+    // =================== FUNZIONE CORRETTA PER IL SALVATAGGIO ===================
     async function toggleCellState(el, aId, data) {
         ultimoAggiornamentoManuale = Date.now();
         
@@ -1237,23 +1237,34 @@
                 }
             } 
             else {
-                // Aggiungi ✔
+                // Aggiungi ✔ - USA UPSERT
                 console.log('➕ Aggiunta presenza per', aId, data);
                 result = await supabaseClient
                     .from('presenze')
-                    .insert({ 
+                    .upsert({ 
                         atleta_id: aId, 
                         data: data, 
                         stato: 'partecipa' 
+                    }, { 
+                        onConflict: 'atleta_id, data',
+                        ignoreDuplicates: false 
                     });
                 
                 if (!result.error) {
                     el.classList.add('p-partecipa');
                     el.innerText = '✔';
                     
+                    // Aggiorna cache
+                    const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
                     const newPresenza = { atleta_id: aId, data: data, stato: 'partecipa' };
-                    presenzeCache.push(newPresenza);
-                    console.log('✅ Presenza aggiunta con successo');
+                    
+                    if (idx >= 0) {
+                        presenzeCache[idx] = newPresenza;
+                    } else {
+                        presenzeCache.push(newPresenza);
+                    }
+                    
+                    console.log('✅ Presenza aggiunta/aggiornata con successo');
                 }
             }
             
@@ -1304,6 +1315,7 @@
         currentCellData = null;
     }
     
+    // =================== FUNZIONE CORRETTA PER I NUMERI ===================
     async function confirmNumberInput() {
         const input = document.getElementById('number-input');
         const numberValue = input.value.trim();
@@ -1315,26 +1327,38 @@
             
             try {
                 console.log('➕ Aggiunta numero per', aId, data, numberValue);
+                
+                // USA UPSERT
                 const result = await supabaseClient
                     .from('presenze')
-                    .insert({ 
+                    .upsert({ 
                         atleta_id: aId, 
                         data: data, 
                         stato: `numero:${numberValue}`
+                    }, { 
+                        onConflict: 'atleta_id, data',
+                        ignoreDuplicates: false 
                     });
                 
                 if (!result.error) {
                     el.classList.add('p-partecipa');
                     el.innerText = numberValue;
                     
+                    // Aggiorna cache
+                    const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
                     const newPresenza = { atleta_id: aId, data: data, stato: `numero:${numberValue}` };
-                    presenzeCache.push(newPresenza);
+                    
+                    if (idx >= 0) {
+                        presenzeCache[idx] = newPresenza;
+                    } else {
+                        presenzeCache.push(newPresenza);
+                    }
                     
                     const row = el.closest('tr');
                     if (row) aggiornaTotaleRiga(row);
                     
                     document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze`;
-                    console.log('✅ Numero aggiunto con successo');
+                    console.log('✅ Numero aggiunto/aggiornato con successo');
                     
                     if (backupAutomaticoAttivo) {
                         avviaTimerBackup();
