@@ -623,6 +623,9 @@
     let numericInputAttivo = false;
     let deferredPrompt = null;
     
+    // Flag per evitare aggiornamenti durante le modifiche
+    let isUpdating = false;
+    
     // Costanti
     const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", 
                       "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
@@ -788,12 +791,25 @@
         supabaseClient.channel('db-changes')
             .on('postgres_changes', 
                 { event: '*', schema: 'public', table: 'presenze' }, 
-                async () => {
+                async (payload) => {
+                    console.log('📦 Cambiamento presenze:', payload);
+                    
+                    // Se stiamo già aggiornando, ignoriamo per evitare loop
+                    if (isUpdating) {
+                        console.log('⏭️ Aggiornamento in corso, ignoro evento');
+                        return;
+                    }
+                    
+                    // Ricarica solo le presenze dell'anno corrente
                     const { data: pres } = await supabaseClient.from('presenze')
                         .select('*')
                         .gte('data', `${dataAttuale.getFullYear()}-01-01`)
                         .lte('data', `${dataAttuale.getFullYear()}-12-31`);
-                    presenzeCache = pres || []; 
+                    
+                    // Aggiorna la cache
+                    presenzeCache = pres || [];
+                    
+                    // Rendi la tabella
                     renderTabella();
                 })
             .on('postgres_changes', 
@@ -801,7 +817,9 @@
                 async () => { 
                     await caricaDati(); 
                 })
-            .subscribe();
+            .subscribe((status) => {
+                console.log('🔌 Stato subscription:', status);
+            });
     }
 
     function popolaSelettori(m, a) {
@@ -1002,40 +1020,78 @@
     }
     
     async function toggleCellState(el, aId, data) {
+        // Imposta flag per evitare aggiornamenti realtime
+        isUpdating = true;
+        
         const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
         
-        // Se la cella ha già una presenza
-        if (p) {
-            // Cancella la presenza
-            await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
-            el.classList.remove('p-partecipa');
-            el.innerText = '';
-            
-            // Aggiorna cache locale
-            const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-            if (idx > -1) {
-                presenzeCache.splice(idx, 1);
+        console.log('🔄 Toggle cell - Stato prima:', {aId, data, presente: !!p, stato: p?.stato});
+        
+        try {
+            if (p) {
+                // Se la cella ha già una presenza, la cancelliamo
+                console.log('🗑️ Cancellazione presenza:', aId, data);
+                
+                const { error } = await supabaseClient
+                    .from('presenze')
+                    .delete()
+                    .eq('atleta_id', aId)
+                    .eq('data', data);
+                    
+                if (error) throw error;
+                
+                // Aggiorniamo UI immediatamente
+                el.classList.remove('p-partecipa');
+                el.innerText = '';
+                
+                // Aggiorniamo cache locale
+                const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
+                if (idx > -1) {
+                    presenzeCache.splice(idx, 1);
+                }
+                
+                console.log('✅ Presenza cancellata con successo');
+                
+            } else {
+                // Altrimenti aggiungiamo presenza
+                console.log('➕ Aggiunta presenza:', aId, data);
+                
+                const { error } = await supabaseClient
+                    .from('presenze')
+                    .upsert({ 
+                        atleta_id: aId, 
+                        data: data, 
+                        stato: 'partecipa' 
+                    }, { onConflict: 'atleta_id, data' });
+                    
+                if (error) throw error;
+                
+                // Aggiorniamo UI immediatamente
+                el.classList.add('p-partecipa');
+                el.innerText = '✔';
+                
+                // Aggiorniamo cache locale
+                presenzeCache.push({ atleta_id: aId, data: data, stato: 'partecipa' });
+                
+                console.log('✅ Presenza aggiunta con successo');
             }
-        } 
-        // Altrimenti aggiungi presenza
-        else {
-            await supabaseClient.from('presenze').upsert({ 
-                atleta_id: aId, 
-                data: data, 
-                stato: 'partecipa' 
-            }, { onConflict: 'atleta_id, data' });
             
-            el.classList.add('p-partecipa');
-            el.innerText = '✔';
+            updateTotalCell(el);
             
-            // Aggiorna cache locale
-            presenzeCache.push({ atleta_id: aId, data: data, stato: 'partecipa' });
-        }
-        
-        updateTotalCell(el);
-        
-        if (backupAutomaticoAttivo) {
-            avviaTimerBackup();
+            if (backupAutomaticoAttivo) {
+                avviaTimerBackup();
+            }
+            
+        } catch (error) {
+            console.error('❌ Errore in toggleCellState:', error);
+            // In caso di errore, ricarichiamo i dati per sincronizzare
+            await caricaDati();
+        } finally {
+            // Rilascio il flag dopo un piccolo delay
+            setTimeout(() => {
+                isUpdating = false;
+                console.log('🔓 Flag di aggiornamento rilasciato');
+            }, 500);
         }
     }
     
@@ -1070,37 +1126,64 @@
         const numberValue = input.value.trim();
         
         if (currentCellData && numberValue !== '') {
+            // Imposta flag per evitare aggiornamenti realtime
+            isUpdating = true;
+            
             const { el, aId, data } = currentCellData;
             
-            // Se esiste già una presenza con numero, la aggiorniamo
-            const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
-            
-            if (p && p.stato && p.stato.includes('numero:')) {
-                // Aggiorna numero esistente
-                await supabaseClient.from('presenze')
-                    .update({ stato: `numero:${numberValue}` })
-                    .eq('atleta_id', aId)
-                    .eq('data', data);
+            try {
+                console.log('🔢 Inserimento numero:', aId, data, numberValue);
                 
-                p.stato = `numero:${numberValue}`;
-            } else {
-                // Crea nuova presenza con numero
-                await supabaseClient.from('presenze').upsert({ 
-                    atleta_id: aId, 
-                    data: data, 
-                    stato: `numero:${numberValue}`
-                }, { onConflict: 'atleta_id, data' });
+                // Verifichiamo se esiste già
+                const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
                 
-                presenzeCache.push({ atleta_id: aId, data: data, stato: `numero:${numberValue}` });
-            }
-            
-            el.classList.add('p-partecipa');
-            el.innerText = numberValue;
-            
-            updateTotalCell(el);
-            
-            if (backupAutomaticoAttivo) {
-                avviaTimerBackup();
+                if (p && p.stato && p.stato.includes('numero:')) {
+                    // Aggiorna numero esistente
+                    const { error } = await supabaseClient
+                        .from('presenze')
+                        .update({ stato: `numero:${numberValue}` })
+                        .eq('atleta_id', aId)
+                        .eq('data', data);
+                        
+                    if (error) throw error;
+                    
+                    p.stato = `numero:${numberValue}`;
+                } else {
+                    // Crea nuova presenza con numero
+                    const { error } = await supabaseClient
+                        .from('presenze')
+                        .upsert({ 
+                            atleta_id: aId, 
+                            data: data, 
+                            stato: `numero:${numberValue}`
+                        }, { onConflict: 'atleta_id, data' });
+                        
+                    if (error) throw error;
+                    
+                    presenzeCache.push({ atleta_id: aId, data: data, stato: `numero:${numberValue}` });
+                }
+                
+                // Aggiornamento ottimistico dell'UI
+                el.classList.add('p-partecipa');
+                el.innerText = numberValue;
+                
+                updateTotalCell(el);
+                
+                if (backupAutomaticoAttivo) {
+                    avviaTimerBackup();
+                }
+                
+                console.log('✅ Numero inserito con successo');
+                
+            } catch (error) {
+                console.error('❌ Errore in confirmNumberInput:', error);
+                await caricaDati();
+            } finally {
+                // Rilascio il flag dopo un piccolo delay
+                setTimeout(() => {
+                    isUpdating = false;
+                    console.log('🔓 Flag di aggiornamento rilasciato');
+                }, 500);
             }
         }
         
