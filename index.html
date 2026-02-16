@@ -654,8 +654,9 @@
     let isScrolling = false;
     let scrollTimeout;
     
-    // 🟢 NUOVA VARIABILE: timestamp ultimo aggiornamento manuale
+    // 🟢 GESTIONE SINCRONIZZAZIONE
     let ultimoAggiornamentoManuale = 0;
+    let canaliRealtime = [];
     
     // Gestione long press
     let longPressTimer = null;
@@ -815,8 +816,12 @@
         dataAttuale = new Date(a, m, 1);
         
         popolaSelettori(m, a);
-        await caricaDati();
-        sottoscriviRealtime();
+        
+        // 🟢 CARICA DATI INIZIALI COMPLETI
+        await caricaDatiIniziali();
+        
+        // 🟢 SOTTOSCRIVI A REALTIME
+        await sottoscriviRealtime();
         
         const lastSez = sessionStorage.getItem('last_sez');
         if (lastSez) mostraSezione(lastSez);
@@ -826,72 +831,145 @@
         
         setTimeout(showInstallButton, 3000);
         
+        // 🟢 RICARICA DATI OGNI 30 SECONDI (FALLBACK)
+        setInterval(ricaricaPresenze, 30000);
+        
         console.log('✅ Applicazione inizializzata');
     }
 
-    // 🟢 NUOVA VERSIONE: Sottoscrizione Realtime INTELLIGENTE
-    function sottoscriviRealtime() {
-        // Canale per le PRESENZE
-        supabaseClient.channel('presenze-realtime')
-            .on('postgres_changes', 
-                { event: '*', schema: 'public', table: 'presenze' }, 
-                async (payload) => {
-                    console.log('🔄 Cambiamento Realtime presenze:', payload.eventType, payload.new?.atleta_id);
-                    
-                    const ora = Date.now();
-                    
-                    // 🟢 IGNORA EVENTI GENERATI DALLO STESSO UTENTE (ultimi 500ms)
-                    if (ora - ultimoAggiornamentoManuale < 500) {
-                        console.log('⏸️ Evento ignorato (generato da questo client)');
-                        return;
-                    }
-                    
-                    // 🟢 AGGIORNA SOLO LA CELLA INTERESSATA
-                    aggiornaCellaDaPayload(payload);
-                })
-            .subscribe();
+    // 🟢 NUOVA FUNZIONE: Carica dati iniziali completi
+    async function caricaDatiIniziali() {
+        try {
+            document.getElementById('status-auto').innerText = "⏳ Caricamento dati iniziali...";
+            
+            // Carica atleti
+            const { data: atleti, error: errorAtleti } = await supabaseClient
+                .from('atleti')
+                .select('*')
+                .order('nome');
+                
+            if (errorAtleti) throw errorAtleti;
+            atletiCache = atleti || [];
+            
+            // Carica presenze per l'anno corrente
+            const anno = dataAttuale.getFullYear();
+            const { data: pres, error: errorPres } = await supabaseClient
+                .from('presenze')
+                .select('*')
+                .gte('data', `${anno}-01-01`)
+                .lte('data', `${anno}-12-31`);
+                
+            if (errorPres) throw errorPres;
+            presenzeCache = pres || [];
+            
+            renderTabella();
+            renderAdminList();
+            
+            document.getElementById('status-auto').innerText = "✅ Sistema Pronto";
+            
+        } catch (error) {
+            console.error('❌ Errore caricamento dati iniziali:', error);
+            document.getElementById('status-auto').innerText = "❌ Errore di connessione";
+        }
+    }
 
-        // Canale per gli ATLETI (ricarica completa)
-        supabaseClient.channel('atleti-realtime')
+    // 🟢 NUOVA VERSIONE: Sottoscrizione Realtime MIGLIORATA
+    async function sottoscriviRealtime() {
+        // Rimuovi canali esistenti
+        canaliRealtime.forEach(channel => {
+            supabaseClient.removeChannel(channel);
+        });
+        
+        // Canale per le PRESENZE - Sottoscrizione più granulare
+        const channelPresenze = supabaseClient.channel('presenze-realtime-' + Date.now())
+            .on('postgres_changes', 
+                { event: 'INSERT', schema: 'public', table: 'presenze' }, 
+                async (payload) => {
+                    console.log('🆕 INSERT Realtime presenze:', payload.new);
+                    await gestisciCambiamentoPresenza(payload.new, 'INSERT');
+                })
+            .on('postgres_changes', 
+                { event: 'UPDATE', schema: 'public', table: 'presenze' }, 
+                async (payload) => {
+                    console.log('🔄 UPDATE Realtime presenze:', payload.new);
+                    await gestisciCambiamentoPresenza(payload.new, 'UPDATE');
+                })
+            .on('postgres_changes', 
+                { event: 'DELETE', schema: 'public', table: 'presenze' }, 
+                async (payload) => {
+                    console.log('🗑️ DELETE Realtime presenze:', payload.old);
+                    await gestisciCambiamentoPresenza(payload.old, 'DELETE');
+                })
+            .subscribe((status) => {
+                console.log('📡 Stato canale presenze:', status);
+            });
+
+        // Canale per gli ATLETI
+        const channelAtleti = supabaseClient.channel('atleti-realtime-' + Date.now())
             .on('postgres_changes', 
                 { event: '*', schema: 'public', table: 'atleti' }, 
                 async () => { 
                     console.log('🔄 Cambiamento atleti, ricarico...');
-                    await caricaDati(); 
+                    await caricaDatiIniziali(); 
                 })
             .subscribe();
+
+        canaliRealtime = [channelPresenze, channelAtleti];
     }
 
-    // 🟢 NUOVA FUNZIONE: Aggiorna cella specifica dal payload Realtime
-    function aggiornaCellaDaPayload(payload) {
-        const { eventType, new: nuovo, old: vecchio } = payload;
-        
-        // Determina quale record usare
-        const record = eventType === 'DELETE' ? vecchio : nuovo;
+    // 🟢 NUOVA FUNZIONE: Gestione cambiamenti presenze
+    async function gestisciCambiamentoPresenza(record, tipoEvento) {
         if (!record) return;
         
+        const ora = Date.now();
+        
+        // 🟢 IGNORA EVENTI GENERATI DALLO STESSO UTENTE (ultimi 500ms)
+        if (ora - ultimoAggiornamentoManuale < 500) {
+            console.log('⏸️ Evento ignorato (generato da questo client)');
+            return;
+        }
+        
+        // Aggiorna cache
+        if (tipoEvento === 'DELETE') {
+            presenzeCache = presenzeCache.filter(p => 
+                !(p.atleta_id === record.atleta_id && p.data === record.data)
+            );
+        } else {
+            const idx = presenzeCache.findIndex(p => 
+                p.atleta_id === record.atleta_id && p.data === record.data
+            );
+            
+            if (idx >= 0) {
+                presenzeCache[idx] = record;
+            } else {
+                presenzeCache.push(record);
+            }
+        }
+        
+        // Aggiorna UI
+        aggiornaCellaDaRecord(record, tipoEvento);
+    }
+
+    // 🟢 NUOVA FUNZIONE: Aggiorna cella specifica
+    function aggiornaCellaDaRecord(record, tipoEvento) {
         const { atleta_id, data, stato } = record;
         
-        // Trova la riga dell'atleta in tutte le tabelle visibili
+        // Trova tutte le tabelle che potrebbero contenere questo atleta
         document.querySelectorAll('.section-active table tbody tr').forEach(row => {
             const atletaId = row.dataset.atletaId;
             if (parseInt(atletaId) === atleta_id) {
-                // Trova la cella del giorno specifico
-                const cells = row.querySelectorAll('.day-cell');
                 const giorno = parseInt(data.split('-')[2]) - 1;
+                const cells = row.querySelectorAll('.day-cell');
                 
                 if (cells[giorno]) {
                     const cell = cells[giorno];
                     
-                    if (eventType === 'DELETE') {
-                        // Rimuovi presenza
+                    if (tipoEvento === 'DELETE') {
                         cell.classList.remove('p-partecipa');
                         cell.innerText = '';
                     } else {
-                        // Aggiungi o aggiorna presenza
                         cell.classList.add('p-partecipa');
-                        
-                        if (stato.includes('numero:')) {
+                        if (stato && stato.includes('numero:')) {
                             cell.innerText = stato.split(':')[1];
                         } else {
                             cell.innerText = '✔';
@@ -903,23 +981,6 @@
                 }
             }
         });
-        
-        // Aggiorna anche la cache
-        if (eventType === 'DELETE') {
-            presenzeCache = presenzeCache.filter(p => 
-                !(p.atleta_id === vecchio.atleta_id && p.data === vecchio.data)
-            );
-        } else if (eventType === 'INSERT' || eventType === 'UPDATE') {
-            const idx = presenzeCache.findIndex(p => 
-                p.atleta_id === nuovo.atleta_id && p.data === nuovo.data
-            );
-            
-            if (idx >= 0) {
-                presenzeCache[idx] = nuovo;
-            } else {
-                presenzeCache.push(nuovo);
-            }
-        }
     }
 
     function aggiornaTotaleRiga(row) {
@@ -938,38 +999,23 @@
         totCell.innerText = total;
     }
 
-    async function caricaDati() {
+    async function ricaricaPresenze() {
         try {
-            document.getElementById('status-auto').innerText = "⏳ Caricamento dati...";
-            
-            const { data: atleti, error: errorAtleti } = await supabaseClient
-                .from('atleti')
+            const anno = dataAttuale.getFullYear();
+            const { data: pres, error } = await supabaseClient
+                .from('presenze')
                 .select('*')
-                .order('nome');
+                .gte('data', `${anno}-01-01`)
+                .lte('data', `${anno}-12-31`);
                 
-            if (errorAtleti) throw errorAtleti;
-            atletiCache = atleti || [];
+            if (error) throw error;
             
-            await ricaricaPresenze();
-            
-            renderAdminList();
-            
-            document.getElementById('status-auto').innerText = "✅ Sistema Pronto";
+            presenzeCache = pres || [];
+            renderTabella();
             
         } catch (error) {
-            console.error('❌ Errore caricamento dati:', error);
-            document.getElementById('status-auto').innerText = "❌ Errore di connessione";
+            console.error('❌ Errore ricarica presenze:', error);
         }
-    }
-
-    async function ricaricaPresenze() {
-        const { data: pres } = await supabaseClient
-            .from('presenze')
-            .select('*')
-            .gte('data', `${dataAttuale.getFullYear()}-01-01`)
-            .lte('data', `${dataAttuale.getFullYear()}-12-31`);
-        presenzeCache = pres || [];
-        renderTabella();
     }
 
     function popolaSelettori(m, a) {
@@ -1575,7 +1621,7 @@
             if (res.error) throw res.error;
             
             resetForm(); 
-            await caricaDati();
+            await caricaDatiIniziali();
             document.getElementById('status-auto').innerText = "✅ Atleta salvato";
             
         } catch(error) { 
@@ -1641,7 +1687,7 @@
                 .update({ archiviato: stato })
                 .eq('id', id);
                 
-            await caricaDati();
+            await caricaDatiIniziali();
             document.getElementById('status-auto').innerText = 
                 stato ? "✅ Atleta archiviato" : "✅ Atleta ripristinato";
                 
@@ -1658,7 +1704,7 @@
             try {
                 await supabaseClient.from('presenze').delete().eq('atleta_id', id);
                 await supabaseClient.from('atleti').delete().eq('id', id); 
-                await caricaDati();
+                await caricaDatiIniziali();
                 document.getElementById('status-auto').innerText = "✅ Atleta eliminato";
             } catch(error) {
                 alert("Errore durante l'eliminazione: " + error.message);
