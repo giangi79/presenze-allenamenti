@@ -131,6 +131,7 @@
         .btn-numeric-input.attivo { background: #9b59b6; }
         .btn-stats { background: #9b59b6; }
         .btn-test { background: #e74c3c; }
+        .btn-diagnostica { background: #34495e; }
         
         /* PULSANTE INSTALLAZIONE */
         .btn-install { 
@@ -540,6 +541,7 @@
             <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti">⚙️ ATLETI</button>
             <button class="btn-action btn-stats" onclick="mostraStatistiche()" title="Statistiche">📊 STATS</button>
             <button class="btn-action btn-test" onclick="testScrittura()" title="Test scrittura">🔍 TEST</button>
+            <button class="btn-action btn-diagnostica" onclick="diagnosticaCompleta()" title="Diagnostica">🩺 DIAG</button>
         </div>
     </div>
 
@@ -832,9 +834,6 @@
             caricaStatoNumericInput();
             caricaStatoBackupAuto();
             
-            // Verifica permessi dopo inizializzazione
-            setTimeout(verificaPermessi, 2000);
-            
             // Ricarica dati ogni 30 secondi come backup
             setInterval(ricaricaPresenze, 30000);
             
@@ -862,12 +861,7 @@
             if (errorAtleti) throw errorAtleti;
             atletiCache = atleti || [];
             
-            // Conta presenze nel database
-            const { count, error: countError } = await supabaseClient
-                .from('presenze')
-                .select('*', { count: 'exact', head: true });
-            
-            console.log(`📊 Il database contiene ${count} presenze totali`);
+            console.log(`📊 Caricati ${atletiCache.length} atleti`);
             
             // Carica TUTTE le presenze
             const { data: presenze, error: errorPresenze } = await supabaseClient
@@ -880,126 +874,15 @@
             
             console.log(`📊 Caricate ${presenzeCache.length} presenze in cache`);
             
-            if (presenzeCache.length > 0) {
-                console.log('Prime 5 presenze:', presenzeCache.slice(0, 5));
-            }
-            
             renderTabella();
             renderAdminList();
             
-            document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze caricate`;
+            document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze - ${atletiCache.length} atleti`;
             
         } catch (error) {
             console.error('❌ Errore caricamento dati:', error);
             document.getElementById('status-auto').innerText = "❌ Errore caricamento";
             throw error;
-        }
-    }
-
-    // Verifica permessi di scrittura
-    async function verificaPermessi() {
-        try {
-            console.log('🔍 Verifica permessi di scrittura...');
-            
-            // Test lettura
-            const { error: readError } = await supabaseClient
-                .from('presenze')
-                .select('*')
-                .limit(1);
-                
-            if (readError) {
-                console.warn('⚠️ Problema lettura:', readError);
-            } else {
-                console.log('✅ Accesso in lettura OK');
-            }
-            
-            // Test scrittura con ID fittizio
-            const testId = -999999;
-            const oggi = new Date().toISOString().split('T')[0];
-            
-            const { error: writeError } = await supabaseClient
-                .from('presenze')
-                .upsert({ 
-                    atleta_id: testId, 
-                    data: oggi, 
-                    stato: 'test' 
-                }, { 
-                    onConflict: 'atleta_id, data' 
-                });
-            
-            if (writeError) {
-                console.error('❌ Problema scrittura:', writeError);
-                
-                let msg = '';
-                if (writeError.code === '42501') {
-                    msg = '❌ ERRORE PERMESSI: Le RLS policies bloccano la scrittura. Devi configurare le policy su Supabase.';
-                } else if (writeError.code === '42P01') {
-                    msg = '❌ ERRORE: Tabella "presenze" non trovata';
-                } else {
-                    msg = `❌ Errore scrittura (${writeError.code}): ${writeError.message}`;
-                }
-                
-                document.getElementById('status-auto').innerHTML = msg;
-                alert(msg);
-            } else {
-                console.log('✅ Test scrittura OK');
-                
-                // Pulisci il test
-                await supabaseClient
-                    .from('presenze')
-                    .delete()
-                    .eq('atleta_id', testId)
-                    .eq('data', oggi);
-            }
-        } catch (error) {
-            console.error('❌ Verifica permessi fallita:', error);
-        }
-    }
-
-    // Test scrittura manuale
-    async function testScrittura() {
-        try {
-            console.log('🧪 Test scrittura manuale...');
-            
-            const testId = -999999;
-            const oggi = new Date().toISOString().split('T')[0];
-            
-            const { data, error } = await supabaseClient
-                .from('presenze')
-                .upsert({ 
-                    atleta_id: testId, 
-                    data: oggi, 
-                    stato: 'test' 
-                }, { 
-                    onConflict: 'atleta_id, data' 
-                });
-            
-            if (error) {
-                console.error('❌ Errore test scrittura:', error);
-                
-                let msg = `ERRORE (${error.code}): ${error.message}`;
-                if (error.code === '42501') {
-                    msg = '❌ PERMESSI NEGATI! Devi configurare le RLS policies su Supabase per permettere INSERT/UPDATE anonimi.';
-                } else if (error.code === '23505') {
-                    msg = '⚠️ CONFLITTO: Record già esistente (ma questo è normale per upsert, non dovrebbe succedere)';
-                }
-                
-                alert(msg);
-            } else {
-                console.log('✅ Test scrittura riuscito!');
-                
-                // Pulisci
-                await supabaseClient
-                    .from('presenze')
-                    .delete()
-                    .eq('atleta_id', testId)
-                    .eq('data', oggi);
-                
-                alert('✅ TEST RIUSCITO! Supabase accetta scritture. Il problema potrebbe essere altrove.');
-            }
-        } catch (error) {
-            console.error('❌ Eccezione test:', error);
-            alert('Eccezione: ' + error.message);
         }
     }
 
@@ -1016,7 +899,7 @@
                 console.log(`🔄 Aggiornate presenze: ${presenze.length} (era ${presenzeCache.length})`);
                 presenzeCache = presenze || [];
                 renderTabella();
-                document.getElementById('status-auto').innerHTML = `✅ ${presenze.length} presenze`;
+                document.getElementById('status-auto').innerHTML = `✅ ${presenze.length} presenze - ${atletiCache.length} atleti`;
             }
             
         } catch (error) {
@@ -1036,7 +919,7 @@
             .on('postgres_changes', 
                 { event: '*', schema: 'public', table: 'presenze' }, 
                 async (payload) => {
-                    console.log('🔄 Cambiamento presenze:', payload.eventType, payload.new || payload.old);
+                    console.log('🔄 Cambiamento presenze:', payload.eventType);
                     
                     const ora = Date.now();
                     if (ora - ultimoAggiornamentoManuale > 500) {
@@ -1086,7 +969,7 @@
         
         // Aggiorna UI
         aggiornaCellaDaRecord(record, eventType);
-        document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze`;
+        document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze - ${atletiCache.length} atleti`;
     }
 
     // Aggiorna cella specifica
@@ -1310,6 +1193,28 @@
         const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
         
         try {
+            // 🔍 VERIFICA CHE L'ATLETA ESISTA NEL DATABASE
+            const { data: atleta, error: atletaError } = await supabaseClient
+                .from('atleti')
+                .select('id')
+                .eq('id', aId)
+                .single();
+            
+            if (atletaError || !atleta) {
+                console.error('❌ Atleta con ID', aId, 'non trovato nel database!');
+                
+                // Prova a ricaricare gli atleti
+                await caricaTuttiIDati();
+                
+                // Controlla di nuovo
+                const atletaEsiste = atletiCache.some(a => a.id === aId);
+                if (!atletaEsiste) {
+                    document.getElementById('status-auto').innerText = "❌ Errore: Atleta non trovato. Ricarica la pagina.";
+                    alert(`L'atleta con ID ${aId} non esiste nel database. Ricarica la pagina.`);
+                    return;
+                }
+            }
+            
             let result;
             let operazione = '';
             
@@ -1334,6 +1239,7 @@
             else {
                 operazione = 'UPSERT presenza';
                 console.log('➕ Aggiunta presenza per', aId, data);
+                
                 result = await supabaseClient
                     .from('presenze')
                     .upsert({ 
@@ -1345,23 +1251,18 @@
                     });
             }
             
-            // Debug dettagliato
             console.log('📤 Operazione:', operazione);
             console.log('📦 Risposta:', result);
             
             if (result.error) {
-                console.error('❌ ERRORE DETTAGLIATO:', {
-                    codice: result.error.code,
-                    messaggio: result.error.message,
-                    dettagli: result.error.details,
-                    hint: result.error.hint
-                });
+                console.error('❌ ERRORE DETTAGLIATO:', result.error);
                 
                 let msg = '';
-                if (result.error.code === '42501') {
-                    msg = '❌ ERRORE PERMESSI: Le RLS policies bloccano la scrittura. Devi configurare le policy su Supabase.';
-                } else if (result.error.code === '23505') {
-                    msg = '⚠️ CONFLITTO: Record già esistente (strano per upsert)';
+                if (result.error.code === '23503') {
+                    msg = `❌ ERRORE FOREIGN KEY: L'atleta con ID ${aId} non esiste nel database. Ricarica la pagina.`;
+                    
+                    // Ricarica gli atleti automaticamente
+                    await caricaTuttiIDati();
                 } else {
                     msg = `❌ Errore (${result.error.code}): ${result.error.message}`;
                 }
@@ -1395,7 +1296,7 @@
             const row = el.closest('tr');
             if (row) aggiornaTotaleRiga(row);
             
-            document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze`;
+            document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze - ${atletiCache.length} atleti`;
             
             if (backupAutomaticoAttivo) {
                 avviaTimerBackup();
@@ -1445,6 +1346,19 @@
             ultimoAggiornamentoManuale = Date.now();
             
             try {
+                // 🔍 VERIFICA CHE L'ATLETA ESISTA
+                const { data: atleta, error: atletaError } = await supabaseClient
+                    .from('atleti')
+                    .select('id')
+                    .eq('id', aId)
+                    .single();
+                
+                if (atletaError || !atleta) {
+                    document.getElementById('status-auto').innerText = "❌ Atleta non trovato";
+                    alert(`L'atleta con ID ${aId} non esiste. Ricarica la pagina.`);
+                    return;
+                }
+                
                 console.log('➕ Aggiunta numero per', aId, data, numberValue);
                 
                 const result = await supabaseClient
@@ -1457,14 +1371,13 @@
                         onConflict: 'atleta_id, data'
                     });
                 
-                console.log('📦 Risposta:', result);
-                
                 if (result.error) {
                     console.error('❌ ERRORE:', result.error);
                     
                     let msg = '';
-                    if (result.error.code === '42501') {
-                        msg = '❌ ERRORE PERMESSI: Le RLS policies bloccano la scrittura.';
+                    if (result.error.code === '23503') {
+                        msg = `❌ ERRORE FOREIGN KEY: L'atleta con ID ${aId} non esiste. Ricarica la pagina.`;
+                        await caricaTuttiIDati();
                     } else {
                         msg = `❌ Errore (${result.error.code}): ${result.error.message}`;
                     }
@@ -1487,7 +1400,7 @@
                     const row = el.closest('tr');
                     if (row) aggiornaTotaleRiga(row);
                     
-                    document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze`;
+                    document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze - ${atletiCache.length} atleti`;
                     console.log('✅ Numero aggiunto/aggiornato con successo');
                     
                     if (backupAutomaticoAttivo) {
@@ -1520,7 +1433,8 @@
             stats[annoMese]++;
         });
         
-        let msg = `📊 TOTALE PRESENZE: ${presenzeCache.length}\n\n`;
+        let msg = `📊 TOTALE PRESENZE: ${presenzeCache.length}\n`;
+        msg += `👤 TOTALE ATLETI: ${atletiCache.length}\n\n`;
         msg += "DISTRIBUZIONE PER MESE:\n";
         
         Object.keys(stats).sort().forEach(annoMese => {
@@ -1533,6 +1447,92 @@
         
         alert(msg);
         console.log('Statistiche dettagliate:', stats);
+    }
+    
+    // =================== DIAGNOSTICA COMPLETA ===================
+    
+    async function diagnosticaCompleta() {
+        console.log('🔍 DIAGNOSTICA COMPLETA');
+        
+        try {
+            // Conta atleti nel database
+            const { count: countAtleti, error: errAtleti } = await supabaseClient
+                .from('atleti')
+                .select('*', { count: 'exact', head: true });
+            
+            // Conta presenze nel database
+            const { count: countPresenze, error: errPresenze } = await supabaseClient
+                .from('presenze')
+                .select('*', { count: 'exact', head: true });
+            
+            let msg = `📊 DIAGNOSTICA:\n\n`;
+            msg += `📦 Database:\n`;
+            msg += `- Atleti: ${countAtleti || 'errore'}\n`;
+            msg += `- Presenze: ${countPresenze || 'errore'}\n\n`;
+            msg += `💾 Cache:\n`;
+            msg += `- Atleti: ${atletiCache.length}\n`;
+            msg += `- Presenze: ${presenzeCache.length}\n\n`;
+            
+            if (errAtleti || errPresenze) {
+                msg += `❌ Errori:\n`;
+                if (errAtleti) msg += `- Atleti: ${errAtleti.message}\n`;
+                if (errPresenze) msg += `- Presenze: ${errPresenze.message}\n`;
+            }
+            
+            alert(msg);
+            
+        } catch (error) {
+            alert('Errore diagnostica: ' + error.message);
+        }
+    }
+    
+    // =================== TEST SCRITTURA ===================
+    
+    async function testScrittura() {
+        try {
+            console.log('🧪 Test scrittura...');
+            
+            // Prendi un atleta che esiste sicuramente
+            if (atletiCache.length === 0) {
+                alert('Nessun atleta trovato!');
+                return;
+            }
+            
+            const atletaTest = atletiCache[0];
+            const oggi = new Date().toISOString().split('T')[0];
+            const dataTest = oggi; // Usa oggi per il test
+            
+            console.log('🧪 Test con atleta ID:', atletaTest.id);
+            
+            const result = await supabaseClient
+                .from('presenze')
+                .upsert({ 
+                    atleta_id: atletaTest.id, 
+                    data: dataTest, 
+                    stato: 'test' 
+                }, { 
+                    onConflict: 'atleta_id, data'
+                });
+            
+            if (result.error) {
+                console.error('❌ Errore test:', result.error);
+                alert(`❌ ERRORE TEST (${result.error.code}): ${result.error.message}`);
+            } else {
+                console.log('✅ Test riuscito!');
+                
+                // Pulisci il test
+                await supabaseClient
+                    .from('presenze')
+                    .delete()
+                    .eq('atleta_id', atletaTest.id)
+                    .eq('data', dataTest);
+                
+                alert('✅ TEST RIUSCITO! Il problema era probabilmente un ID atleta non valido.');
+            }
+        } catch (error) {
+            console.error('❌ Eccezione test:', error);
+            alert('Eccezione: ' + error.message);
+        }
     }
     
     // =================== BACKUP AUTOMATICO ===================
@@ -1803,6 +1803,7 @@
             
             resetForm(); 
             await caricaTuttiIDati();
+            document.getElementById('status-auto').innerText = "✅ Atleta salvato";
             
         } catch(error) { 
             alert("Errore: " + error.message); 
