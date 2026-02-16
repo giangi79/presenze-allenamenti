@@ -654,7 +654,7 @@
     let isScrolling = false;
     let scrollTimeout;
     
-    // 🟢 GESTIONE SINCRONIZZAZIONE
+    // Gestione sincronizzazione
     let ultimoAggiornamentoManuale = 0;
     let canaliRealtime = [];
     
@@ -772,7 +772,6 @@
         document.getElementById('install-button').style.display = 'none';
         document.getElementById('install-banner').style.display = 'none';
         deferredPrompt = null;
-        alert('🎉 App installata con successo! Ora puoi aprirla dalla schermata home.');
     });
     
     // =================== REGISTRAZIONE SERVICE WORKER ===================
@@ -782,17 +781,6 @@
             navigator.serviceWorker.register('sw.js')
                 .then((registration) => {
                     console.log('✅ Service Worker registrato:', registration.scope);
-                    
-                    registration.addEventListener('updatefound', () => {
-                        const newWorker = registration.installing;
-                        console.log('🔄 Nuova versione del Service Worker trovata');
-                        
-                        newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                console.log('🔄 Nuova versione disponibile! Ricarica per aggiornare.');
-                            }
-                        });
-                    });
                 })
                 .catch((error) => {
                     console.error('❌ Errore registrazione Service Worker:', error);
@@ -811,37 +799,52 @@
     async function inizializza() {
         console.log('🚀 Inizializzazione applicazione...');
         
-        const m = localStorage.getItem('p_mese') || dataAttuale.getMonth();
-        const a = localStorage.getItem('p_anno') || dataAttuale.getFullYear();
-        dataAttuale = new Date(a, m, 1);
-        
-        popolaSelettori(m, a);
-        
-        // 🟢 CARICA DATI INIZIALI COMPLETI
-        await caricaDatiIniziali();
-        
-        // 🟢 SOTTOSCRIVI A REALTIME
-        await sottoscriviRealtime();
-        
-        const lastSez = sessionStorage.getItem('last_sez');
-        if (lastSez) mostraSezione(lastSez);
-        
-        caricaStatoNumericInput();
-        caricaStatoBackupAuto();
-        
-        setTimeout(showInstallButton, 3000);
-        
-        // 🟢 RICARICA DATI OGNI 30 SECONDI (FALLBACK)
-        setInterval(ricaricaPresenze, 30000);
-        
-        console.log('✅ Applicazione inizializzata');
+        try {
+            // Carica la data salvata
+            const m = localStorage.getItem('p_mese');
+            const a = localStorage.getItem('p_anno');
+            
+            if (m !== null && a !== null) {
+                dataAttuale = new Date(parseInt(a), parseInt(m), 1);
+            } else {
+                dataAttuale = new Date();
+            }
+            
+            popolaSelettori(dataAttuale.getMonth(), dataAttuale.getFullYear());
+            
+            // Carica TUTTI i dati
+            await caricaTuttiIDati();
+            
+            // Sottoscrivi a Realtime
+            await sottoscriviRealtime();
+            
+            // Mostra l'ultima sezione visitata
+            const lastSez = sessionStorage.getItem('last_sez');
+            if (lastSez) {
+                mostraSezione(lastSez);
+            }
+            
+            caricaStatoNumericInput();
+            caricaStatoBackupAuto();
+            
+            // Ricarica dati ogni 30 secondi come backup
+            setInterval(ricaricaPresenze, 30000);
+            
+            setTimeout(showInstallButton, 3000);
+            
+            console.log('✅ Applicazione inizializzata');
+            
+        } catch (error) {
+            console.error('❌ Errore inizializzazione:', error);
+            document.getElementById('status-auto').innerText = "❌ Errore di connessione";
+        }
     }
 
-    // 🟢 NUOVA FUNZIONE: Carica dati iniziali completi
-    async function caricaDatiIniziali() {
+    // 🟢 Carica TUTTI i dati (senza filtri)
+    async function caricaTuttiIDati() {
+        document.getElementById('status-auto').innerText = "⏳ Caricamento dati...";
+        
         try {
-            document.getElementById('status-auto').innerText = "⏳ Caricamento dati iniziali...";
-            
             // Carica atleti
             const { data: atleti, error: errorAtleti } = await supabaseClient
                 .from('atleti')
@@ -851,86 +854,96 @@
             if (errorAtleti) throw errorAtleti;
             atletiCache = atleti || [];
             
-            // Carica presenze per l'anno corrente
-            const anno = dataAttuale.getFullYear();
-            const { data: pres, error: errorPres } = await supabaseClient
+            // Carica TUTTE le presenze (senza filtro anno)
+            const { data: presenze, error: errorPresenze } = await supabaseClient
                 .from('presenze')
-                .select('*')
-                .gte('data', `${anno}-01-01`)
-                .lte('data', `${anno}-12-31`);
+                .select('*');
                 
-            if (errorPres) throw errorPres;
-            presenzeCache = pres || [];
+            if (errorPresenze) throw errorPresenze;
+            presenzeCache = presenze || [];
             
+            console.log(`📊 Caricate ${atletiCache.length} atleti e ${presenzeCache.length} presenze`);
+            
+            // Renderizza la tabella
             renderTabella();
             renderAdminList();
             
-            document.getElementById('status-auto').innerText = "✅ Sistema Pronto";
+            document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze caricate`;
             
         } catch (error) {
-            console.error('❌ Errore caricamento dati iniziali:', error);
-            document.getElementById('status-auto').innerText = "❌ Errore di connessione";
+            console.error('❌ Errore caricamento dati:', error);
+            document.getElementById('status-auto').innerText = "❌ Errore caricamento";
+            throw error;
         }
     }
 
-    // 🟢 NUOVA VERSIONE: Sottoscrizione Realtime MIGLIORATA
+    // Ricarica solo le presenze
+    async function ricaricaPresenze() {
+        try {
+            const { data: presenze, error } = await supabaseClient
+                .from('presenze')
+                .select('*');
+                
+            if (error) throw error;
+            
+            if (JSON.stringify(presenzeCache) !== JSON.stringify(presenze)) {
+                console.log('🔄 Aggiornate presenze:', presenze.length);
+                presenzeCache = presenze || [];
+                renderTabella();
+                document.getElementById('status-auto').innerHTML = `✅ ${presenze.length} presenze`;
+            }
+            
+        } catch (error) {
+            console.error('❌ Errore ricarica presenze:', error);
+        }
+    }
+
+    // Sottoscrizione Realtime
     async function sottoscriviRealtime() {
         // Rimuovi canali esistenti
         canaliRealtime.forEach(channel => {
             supabaseClient.removeChannel(channel);
         });
         
-        // Canale per le PRESENZE - Sottoscrizione più granulare
-        const channelPresenze = supabaseClient.channel('presenze-realtime-' + Date.now())
+        // Canale per le PRESENZE
+        const channelPresenze = supabaseClient.channel('presenze-realtime')
             .on('postgres_changes', 
-                { event: 'INSERT', schema: 'public', table: 'presenze' }, 
+                { event: '*', schema: 'public', table: 'presenze' }, 
                 async (payload) => {
-                    console.log('🆕 INSERT Realtime presenze:', payload.new);
-                    await gestisciCambiamentoPresenza(payload.new, 'INSERT');
+                    console.log('🔄 Cambiamento presenze:', payload.eventType);
+                    
+                    const ora = Date.now();
+                    if (ora - ultimoAggiornamentoManuale < 500) {
+                        console.log('⏸️ Evento ignorato (generato da questo client)');
+                        return;
+                    }
+                    
+                    await gestisciCambiamentoPresenza(payload);
                 })
-            .on('postgres_changes', 
-                { event: 'UPDATE', schema: 'public', table: 'presenze' }, 
-                async (payload) => {
-                    console.log('🔄 UPDATE Realtime presenze:', payload.new);
-                    await gestisciCambiamentoPresenza(payload.new, 'UPDATE');
-                })
-            .on('postgres_changes', 
-                { event: 'DELETE', schema: 'public', table: 'presenze' }, 
-                async (payload) => {
-                    console.log('🗑️ DELETE Realtime presenze:', payload.old);
-                    await gestisciCambiamentoPresenza(payload.old, 'DELETE');
-                })
-            .subscribe((status) => {
-                console.log('📡 Stato canale presenze:', status);
-            });
+            .subscribe();
 
         // Canale per gli ATLETI
-        const channelAtleti = supabaseClient.channel('atleti-realtime-' + Date.now())
+        const channelAtleti = supabaseClient.channel('atleti-realtime')
             .on('postgres_changes', 
                 { event: '*', schema: 'public', table: 'atleti' }, 
-                async () => { 
+                async () => {
                     console.log('🔄 Cambiamento atleti, ricarico...');
-                    await caricaDatiIniziali(); 
+                    await caricaTuttiIDati();
                 })
             .subscribe();
 
         canaliRealtime = [channelPresenze, channelAtleti];
     }
 
-    // 🟢 NUOVA FUNZIONE: Gestione cambiamenti presenze
-    async function gestisciCambiamentoPresenza(record, tipoEvento) {
+    // Gestisci cambiamento presenza
+    async function gestisciCambiamentoPresenza(payload) {
+        const { eventType, new: nuovo, old: vecchio } = payload;
+        const record = eventType === 'DELETE' ? vecchio : nuovo;
+        
         if (!record) return;
         
-        const ora = Date.now();
-        
-        // 🟢 IGNORA EVENTI GENERATI DALLO STESSO UTENTE (ultimi 500ms)
-        if (ora - ultimoAggiornamentoManuale < 500) {
-            console.log('⏸️ Evento ignorato (generato da questo client)');
-            return;
-        }
-        
         // Aggiorna cache
-        if (tipoEvento === 'DELETE') {
+        if (eventType === 'DELETE') {
             presenzeCache = presenzeCache.filter(p => 
                 !(p.atleta_id === record.atleta_id && p.data === record.data)
             );
@@ -947,14 +960,14 @@
         }
         
         // Aggiorna UI
-        aggiornaCellaDaRecord(record, tipoEvento);
+        aggiornaCellaDaRecord(record, eventType);
+        document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze`;
     }
 
-    // 🟢 NUOVA FUNZIONE: Aggiorna cella specifica
-    function aggiornaCellaDaRecord(record, tipoEvento) {
+    // Aggiorna cella specifica
+    function aggiornaCellaDaRecord(record, eventType) {
         const { atleta_id, data, stato } = record;
         
-        // Trova tutte le tabelle che potrebbero contenere questo atleta
         document.querySelectorAll('.section-active table tbody tr').forEach(row => {
             const atletaId = row.dataset.atletaId;
             if (parseInt(atletaId) === atleta_id) {
@@ -964,7 +977,7 @@
                 if (cells[giorno]) {
                     const cell = cells[giorno];
                     
-                    if (tipoEvento === 'DELETE') {
+                    if (eventType === 'DELETE') {
                         cell.classList.remove('p-partecipa');
                         cell.innerText = '';
                     } else {
@@ -999,25 +1012,6 @@
         totCell.innerText = total;
     }
 
-    async function ricaricaPresenze() {
-        try {
-            const anno = dataAttuale.getFullYear();
-            const { data: pres, error } = await supabaseClient
-                .from('presenze')
-                .select('*')
-                .gte('data', `${anno}-01-01`)
-                .lte('data', `${anno}-12-31`);
-                
-            if (error) throw error;
-            
-            presenzeCache = pres || [];
-            renderTabella();
-            
-        } catch (error) {
-            console.error('❌ Errore ricarica presenze:', error);
-        }
-    }
-
     function popolaSelettori(m, a) {
         const sm = document.getElementById('select-mese');
         const sa = document.getElementById('select-anno');
@@ -1047,6 +1041,7 @@
             const table = document.getElementById(`tab-${tipo}`);
             if (!table) return;
             
+            // Intestazione
             let head = `<tr><th class="sticky-col">ATLETA</th>`;
             for(let i = 1; i <= giorniMese; i++) {
                 const giorno = new Date(anno, mese, i);
@@ -1055,6 +1050,7 @@
             head += `<th>TOT</th></tr>`;
             table.querySelector('thead').innerHTML = head;
             
+            // Filtra atleti per categoria
             const cats = tipo === 'cuccioli' ? CAT_CUCCIOLI : 
                         (tipo === 'piccoli' ? CAT_PICCOLI : CAT_GRANDI);
             
@@ -1063,6 +1059,7 @@
                 (a.archiviato === false || a.archiviato === null)
             );
             
+            // Corpo tabella
             let body = "";
             filtrati.forEach(a => {
                 body += `<tr data-atleta-id="${a.id}"><td class="sticky-col" title="${a.categoria}">${a.nome.toUpperCase()}</td>`;
@@ -1100,21 +1097,18 @@
         });
     }
 
-    // =================== INPUT NUMERICO ===================
+    // =================== GESTIONE CLICK E LONG PRESS ===================
     
     function toggleNumericInput() {
         numericInputAttivo = !numericInputAttivo;
         const btn = document.getElementById('btn-numeric-input');
-        const status = document.getElementById('status-auto');
         
         if (numericInputAttivo) {
             btn.innerHTML = "🔢 NUM ON";
             btn.classList.add('attivo');
-            status.innerText = "✅ Input numerico ATTIVATO - Long press per numeri";
         } else {
             btn.innerHTML = "🔢 NUM OFF";
             btn.classList.remove('attivo');
-            status.innerText = "⏸️ Input numerico DISATTIVATO";
         }
         
         renderTabella();
@@ -1135,8 +1129,6 @@
             }
         }
     }
-    
-    // =================== GESTIONE LONG PRESS ===================
     
     function startLongPress(el, aId, data) {
         if (!numericInputAttivo) return;
@@ -1176,14 +1168,13 @@
     }
     
     async function toggleCellState(el, aId, data) {
-        // 🟢 REGISTRA TEMPO AGGIORNAMENTO MANUALE
         ultimoAggiornamentoManuale = Date.now();
         
         const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
         
         try {
-            // Se c'è già un numero, cancella tutto
             if (p && p.stato && p.stato.includes('numero:')) {
+                // Rimuovi numero
                 const { error } = await supabaseClient
                     .from('presenze')
                     .delete()
@@ -1198,8 +1189,8 @@
                     if (idx > -1) presenzeCache.splice(idx, 1);
                 }
             } 
-            // Se è già presente (✔), rimuovi
             else if (p && p.stato === 'partecipa') {
+                // Rimuovi ✔
                 const { error } = await supabaseClient
                     .from('presenze')
                     .delete()
@@ -1214,8 +1205,8 @@
                     if (idx > -1) presenzeCache.splice(idx, 1);
                 }
             } 
-            // Altrimenti aggiungi presenza
             else {
+                // Aggiungi ✔
                 const { error } = await supabaseClient
                     .from('presenze')
                     .upsert({ 
@@ -1239,9 +1230,10 @@
                 }
             }
             
-            // 🟢 AGGIORNA TOTALE
             const row = el.closest('tr');
             if (row) aggiornaTotaleRiga(row);
+            
+            document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze`;
             
             if (backupAutomaticoAttivo) {
                 avviaTimerBackup();
@@ -1286,7 +1278,6 @@
         if (currentCellData && numberValue !== '') {
             const { el, aId, data } = currentCellData;
             
-            // 🟢 REGISTRA TEMPO AGGIORNAMENTO MANUALE
             ultimoAggiornamentoManuale = Date.now();
             
             try {
@@ -1313,6 +1304,8 @@
                     
                     const row = el.closest('tr');
                     if (row) aggiornaTotaleRiga(row);
+                    
+                    document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze`;
                     
                     if (backupAutomaticoAttivo) {
                         avviaTimerBackup();
@@ -1356,21 +1349,10 @@
             btn.innerHTML = "▶️ AUTO ON";
             btn.classList.add('attivo');
             status.innerText = "✅ Backup automatico ATTIVATO";
-            
-            if (secondiMancanti < 10 && timerBackup) {
-                clearInterval(timerBackup);
-                secondiMancanti = 10;
-                status.innerText = "Sistema Pronto";
-            }
         } else {
             btn.innerHTML = "⏸️ AUTO OFF";
             btn.classList.remove('attivo');
             status.innerText = "⏸️ Backup automatico DISATTIVATO";
-            
-            if (timerBackup) {
-                clearInterval(timerBackup);
-                timerBackup = null;
-            }
         }
         
         localStorage.setItem('backup_auto_attivo', backupAutomaticoAttivo);
@@ -1442,13 +1424,8 @@
                     didParseCell: function(data) { 
                         if (data.section === 'body' && data.column.index > 0 && 
                             data.column.index <= g && data.cell.text[0] !== '') { 
-                            if (data.cell.text[0] !== '✔' && !isNaN(parseInt(data.cell.text[0]))) {
-                                data.cell.styles.fillColor = [46, 204, 113];
-                                data.cell.styles.textColor = [255, 255, 255];
-                            } else if (data.cell.text[0] === '✔') {
-                                data.cell.styles.fillColor = [46, 204, 113];
-                                data.cell.styles.textColor = [255, 255, 255];
-                            }
+                            data.cell.styles.fillColor = [46, 204, 113];
+                            data.cell.styles.textColor = [255, 255, 255];
                         } 
                     } 
                 };
@@ -1489,18 +1466,7 @@
         return atletiCache.filter(a => {
             const inCat = cats.includes((a.categoria || "").trim().toUpperCase());
             if (!inCat) return false;
-            
-            if (a.archiviato === false || a.archiviato === null) return true;
-            
-            const dInizio = `${anno}-${String(mese+1).padStart(2,'0')}-01`;
-            const dFine = `${anno}-${String(mese+1).padStart(2,'0')}-${giorni}`;
-            
-            return presenzeCache.some(p => 
-                p.atleta_id === a.id && 
-                p.data >= dInizio && 
-                p.data <= dFine && 
-                (p.stato === 'partecipa' || p.stato.includes('numero:'))
-            );
+            return (a.archiviato === false || a.archiviato === null);
         }).map(a => {
             let riga = [a.nome.toUpperCase()], tot = 0;
             
@@ -1566,9 +1532,13 @@
     }
     
     function cambiaData() { 
-        localStorage.setItem('p_mese', document.getElementById('select-mese').value); 
-        localStorage.setItem('p_anno', document.getElementById('select-anno').value); 
-        location.reload(); 
+        const mese = document.getElementById('select-mese').value;
+        const anno = document.getElementById('select-anno').value;
+        localStorage.setItem('p_mese', mese); 
+        localStorage.setItem('p_anno', anno); 
+        dataAttuale = new Date(parseInt(anno), parseInt(mese), 1);
+        renderTabella();
+        setTimeout(scrollOggi, 300);
     }
     
     function toggleAdmin() { 
@@ -1599,16 +1569,15 @@
         }
         
         document.getElementById('status-auto').innerText = "⏳ Salvataggio atleta...";
-        let res;
         
         try {
             if(id) {
-                res = await supabaseClient
+                await supabaseClient
                     .from('atleti')
                     .update({ nome, categoria: cat })
                     .eq('id', id);
             } else {
-                res = await supabaseClient
+                await supabaseClient
                     .from('atleti')
                     .insert([{ 
                         nome, 
@@ -1618,11 +1587,8 @@
                     }]);
             }
             
-            if (res.error) throw res.error;
-            
             resetForm(); 
-            await caricaDatiIniziali();
-            document.getElementById('status-auto').innerText = "✅ Atleta salvato";
+            await caricaTuttiIDati();
             
         } catch(error) { 
             alert("Errore: " + error.message); 
@@ -1687,7 +1653,7 @@
                 .update({ archiviato: stato })
                 .eq('id', id);
                 
-            await caricaDatiIniziali();
+            await caricaTuttiIDati();
             document.getElementById('status-auto').innerText = 
                 stato ? "✅ Atleta archiviato" : "✅ Atleta ripristinato";
                 
@@ -1704,7 +1670,7 @@
             try {
                 await supabaseClient.from('presenze').delete().eq('atleta_id', id);
                 await supabaseClient.from('atleti').delete().eq('id', id); 
-                await caricaDatiIniziali();
+                await caricaTuttiIDati();
                 document.getElementById('status-auto').innerText = "✅ Atleta eliminato";
             } catch(error) {
                 alert("Errore durante l'eliminazione: " + error.message);
