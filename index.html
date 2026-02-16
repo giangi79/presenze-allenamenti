@@ -985,27 +985,26 @@
         event.stopPropagation();
         
         if (isScrolling) return;
+        
+        // Se è stato un long press, non fare nulla
         if (isLongPress) {
             isLongPress = false;
             return;
         }
         
-        // Se siamo in modalità numerica e la cella ha già un numero, apri l'input numerico
+        // Se siamo in modalità numerica, non permettere tap semplici
         if (numericInputAttivo) {
-            const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
-            if (p && p.stato && p.stato.includes('numero:')) {
-                showNumberInput(el, aId, data);
-                return;
-            }
+            return;
         }
         
+        // Solo se NON siamo in modalità numerica, gestiamo il toggle della spunta
         toggleCellState(el, aId, data);
     }
     
     async function toggleCellState(el, aId, data) {
         const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
         
-        // Se la cella ha già una presenza (✔ o numero)
+        // Se la cella ha già una presenza
         if (p) {
             // Cancella la presenza
             await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
@@ -1018,8 +1017,8 @@
                 presenzeCache.splice(idx, 1);
             }
         } 
-        // Altrimenti aggiungi presenza (solo se NON è in modalità numerica)
-        else if (!numericInputAttivo) {
+        // Altrimenti aggiungi presenza
+        else {
             await supabaseClient.from('presenze').upsert({ 
                 atleta_id: aId, 
                 data: data, 
@@ -1073,40 +1072,36 @@
         if (currentCellData && numberValue !== '') {
             const { el, aId, data } = currentCellData;
             
-            await supabaseClient.from('presenze').upsert({ 
-                atleta_id: aId, 
-                data: data, 
-                stato: `numero:${numberValue}`
-            }, { onConflict: 'atleta_id, data' });
+            // Se esiste già una presenza con numero, la aggiorniamo
+            const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
+            
+            if (p && p.stato && p.stato.includes('numero:')) {
+                // Aggiorna numero esistente
+                await supabaseClient.from('presenze')
+                    .update({ stato: `numero:${numberValue}` })
+                    .eq('atleta_id', aId)
+                    .eq('data', data);
+                
+                p.stato = `numero:${numberValue}`;
+            } else {
+                // Crea nuova presenza con numero
+                await supabaseClient.from('presenze').upsert({ 
+                    atleta_id: aId, 
+                    data: data, 
+                    stato: `numero:${numberValue}`
+                }, { onConflict: 'atleta_id, data' });
+                
+                presenzeCache.push({ atleta_id: aId, data: data, stato: `numero:${numberValue}` });
+            }
             
             el.classList.add('p-partecipa');
             el.innerText = numberValue;
-            
-            const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-            if (idx > -1) {
-                presenzeCache[idx].stato = `numero:${numberValue}`;
-            } else {
-                presenzeCache.push({ atleta_id: aId, data: data, stato: `numero:${numberValue}` });
-            }
             
             updateTotalCell(el);
             
             if (backupAutomaticoAttivo) {
                 avviaTimerBackup();
             }
-        } else if (currentCellData && numberValue === '') {
-            // Se il valore è vuoto, cancella la presenza
-            const { el, aId, data } = currentCellData;
-            await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
-            el.classList.remove('p-partecipa');
-            el.innerText = '';
-            
-            const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-            if (idx > -1) {
-                presenzeCache.splice(idx, 1);
-            }
-            
-            updateTotalCell(el);
         }
         
         document.getElementById('number-input-overlay').style.display = 'none';
