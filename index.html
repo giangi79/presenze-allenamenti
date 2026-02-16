@@ -130,6 +130,7 @@
         .btn-numeric-input { background: #8e44ad; }
         .btn-numeric-input.attivo { background: #9b59b6; }
         .btn-stats { background: #9b59b6; }
+        .btn-test { background: #e74c3c; }
         
         /* PULSANTE INSTALLAZIONE */
         .btn-install { 
@@ -538,6 +539,7 @@
             <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto" title="Backup automatico">▶️ AUTO ON</button>
             <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti">⚙️ ATLETI</button>
             <button class="btn-action btn-stats" onclick="mostraStatistiche()" title="Statistiche">📊 STATS</button>
+            <button class="btn-action btn-test" onclick="testScrittura()" title="Test scrittura">🔍 TEST</button>
         </div>
     </div>
 
@@ -830,6 +832,9 @@
             caricaStatoNumericInput();
             caricaStatoBackupAuto();
             
+            // Verifica permessi dopo inizializzazione
+            setTimeout(verificaPermessi, 2000);
+            
             // Ricarica dati ogni 30 secondi come backup
             setInterval(ricaricaPresenze, 30000);
             
@@ -888,6 +893,113 @@
             console.error('❌ Errore caricamento dati:', error);
             document.getElementById('status-auto').innerText = "❌ Errore caricamento";
             throw error;
+        }
+    }
+
+    // Verifica permessi di scrittura
+    async function verificaPermessi() {
+        try {
+            console.log('🔍 Verifica permessi di scrittura...');
+            
+            // Test lettura
+            const { error: readError } = await supabaseClient
+                .from('presenze')
+                .select('*')
+                .limit(1);
+                
+            if (readError) {
+                console.warn('⚠️ Problema lettura:', readError);
+            } else {
+                console.log('✅ Accesso in lettura OK');
+            }
+            
+            // Test scrittura con ID fittizio
+            const testId = -999999;
+            const oggi = new Date().toISOString().split('T')[0];
+            
+            const { error: writeError } = await supabaseClient
+                .from('presenze')
+                .upsert({ 
+                    atleta_id: testId, 
+                    data: oggi, 
+                    stato: 'test' 
+                }, { 
+                    onConflict: 'atleta_id, data' 
+                });
+            
+            if (writeError) {
+                console.error('❌ Problema scrittura:', writeError);
+                
+                let msg = '';
+                if (writeError.code === '42501') {
+                    msg = '❌ ERRORE PERMESSI: Le RLS policies bloccano la scrittura. Devi configurare le policy su Supabase.';
+                } else if (writeError.code === '42P01') {
+                    msg = '❌ ERRORE: Tabella "presenze" non trovata';
+                } else {
+                    msg = `❌ Errore scrittura (${writeError.code}): ${writeError.message}`;
+                }
+                
+                document.getElementById('status-auto').innerHTML = msg;
+                alert(msg);
+            } else {
+                console.log('✅ Test scrittura OK');
+                
+                // Pulisci il test
+                await supabaseClient
+                    .from('presenze')
+                    .delete()
+                    .eq('atleta_id', testId)
+                    .eq('data', oggi);
+            }
+        } catch (error) {
+            console.error('❌ Verifica permessi fallita:', error);
+        }
+    }
+
+    // Test scrittura manuale
+    async function testScrittura() {
+        try {
+            console.log('🧪 Test scrittura manuale...');
+            
+            const testId = -999999;
+            const oggi = new Date().toISOString().split('T')[0];
+            
+            const { data, error } = await supabaseClient
+                .from('presenze')
+                .upsert({ 
+                    atleta_id: testId, 
+                    data: oggi, 
+                    stato: 'test' 
+                }, { 
+                    onConflict: 'atleta_id, data' 
+                });
+            
+            if (error) {
+                console.error('❌ Errore test scrittura:', error);
+                
+                let msg = `ERRORE (${error.code}): ${error.message}`;
+                if (error.code === '42501') {
+                    msg = '❌ PERMESSI NEGATI! Devi configurare le RLS policies su Supabase per permettere INSERT/UPDATE anonimi.';
+                } else if (error.code === '23505') {
+                    msg = '⚠️ CONFLITTO: Record già esistente (ma questo è normale per upsert, non dovrebbe succedere)';
+                }
+                
+                alert(msg);
+            } else {
+                console.log('✅ Test scrittura riuscito!');
+                
+                // Pulisci
+                await supabaseClient
+                    .from('presenze')
+                    .delete()
+                    .eq('atleta_id', testId)
+                    .eq('data', oggi);
+                
+                alert('✅ TEST RIUSCITO! Supabase accetta scritture. Il problema potrebbe essere altrove.');
+            }
+        } catch (error) {
+            console.error('❌ Eccezione test:', error);
+            alert('Eccezione: ' + error.message);
         }
     }
 
@@ -1199,45 +1311,28 @@
         
         try {
             let result;
+            let operazione = '';
             
             if (p && p.stato && p.stato.includes('numero:')) {
-                // Rimuovi numero
+                operazione = 'DELETE numero';
                 console.log('🗑️ Rimozione numero per', aId, data);
                 result = await supabaseClient
                     .from('presenze')
                     .delete()
                     .eq('atleta_id', aId)
                     .eq('data', data);
-                
-                if (!result.error) {
-                    el.classList.remove('p-partecipa');
-                    el.innerText = '';
-                    
-                    const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-                    if (idx > -1) presenzeCache.splice(idx, 1);
-                    console.log('✅ Numero rimosso con successo');
-                }
             } 
             else if (p && p.stato === 'partecipa') {
-                // Rimuovi ✔
+                operazione = 'DELETE presenza';
                 console.log('🗑️ Rimozione presenza per', aId, data);
                 result = await supabaseClient
                     .from('presenze')
                     .delete()
                     .eq('atleta_id', aId)
                     .eq('data', data);
-                
-                if (!result.error) {
-                    el.classList.remove('p-partecipa');
-                    el.innerText = '';
-                    
-                    const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-                    if (idx > -1) presenzeCache.splice(idx, 1);
-                    console.log('✅ Presenza rimossa con successo');
-                }
             } 
             else {
-                // Aggiungi ✔ - USA UPSERT
+                operazione = 'UPSERT presenza';
                 console.log('➕ Aggiunta presenza per', aId, data);
                 result = await supabaseClient
                     .from('presenze')
@@ -1246,32 +1341,55 @@
                         data: data, 
                         stato: 'partecipa' 
                     }, { 
-                        onConflict: 'atleta_id, data',
-                        ignoreDuplicates: false 
+                        onConflict: 'atleta_id, data'
                     });
-                
-                if (!result.error) {
-                    el.classList.add('p-partecipa');
-                    el.innerText = '✔';
-                    
-                    // Aggiorna cache
-                    const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-                    const newPresenza = { atleta_id: aId, data: data, stato: 'partecipa' };
-                    
-                    if (idx >= 0) {
-                        presenzeCache[idx] = newPresenza;
-                    } else {
-                        presenzeCache.push(newPresenza);
-                    }
-                    
-                    console.log('✅ Presenza aggiunta/aggiornata con successo');
-                }
             }
             
-            if (result && result.error) {
-                console.error('❌ Errore Supabase:', result.error);
-                document.getElementById('status-auto').innerText = "❌ Errore: " + result.error.message;
+            // Debug dettagliato
+            console.log('📤 Operazione:', operazione);
+            console.log('📦 Risposta:', result);
+            
+            if (result.error) {
+                console.error('❌ ERRORE DETTAGLIATO:', {
+                    codice: result.error.code,
+                    messaggio: result.error.message,
+                    dettagli: result.error.details,
+                    hint: result.error.hint
+                });
+                
+                let msg = '';
+                if (result.error.code === '42501') {
+                    msg = '❌ ERRORE PERMESSI: Le RLS policies bloccano la scrittura. Devi configurare le policy su Supabase.';
+                } else if (result.error.code === '23505') {
+                    msg = '⚠️ CONFLITTO: Record già esistente (strano per upsert)';
+                } else {
+                    msg = `❌ Errore (${result.error.code}): ${result.error.message}`;
+                }
+                
+                document.getElementById('status-auto').innerText = msg;
+                alert(msg);
                 return;
+            }
+            
+            // Se tutto ok, aggiorna UI
+            if (operazione.startsWith('DELETE')) {
+                el.classList.remove('p-partecipa');
+                el.innerText = '';
+                
+                const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
+                if (idx > -1) presenzeCache.splice(idx, 1);
+            } else {
+                el.classList.add('p-partecipa');
+                el.innerText = '✔';
+                
+                const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
+                const newPresenza = { atleta_id: aId, data: data, stato: 'partecipa' };
+                
+                if (idx >= 0) {
+                    presenzeCache[idx] = newPresenza;
+                } else {
+                    presenzeCache.push(newPresenza);
+                }
             }
             
             const row = el.closest('tr');
@@ -1284,8 +1402,9 @@
             }
             
         } catch (error) {
-            console.error('❌ Errore nel toggle presenza:', error);
-            document.getElementById('status-auto').innerText = "❌ Errore nel salvataggio";
+            console.error('❌ ECCEZIONE:', error);
+            document.getElementById('status-auto').innerText = "❌ Errore: " + error.message;
+            alert('Errore: ' + error.message);
         }
     }
     
@@ -1328,7 +1447,6 @@
             try {
                 console.log('➕ Aggiunta numero per', aId, data, numberValue);
                 
-                // USA UPSERT
                 const result = await supabaseClient
                     .from('presenze')
                     .upsert({ 
@@ -1336,15 +1454,27 @@
                         data: data, 
                         stato: `numero:${numberValue}`
                     }, { 
-                        onConflict: 'atleta_id, data',
-                        ignoreDuplicates: false 
+                        onConflict: 'atleta_id, data'
                     });
                 
-                if (!result.error) {
+                console.log('📦 Risposta:', result);
+                
+                if (result.error) {
+                    console.error('❌ ERRORE:', result.error);
+                    
+                    let msg = '';
+                    if (result.error.code === '42501') {
+                        msg = '❌ ERRORE PERMESSI: Le RLS policies bloccano la scrittura.';
+                    } else {
+                        msg = `❌ Errore (${result.error.code}): ${result.error.message}`;
+                    }
+                    
+                    document.getElementById('status-auto').innerText = msg;
+                    alert(msg);
+                } else {
                     el.classList.add('p-partecipa');
                     el.innerText = numberValue;
                     
-                    // Aggiorna cache
                     const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
                     const newPresenza = { atleta_id: aId, data: data, stato: `numero:${numberValue}` };
                     
@@ -1363,13 +1493,11 @@
                     if (backupAutomaticoAttivo) {
                         avviaTimerBackup();
                     }
-                } else {
-                    console.error('❌ Errore:', result.error);
-                    document.getElementById('status-auto').innerText = "❌ Errore: " + result.error.message;
                 }
             } catch (error) {
-                console.error('❌ Errore nel salvataggio numero:', error);
-                document.getElementById('status-auto').innerText = "❌ Errore nel salvataggio";
+                console.error('❌ ECCEZIONE:', error);
+                document.getElementById('status-auto').innerText = "❌ Errore: " + error.message;
+                alert('Errore: ' + error.message);
             }
         }
         
