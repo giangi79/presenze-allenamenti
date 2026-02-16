@@ -653,6 +653,7 @@
     let secondiMancanti = 10;
     let isScrolling = false;
     let scrollTimeout;
+    let attesaAggiornamento = false; // 🟢 VARIABILE CHIAVE PER RISOLVERE IL PROBLEMA
     
     // Gestione long press
     let longPressTimer = null;
@@ -832,7 +833,12 @@
                 { event: '*', schema: 'public', table: 'presenze' }, 
                 async (payload) => {
                     console.log('🔄 Cambiamento rilevato in presenze:', payload);
-                    await ricaricaPresenze();
+                    // 🟢 IMPORTANTE: Se stiamo già aggiornando, ignoriamo l'evento Realtime
+                    if (!attesaAggiornamento) {
+                        await ricaricaPresenze();
+                    } else {
+                        console.log('⏸️ Ignoro evento Realtime perché sto già aggiornando');
+                    }
                 })
             .on('postgres_changes', 
                 { event: '*', schema: 'public', table: 'atleti' }, 
@@ -1034,6 +1040,9 @@
     }
     
     async function toggleCellState(el, aId, data) {
+        // 🟢 IMPOSTA FLAG PER EVITARE DOPPI AGGIORNAMENTI
+        attesaAggiornamento = true;
+        
         const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
         
         try {
@@ -1046,11 +1055,13 @@
                     .eq('data', data);
                 
                 if (!error) {
-                    const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-                    if (idx > -1) presenzeCache.splice(idx, 1);
-                    
+                    // 🟢 AGGIORNA UI IMMEDIATAMENTE
                     el.classList.remove('p-partecipa');
                     el.innerText = '';
+                    
+                    // Aggiorna cache
+                    const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
+                    if (idx > -1) presenzeCache.splice(idx, 1);
                 }
             } 
             // Se è già presente (✔), rimuovi
@@ -1062,11 +1073,13 @@
                     .eq('data', data);
                 
                 if (!error) {
-                    const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-                    if (idx > -1) presenzeCache.splice(idx, 1);
-                    
+                    // 🟢 AGGIORNA UI IMMEDIATAMENTE
                     el.classList.remove('p-partecipa');
                     el.innerText = '';
+                    
+                    // Aggiorna cache
+                    const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
+                    if (idx > -1) presenzeCache.splice(idx, 1);
                 }
             } 
             // Altrimenti aggiungi presenza
@@ -1080,6 +1093,11 @@
                     }, { onConflict: 'atleta_id, data' });
                 
                 if (!error) {
+                    // 🟢 AGGIORNA UI IMMEDIATAMENTE
+                    el.classList.add('p-partecipa');
+                    el.innerText = '✔';
+                    
+                    // Aggiorna cache
                     const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
                     const newPresenza = { atleta_id: aId, data: data, stato: 'partecipa' };
                     
@@ -1088,12 +1106,10 @@
                     } else {
                         presenzeCache.push(newPresenza);
                     }
-                    
-                    el.classList.add('p-partecipa');
-                    el.innerText = '✔';
                 }
             }
             
+            // 🟢 AGGIORNA TOTALE
             updateTotalCell(el);
             
             if (backupAutomaticoAttivo) {
@@ -1103,6 +1119,12 @@
         } catch (error) {
             console.error('Errore nel toggle presenza:', error);
             document.getElementById('status-auto').innerText = "❌ Errore nel salvataggio";
+        } finally {
+            // 🟢 RIMUOVI FLAG DOPO 1 SECONDO PER PERMETTERE EVENTUALI AGGIORNAMENTI REALTIME
+            setTimeout(() => {
+                attesaAggiornamento = false;
+                console.log('✅ Flag aggiornamento resettato');
+            }, 1000);
         }
     }
     
@@ -1139,6 +1161,9 @@
         if (currentCellData && numberValue !== '') {
             const { el, aId, data } = currentCellData;
             
+            // 🟢 IMPOSTA FLAG
+            attesaAggiornamento = true;
+            
             try {
                 const { error } = await supabaseClient
                     .from('presenze')
@@ -1149,6 +1174,11 @@
                     }, { onConflict: 'atleta_id, data' });
                 
                 if (!error) {
+                    // 🟢 AGGIORNA UI IMMEDIATAMENTE
+                    el.classList.add('p-partecipa');
+                    el.innerText = numberValue;
+                    
+                    // Aggiorna cache
                     const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
                     const newPresenza = { atleta_id: aId, data: data, stato: `numero:${numberValue}` };
                     
@@ -1157,9 +1187,6 @@
                     } else {
                         presenzeCache.push(newPresenza);
                     }
-                    
-                    el.classList.add('p-partecipa');
-                    el.innerText = numberValue;
                     
                     updateTotalCell(el);
                     
@@ -1170,6 +1197,12 @@
             } catch (error) {
                 console.error('Errore nel salvataggio numero:', error);
                 document.getElementById('status-auto').innerText = "❌ Errore nel salvataggio";
+            } finally {
+                // 🟢 RIMUOVI FLAG
+                setTimeout(() => {
+                    attesaAggiornamento = false;
+                    console.log('✅ Flag aggiornamento resettato');
+                }, 1000);
             }
         }
         
