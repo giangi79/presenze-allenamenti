@@ -648,7 +648,8 @@
     // =================== VARIABILI GLOBALI ===================
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
     let dataAttuale = new Date();
-    let atletiCache = [], presenzeCache = [];
+    let atletiCache = [];
+    let presenzeCache = [];
     let timerBackup = null;
     let secondiMancanti = 10;
     let isScrolling = false;
@@ -840,7 +841,7 @@
         }
     }
 
-    // 🟢 Carica TUTTI i dati (senza filtri)
+    // 🟢 Carica TUTTI i dati (senza filtri) con DEBUG
     async function caricaTuttiIDati() {
         document.getElementById('status-auto').innerText = "⏳ Caricamento dati...";
         
@@ -854,17 +855,33 @@
             if (errorAtleti) throw errorAtleti;
             atletiCache = atleti || [];
             
-            // Carica TUTTE le presenze (senza filtro anno)
+            // 🟢 DEBUG: Controlla quante presenze ci sono nel database
+            const { count, error: countError } = await supabaseClient
+                .from('presenze')
+                .select('*', { count: 'exact', head: true });
+            
+            console.log(`📊 Il database contiene ${count} presenze totali`);
+            
+            // Carica TUTTE le presenze (SENZA ALCUN FILTRO)
             const { data: presenze, error: errorPresenze } = await supabaseClient
                 .from('presenze')
                 .select('*');
                 
             if (errorPresenze) throw errorPresenze;
+            
+            // 🟢 IMPORTANTE: Assegna a presenzeCache
             presenzeCache = presenze || [];
             
-            console.log(`📊 Caricate ${atletiCache.length} atleti e ${presenzeCache.length} presenze`);
+            console.log(`📊 Caricate ${presenzeCache.length} presenze in cache`);
             
-            // Renderizza la tabella
+            // 🟢 DEBUG: Mostra le prime 5 presenze per verificare
+            if (presenzeCache.length > 0) {
+                console.log('Prime 5 presenze:', presenzeCache.slice(0, 5));
+            } else {
+                console.warn('⚠️ Nessuna presenza caricata!');
+            }
+            
+            // Renderizza la tabella DOPO aver caricato i dati
             renderTabella();
             renderAdminList();
             
@@ -886,8 +903,8 @@
                 
             if (error) throw error;
             
-            if (JSON.stringify(presenzeCache) !== JSON.stringify(presenze)) {
-                console.log('🔄 Aggiornate presenze:', presenze.length);
+            if (presenze && presenze.length !== presenzeCache.length) {
+                console.log(`🔄 Aggiornate presenze: ${presenze.length} (era ${presenzeCache.length})`);
                 presenzeCache = presenze || [];
                 renderTabella();
                 document.getElementById('status-auto').innerHTML = `✅ ${presenze.length} presenze`;
@@ -1037,6 +1054,8 @@
         const giorniMese = new Date(anno, mese + 1, 0).getDate();
         const oggiStr = new Date().toLocaleDateString('en-CA');
         
+        console.log(`🎨 Render tabella per ${nomiMesi[mese]} ${anno} con ${presenzeCache.length} presenze in cache`);
+        
         ["cuccioli", "piccoli", "grandi"].forEach(tipo => {
             const table = document.getElementById(`tab-${tipo}`);
             if (!table) return;
@@ -1059,6 +1078,9 @@
                 (a.archiviato === false || a.archiviato === null)
             );
             
+            // Conta quante presenze ci sono per questo mese
+            let presenzeMese = 0;
+            
             // Corpo tabella
             let body = "";
             filtrati.forEach(a => {
@@ -1073,7 +1095,10 @@
                     const numberValue = hasNumber ? p.stato.split(':')[1] : '';
                     const isGreen = p && (p.stato === 'partecipa' || hasNumber);
                     
-                    if(isGreen) totMese++;
+                    if(isGreen) {
+                        totMese++;
+                        presenzeMese++;
+                    }
                     
                     const longPressAttrs = numericInputAttivo ? 
                         `onmousedown="startLongPress(this, ${a.id}, '${dStr}')" 
@@ -1094,6 +1119,11 @@
             });
             
             table.querySelector('tbody').innerHTML = body;
+            
+            // DEBUG: Mostra quante presenze ci sono in questo mese
+            if (tipo === 'cuccioli') {
+                console.log(`📅 Nel mese di ${nomiMesi[mese]} ci sono ${presenzeMese} presenze visualizzate`);
+            }
         });
     }
 
