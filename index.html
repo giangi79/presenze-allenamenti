@@ -132,6 +132,7 @@
         .btn-stats { background: #9b59b6; }
         .btn-test { background: #e74c3c; }
         .btn-diagnostica { background: #34495e; }
+        .btn-fix { background: #27ae60; }
         
         /* PULSANTE INSTALLAZIONE */
         .btn-install { 
@@ -159,6 +160,49 @@
             border-radius: 20px; 
             display: inline-block;
             box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* DEBUG PANEL */
+        #debug-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            z-index: 10000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: auto;
+        }
+        
+        #debug-content {
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        
+        .debug-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            border-radius: 50%;
         }
         
         /* MENU CATEGORIE */
@@ -491,6 +535,14 @@
 </head>
 <body>
 
+    <!-- === DEBUG PANEL === -->
+    <div id="debug-panel">
+        <div class="debug-close" onclick="closeDebug()">&times;</div>
+        <h3>🔍 DEBUG INFORMAZIONI</h3>
+        <div id="debug-content"></div>
+        <button onclick="closeDebug()" style="width:100%; padding:10px; background:#3498db; color:white; border:none; border-radius:8px;">CHIUDI</button>
+    </div>
+
     <!-- === BANNER INSTALLAZIONE === -->
     <div id="install-banner">
         <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -541,7 +593,7 @@
             <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti">⚙️ ATLETI</button>
             <button class="btn-action btn-stats" onclick="mostraStatistiche()" title="Statistiche">📊 STATS</button>
             <button class="btn-action btn-test" onclick="testScrittura()" title="Test scrittura">🔍 TEST</button>
-            <button class="btn-action btn-diagnostica" onclick="diagnosticaCompleta()" title="Diagnostica">🩺 DIAG</button>
+            <button class="btn-action btn-diagnostica" onclick="mostraDebug()" title="Diagnostica">🩺 DEBUG</button>
         </div>
     </div>
 
@@ -689,6 +741,55 @@
     const isAndroid = /Android/.test(navigator.userAgent);
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
                          window.navigator.standalone;
+
+    // =================== FUNZIONI DEBUG ===================
+    
+    function showDebug(content) {
+        const panel = document.getElementById('debug-panel');
+        const debugContent = document.getElementById('debug-content');
+        debugContent.innerText = content;
+        panel.style.display = 'block';
+    }
+    
+    function closeDebug() {
+        document.getElementById('debug-panel').style.display = 'none';
+    }
+    
+    async function mostraDebug() {
+        try {
+            let debug = '🔍 DEBUG INFORMAZIONI\n\n';
+            debug += `📅 Data corrente: ${dataAttuale.toLocaleDateString()}\n`;
+            debug += `📊 Atleti in cache: ${atletiCache.length}\n`;
+            debug += `📊 Presenze in cache: ${presenzeCache.length}\n\n`;
+            
+            // Conta nel database
+            const { count: dbAtleti, error: errAtleti } = await supabaseClient
+                .from('atleti')
+                .select('*', { count: 'exact', head: true });
+            
+            const { count: dbPresenze, error: errPresenze } = await supabaseClient
+                .from('presenze')
+                .select('*', { count: 'exact', head: true });
+            
+            debug += `📦 DATABASE:\n`;
+            debug += `- Atleti: ${dbAtleti || 'errore'}\n`;
+            debug += `- Presenze: ${dbPresenze || 'errore'}\n\n`;
+            
+            if (errAtleti) debug += `❌ Errore atleti: ${errAtleti.message}\n`;
+            if (errPresenze) debug += `❌ Errore presenze: ${errPresenze.message}\n\n`;
+            
+            // Primi 10 atleti
+            debug += `👥 PRIMI 10 ATLETI (cache):\n`;
+            atletiCache.slice(0, 10).forEach((a, i) => {
+                debug += `${i+1}. ID: ${a.id} - ${a.nome} (${a.categoria})\n`;
+            });
+            
+            showDebug(debug);
+            
+        } catch (error) {
+            showDebug('❌ Errore nel debug: ' + error.message);
+        }
+    }
 
     // =================== FUNZIONI INSTALLAZIONE PWA ===================
     
@@ -1186,41 +1287,53 @@
         toggleCellState(el, aId, data);
     }
     
-    // =================== FUNZIONE CORRETTA PER IL SALVATAGGIO ===================
+    // =================== FUNZIONE CON DEBUG AVANZATO ===================
     async function toggleCellState(el, aId, data) {
         ultimoAggiornamentoManuale = Date.now();
         
-        const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
+        console.log('========== DEBUG CLICK ==========');
+        console.log('📌 ID Atleta cliccato:', aId);
+        console.log('📅 Data:', data);
+        
+        // Trova l'atleta nella cache
+        const atletaInCache = atletiCache.find(a => a.id === aId);
+        console.log('👤 Atleta in cache:', atletaInCache ? atletaInCache.nome : 'NON TROVATO');
+        
+        if (!atletaInCache) {
+            console.error('❌ Atleta non trovato in cache!');
+            document.getElementById('status-auto').innerText = "❌ Errore: Atleta non in cache";
+            return;
+        }
         
         try {
-            // 🔍 VERIFICA CHE L'ATLETA ESISTA NEL DATABASE
-            const { data: atleta, error: atletaError } = await supabaseClient
+            // Verifica direttamente nel database
+            const { data: atletaDB, error: dbError } = await supabaseClient
                 .from('atleti')
-                .select('id')
-                .eq('id', aId)
-                .single();
+                .select('id, nome')
+                .eq('id', aId);
             
-            if (atletaError || !atleta) {
-                console.error('❌ Atleta con ID', aId, 'non trovato nel database!');
-                
-                // Prova a ricaricare gli atleti
-                await caricaTuttiIDati();
-                
-                // Controlla di nuovo
-                const atletaEsiste = atletiCache.some(a => a.id === aId);
-                if (!atletaEsiste) {
-                    document.getElementById('status-auto').innerText = "❌ Errore: Atleta non trovato. Ricarica la pagina.";
-                    alert(`L'atleta con ID ${aId} non esiste nel database. Ricarica la pagina.`);
-                    return;
-                }
+            console.log('🔍 Ricerca atleta nel database:', atletaDB);
+            
+            if (dbError) {
+                console.error('❌ Errore query database:', dbError);
             }
             
+            if (!atletaDB || atletaDB.length === 0) {
+                console.error('❌ Atleta NON TROVATO nel database!');
+                console.log('📊 Atleti in cache:', atletiCache.map(a => ({ id: a.id, nome: a.nome })));
+                document.getElementById('status-auto').innerText = `❌ Atleta ID ${aId} non esiste nel database`;
+                return;
+            }
+            
+            console.log('✅ Atleta trovato nel database:', atletaDB[0]);
+            
+            const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
+            console.log('📝 Presenza esistente:', p || 'nessuna');
+            
             let result;
-            let operazione = '';
             
             if (p && p.stato && p.stato.includes('numero:')) {
-                operazione = 'DELETE numero';
-                console.log('🗑️ Rimozione numero per', aId, data);
+                console.log('🗑️ Rimozione numero');
                 result = await supabaseClient
                     .from('presenze')
                     .delete()
@@ -1228,8 +1341,7 @@
                     .eq('data', data);
             } 
             else if (p && p.stato === 'partecipa') {
-                operazione = 'DELETE presenza';
-                console.log('🗑️ Rimozione presenza per', aId, data);
+                console.log('🗑️ Rimozione presenza');
                 result = await supabaseClient
                     .from('presenze')
                     .delete()
@@ -1237,9 +1349,7 @@
                     .eq('data', data);
             } 
             else {
-                operazione = 'UPSERT presenza';
-                console.log('➕ Aggiunta presenza per', aId, data);
-                
+                console.log('➕ Aggiunta presenza');
                 result = await supabaseClient
                     .from('presenze')
                     .upsert({ 
@@ -1251,46 +1361,24 @@
                     });
             }
             
-            console.log('📤 Operazione:', operazione);
-            console.log('📦 Risposta:', result);
+            console.log('📦 Risposta Supabase:', result);
             
             if (result.error) {
-                console.error('❌ ERRORE DETTAGLIATO:', result.error);
-                
-                let msg = '';
-                if (result.error.code === '23503') {
-                    msg = `❌ ERRORE FOREIGN KEY: L'atleta con ID ${aId} non esiste nel database. Ricarica la pagina.`;
-                    
-                    // Ricarica gli atleti automaticamente
-                    await caricaTuttiIDati();
-                } else {
-                    msg = `❌ Errore (${result.error.code}): ${result.error.message}`;
-                }
-                
-                document.getElementById('status-auto').innerText = msg;
-                alert(msg);
+                console.error('❌ ERRORE:', result.error);
+                document.getElementById('status-auto').innerText = `❌ Errore: ${result.error.message}`;
                 return;
             }
             
-            // Se tutto ok, aggiorna UI
-            if (operazione.startsWith('DELETE')) {
+            // Aggiorna UI
+            if (p) {
                 el.classList.remove('p-partecipa');
                 el.innerText = '';
-                
                 const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
                 if (idx > -1) presenzeCache.splice(idx, 1);
             } else {
                 el.classList.add('p-partecipa');
                 el.innerText = '✔';
-                
-                const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-                const newPresenza = { atleta_id: aId, data: data, stato: 'partecipa' };
-                
-                if (idx >= 0) {
-                    presenzeCache[idx] = newPresenza;
-                } else {
-                    presenzeCache.push(newPresenza);
-                }
+                presenzeCache.push({ atleta_id: aId, data: data, stato: 'partecipa' });
             }
             
             const row = el.closest('tr');
@@ -1305,7 +1393,6 @@
         } catch (error) {
             console.error('❌ ECCEZIONE:', error);
             document.getElementById('status-auto').innerText = "❌ Errore: " + error.message;
-            alert('Errore: ' + error.message);
         }
     }
     
@@ -1335,7 +1422,6 @@
         currentCellData = null;
     }
     
-    // =================== FUNZIONE CORRETTA PER I NUMERI ===================
     async function confirmNumberInput() {
         const input = document.getElementById('number-input');
         const numberValue = input.value.trim();
@@ -1346,19 +1432,6 @@
             ultimoAggiornamentoManuale = Date.now();
             
             try {
-                // 🔍 VERIFICA CHE L'ATLETA ESISTA
-                const { data: atleta, error: atletaError } = await supabaseClient
-                    .from('atleti')
-                    .select('id')
-                    .eq('id', aId)
-                    .single();
-                
-                if (atletaError || !atleta) {
-                    document.getElementById('status-auto').innerText = "❌ Atleta non trovato";
-                    alert(`L'atleta con ID ${aId} non esiste. Ricarica la pagina.`);
-                    return;
-                }
-                
                 console.log('➕ Aggiunta numero per', aId, data, numberValue);
                 
                 const result = await supabaseClient
@@ -1373,35 +1446,22 @@
                 
                 if (result.error) {
                     console.error('❌ ERRORE:', result.error);
-                    
-                    let msg = '';
-                    if (result.error.code === '23503') {
-                        msg = `❌ ERRORE FOREIGN KEY: L'atleta con ID ${aId} non esiste. Ricarica la pagina.`;
-                        await caricaTuttiIDati();
-                    } else {
-                        msg = `❌ Errore (${result.error.code}): ${result.error.message}`;
-                    }
-                    
-                    document.getElementById('status-auto').innerText = msg;
-                    alert(msg);
+                    document.getElementById('status-auto').innerText = `❌ Errore: ${result.error.message}`;
                 } else {
                     el.classList.add('p-partecipa');
                     el.innerText = numberValue;
                     
                     const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-                    const newPresenza = { atleta_id: aId, data: data, stato: `numero:${numberValue}` };
-                    
                     if (idx >= 0) {
-                        presenzeCache[idx] = newPresenza;
+                        presenzeCache[idx] = { atleta_id: aId, data: data, stato: `numero:${numberValue}` };
                     } else {
-                        presenzeCache.push(newPresenza);
+                        presenzeCache.push({ atleta_id: aId, data: data, stato: `numero:${numberValue}` });
                     }
                     
                     const row = el.closest('tr');
                     if (row) aggiornaTotaleRiga(row);
                     
                     document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze - ${atletiCache.length} atleti`;
-                    console.log('✅ Numero aggiunto/aggiornato con successo');
                     
                     if (backupAutomaticoAttivo) {
                         avviaTimerBackup();
@@ -1410,12 +1470,52 @@
             } catch (error) {
                 console.error('❌ ECCEZIONE:', error);
                 document.getElementById('status-auto').innerText = "❌ Errore: " + error.message;
-                alert('Errore: ' + error.message);
             }
         }
         
         document.getElementById('number-input-overlay').style.display = 'none';
         currentCellData = null;
+    }
+    
+    // =================== TEST SCRITTURA ===================
+    
+    async function testScrittura() {
+        try {
+            if (atletiCache.length === 0) {
+                alert('Nessun atleta trovato!');
+                return;
+            }
+            
+            const atletaTest = atletiCache[0];
+            const oggi = new Date().toISOString().split('T')[0];
+            
+            console.log('🧪 Test con atleta:', atletaTest);
+            
+            const result = await supabaseClient
+                .from('presenze')
+                .upsert({ 
+                    atleta_id: atletaTest.id, 
+                    data: oggi, 
+                    stato: 'test' 
+                }, { 
+                    onConflict: 'atleta_id, data'
+                });
+            
+            if (result.error) {
+                alert(`❌ ERRORE TEST: ${result.error.message}`);
+            } else {
+                alert(`✅ TEST RIUSCITO con atleta ${atletaTest.nome} (ID: ${atletaTest.id})`);
+                
+                // Pulisci il test
+                await supabaseClient
+                    .from('presenze')
+                    .delete()
+                    .eq('atleta_id', atletaTest.id)
+                    .eq('data', oggi);
+            }
+        } catch (error) {
+            alert('Errore test: ' + error.message);
+        }
     }
     
     // =================== STATISTICHE ===================
@@ -1446,93 +1546,6 @@
         msg += `\n📍 MESE CORRENTE: ${nomiMesi[dataAttuale.getMonth()]} ${dataAttuale.getFullYear()}`;
         
         alert(msg);
-        console.log('Statistiche dettagliate:', stats);
-    }
-    
-    // =================== DIAGNOSTICA COMPLETA ===================
-    
-    async function diagnosticaCompleta() {
-        console.log('🔍 DIAGNOSTICA COMPLETA');
-        
-        try {
-            // Conta atleti nel database
-            const { count: countAtleti, error: errAtleti } = await supabaseClient
-                .from('atleti')
-                .select('*', { count: 'exact', head: true });
-            
-            // Conta presenze nel database
-            const { count: countPresenze, error: errPresenze } = await supabaseClient
-                .from('presenze')
-                .select('*', { count: 'exact', head: true });
-            
-            let msg = `📊 DIAGNOSTICA:\n\n`;
-            msg += `📦 Database:\n`;
-            msg += `- Atleti: ${countAtleti || 'errore'}\n`;
-            msg += `- Presenze: ${countPresenze || 'errore'}\n\n`;
-            msg += `💾 Cache:\n`;
-            msg += `- Atleti: ${atletiCache.length}\n`;
-            msg += `- Presenze: ${presenzeCache.length}\n\n`;
-            
-            if (errAtleti || errPresenze) {
-                msg += `❌ Errori:\n`;
-                if (errAtleti) msg += `- Atleti: ${errAtleti.message}\n`;
-                if (errPresenze) msg += `- Presenze: ${errPresenze.message}\n`;
-            }
-            
-            alert(msg);
-            
-        } catch (error) {
-            alert('Errore diagnostica: ' + error.message);
-        }
-    }
-    
-    // =================== TEST SCRITTURA ===================
-    
-    async function testScrittura() {
-        try {
-            console.log('🧪 Test scrittura...');
-            
-            // Prendi un atleta che esiste sicuramente
-            if (atletiCache.length === 0) {
-                alert('Nessun atleta trovato!');
-                return;
-            }
-            
-            const atletaTest = atletiCache[0];
-            const oggi = new Date().toISOString().split('T')[0];
-            const dataTest = oggi; // Usa oggi per il test
-            
-            console.log('🧪 Test con atleta ID:', atletaTest.id);
-            
-            const result = await supabaseClient
-                .from('presenze')
-                .upsert({ 
-                    atleta_id: atletaTest.id, 
-                    data: dataTest, 
-                    stato: 'test' 
-                }, { 
-                    onConflict: 'atleta_id, data'
-                });
-            
-            if (result.error) {
-                console.error('❌ Errore test:', result.error);
-                alert(`❌ ERRORE TEST (${result.error.code}): ${result.error.message}`);
-            } else {
-                console.log('✅ Test riuscito!');
-                
-                // Pulisci il test
-                await supabaseClient
-                    .from('presenze')
-                    .delete()
-                    .eq('atleta_id', atletaTest.id)
-                    .eq('data', dataTest);
-                
-                alert('✅ TEST RIUSCITO! Il problema era probabilmente un ID atleta non valido.');
-            }
-        } catch (error) {
-            console.error('❌ Eccezione test:', error);
-            alert('Eccezione: ' + error.message);
-        }
     }
     
     // =================== BACKUP AUTOMATICO ===================
