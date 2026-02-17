@@ -30,6 +30,9 @@
     <!-- === META DESCRIPTION === -->
     <meta name="description" content="Registro digitale presenze atleti - Gruppo Sportivo 2050">
 
+    <!-- === SERVICE WORKER REGISTRATION (Spostato in fondo) === -->
+    <!-- Rimuovi lo script duplicato qui, lo mettiamo in fondo -->
+
     <!-- === LIBRERIE ESTERNE === -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -129,10 +132,6 @@
         .btn-backup-auto.attivo { background: #2ecc71; }
         .btn-numeric-input { background: #8e44ad; }
         .btn-numeric-input.attivo { background: #9b59b6; }
-        .btn-stats { background: #9b59b6; }
-        .btn-test { background: #e74c3c; }
-        .btn-diagnostica { background: #34495e; }
-        .btn-fix { background: #27ae60; }
         
         /* PULSANTE INSTALLAZIONE */
         .btn-install { 
@@ -160,49 +159,6 @@
             border-radius: 20px; 
             display: inline-block;
             box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-        }
-        
-        /* DEBUG PANEL */
-        #debug-panel {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            z-index: 10000;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: auto;
-        }
-        
-        #debug-content {
-            font-family: monospace;
-            font-size: 12px;
-            white-space: pre-wrap;
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-        }
-        
-        .debug-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 24px;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f0f0f0;
-            border-radius: 50%;
         }
         
         /* MENU CATEGORIE */
@@ -460,48 +416,6 @@
             display: none;
         }
         
-        /* STILI LISTA ATLETI ADMIN */
-        .atleta-item {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 15px;
-            margin-bottom: 10px;
-            background: #f8f9fa;
-            border-radius: 12px;
-            border-left: 5px solid #007bff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        
-        .atleta-item.archiviato {
-            border-left-color: #6c757d;
-            opacity: 0.8;
-            background: #e9ecef;
-        }
-        
-        .atleta-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .atleta-name {
-            font-weight: bold;
-            font-size: 16px;
-            color: #333;
-        }
-        
-        .atleta-cat {
-            background: #007bff;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
         /* ANIMAZIONI */
         @keyframes pulse {
             0% { transform: scale(1); box-shadow: 0 8px 25px rgba(66, 133, 244, 0.5); }
@@ -535,14 +449,6 @@
 </head>
 <body>
 
-    <!-- === DEBUG PANEL === -->
-    <div id="debug-panel">
-        <div class="debug-close" onclick="closeDebug()">&times;</div>
-        <h3>🔍 DEBUG INFORMAZIONI</h3>
-        <div id="debug-content"></div>
-        <button onclick="closeDebug()" style="width:100%; padding:10px; background:#3498db; color:white; border:none; border-radius:8px;">CHIUDI</button>
-    </div>
-
     <!-- === BANNER INSTALLAZIONE === -->
     <div id="install-banner">
         <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -569,7 +475,7 @@
     <div class="header">
         <!-- LOGO con fallback SVG -->
         <img src="./logo.png" alt="Logo Registro Presenze" class="logo" 
-             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQzYTQwIiByeD0iMTAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+R1JVUFBPIDIwNTA8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9IjFlbSI+UkVHSVNUUk8gUFJFU0VOWkU8L3RleHQ+PC9zdmc+'">
+             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQzYTQwIiByeD0iMTAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj9sYXN0IGRheT8/bWlkZGxlIiBkeT0iLjNlbSI+R1JVUFBPIDIwNTA8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9IjFlbSI+UkVHSVNUUk8gUFJFU0VOWkU8L3RleHQ+PC9zdmc+'">
         
         <!-- CONTROLLI DATA -->
         <div class="controls-container">
@@ -591,9 +497,6 @@
             <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input" title="Input numerico">🔢 NUM OFF</button>
             <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto" title="Backup automatico">▶️ AUTO ON</button>
             <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti">⚙️ ATLETI</button>
-            <button class="btn-action btn-stats" onclick="mostraStatistiche()" title="Statistiche">📊 STATS</button>
-            <button class="btn-action btn-test" onclick="testScrittura()" title="Test scrittura">🔍 TEST</button>
-            <button class="btn-action btn-diagnostica" onclick="mostraDebug()" title="Diagnostica">🩺 DEBUG</button>
         </div>
     </div>
 
@@ -706,16 +609,11 @@
     // =================== VARIABILI GLOBALI ===================
     const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
     let dataAttuale = new Date();
-    let atletiCache = [];
-    let presenzeCache = [];
+    let atletiCache = [], presenzeCache = [];
     let timerBackup = null;
     let secondiMancanti = 10;
     let isScrolling = false;
     let scrollTimeout;
-    
-    // Gestione sincronizzazione
-    let ultimoAggiornamentoManuale = 0;
-    let canaliRealtime = [];
     
     // Gestione long press
     let longPressTimer = null;
@@ -742,57 +640,9 @@
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
                          window.navigator.standalone;
 
-    // =================== FUNZIONI DEBUG ===================
-    
-    function showDebug(content) {
-        const panel = document.getElementById('debug-panel');
-        const debugContent = document.getElementById('debug-content');
-        debugContent.innerText = content;
-        panel.style.display = 'block';
-    }
-    
-    function closeDebug() {
-        document.getElementById('debug-panel').style.display = 'none';
-    }
-    
-    async function mostraDebug() {
-        try {
-            let debug = '🔍 DEBUG INFORMAZIONI\n\n';
-            debug += `📅 Data corrente: ${dataAttuale.toLocaleDateString()}\n`;
-            debug += `📊 Atleti in cache: ${atletiCache.length}\n`;
-            debug += `📊 Presenze in cache: ${presenzeCache.length}\n\n`;
-            
-            // Conta nel database
-            const { count: dbAtleti, error: errAtleti } = await supabaseClient
-                .from('atleti')
-                .select('*', { count: 'exact', head: true });
-            
-            const { count: dbPresenze, error: errPresenze } = await supabaseClient
-                .from('presenze')
-                .select('*', { count: 'exact', head: true });
-            
-            debug += `📦 DATABASE:\n`;
-            debug += `- Atleti: ${dbAtleti || 'errore'}\n`;
-            debug += `- Presenze: ${dbPresenze || 'errore'}\n\n`;
-            
-            if (errAtleti) debug += `❌ Errore atleti: ${errAtleti.message}\n`;
-            if (errPresenze) debug += `❌ Errore presenze: ${errPresenze.message}\n\n`;
-            
-            // Primi 10 atleti
-            debug += `👥 PRIMI 10 ATLETI (cache):\n`;
-            atletiCache.slice(0, 10).forEach((a, i) => {
-                debug += `${i+1}. ID: ${a.id} - ${a.nome} (${a.categoria})\n`;
-            });
-            
-            showDebug(debug);
-            
-        } catch (error) {
-            showDebug('❌ Errore nel debug: ' + error.message);
-        }
-    }
-
     // =================== FUNZIONI INSTALLAZIONE PWA ===================
     
+    // Funzione per mostrare le istruzioni di installazione
     function showInstallInstructions() {
         let message = '';
         if (isIOS) {
@@ -817,14 +667,17 @@
         hideInstallBanner();
     }
     
+    // Funzione per mostrare il prompt di installazione
     function promptInstall() {
         if (!deferredPrompt) {
             showInstallInstructions();
             return;
         }
         
+        // Mostra il prompt di installazione
         deferredPrompt.prompt();
         
+        // Attendi la scelta dell'utente
         deferredPrompt.userChoice.then((choiceResult) => {
             console.log('Scelta utente:', choiceResult.outcome);
             
@@ -836,6 +689,7 @@
                 console.log('❌ Utente ha rifiutato l\'installazione');
             }
             
+            // Resetta deferredPrompt
             deferredPrompt = null;
         });
     }
@@ -847,6 +701,7 @@
     }
     
     function showInstallButton() {
+        // Non mostrare se già installata o utente ha chiuso
         if (isStandalone || localStorage.getItem('hideInstallBanner') === 'true') {
             return;
         }
@@ -857,29 +712,45 @@
         if (deferredPrompt && installBtn) {
             installBtn.style.display = 'flex';
             
+            // Nascondi dopo 60 secondi
             setTimeout(() => {
                 installBtn.style.display = 'none';
                 if (banner) banner.style.display = 'none';
             }, 60000);
         }
         
+        // Mostra banner per iOS/Android
         if ((isIOS || isAndroid) && banner && !isStandalone) {
             banner.style.display = 'block';
         }
     }
     
+    // Evento che si attiva quando il browser può mostrare il banner di installazione
     window.addEventListener('beforeinstallprompt', (e) => {
         console.log('🚀 beforeinstallprompt event catturato');
+        
+        // Previeni il comportamento predefinito
         e.preventDefault();
+        
+        // Salva l'evento per usarlo dopo
         deferredPrompt = e;
+        
+        // Mostra il pulsante di installazione
         showInstallButton();
     });
     
+    // Evento quando l'app viene installata
     window.addEventListener('appinstalled', () => {
         console.log('🎉 App installata con successo!');
+        
+        // Nascondi i pulsanti di installazione
         document.getElementById('install-button').style.display = 'none';
         document.getElementById('install-banner').style.display = 'none';
+        
         deferredPrompt = null;
+        
+        // Messaggio di conferma
+        alert('🎉 App installata con successo! Ora puoi aprirla dalla schermata home.');
     });
     
     // =================== REGISTRAZIONE SERVICE WORKER ===================
@@ -889,6 +760,19 @@
             navigator.serviceWorker.register('sw.js')
                 .then((registration) => {
                     console.log('✅ Service Worker registrato:', registration.scope);
+                    
+                    // Controlla se c'è un aggiornamento del Service Worker
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        console.log('🔄 Nuova versione del Service Worker trovata');
+                        
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('🔄 Nuova versione disponibile! Ricarica per aggiornare.');
+                                // Opzionale: mostra un banner per chiedere all'utente di ricaricare
+                            }
+                        });
+                    });
                 })
                 .catch((error) => {
                     console.error('❌ Errore registrazione Service Worker:', error);
@@ -907,217 +791,47 @@
     async function inizializza() {
         console.log('🚀 Inizializzazione applicazione...');
         
-        try {
-            // Carica la data salvata
-            const m = localStorage.getItem('p_mese');
-            const a = localStorage.getItem('p_anno');
-            
-            if (m !== null && a !== null) {
-                dataAttuale = new Date(parseInt(a), parseInt(m), 1);
-            } else {
-                dataAttuale = new Date();
-            }
-            
-            popolaSelettori(dataAttuale.getMonth(), dataAttuale.getFullYear());
-            
-            // Carica TUTTI i dati
-            await caricaTuttiIDati();
-            
-            // Sottoscrivi a Realtime
-            await sottoscriviRealtime();
-            
-            // Mostra l'ultima sezione visitata
-            const lastSez = sessionStorage.getItem('last_sez');
-            if (lastSez) {
-                mostraSezione(lastSez);
-            }
-            
-            caricaStatoNumericInput();
-            caricaStatoBackupAuto();
-            
-            // Ricarica dati ogni 30 secondi come backup
-            setInterval(ricaricaPresenze, 30000);
-            
-            setTimeout(showInstallButton, 3000);
-            
-            console.log('✅ Applicazione inizializzata');
-            
-        } catch (error) {
-            console.error('❌ Errore inizializzazione:', error);
-            document.getElementById('status-auto').innerText = "❌ Errore di connessione";
-        }
-    }
-
-    // Carica TUTTI i dati
-    async function caricaTuttiIDati() {
-        document.getElementById('status-auto').innerText = "⏳ Caricamento dati...";
+        // Carica data salvata
+        const m = localStorage.getItem('p_mese') || dataAttuale.getMonth();
+        const a = localStorage.getItem('p_anno') || dataAttuale.getFullYear();
+        dataAttuale = new Date(a, m, 1);
         
-        try {
-            // Carica atleti
-            const { data: atleti, error: errorAtleti } = await supabaseClient
-                .from('atleti')
-                .select('*')
-                .order('nome');
-                
-            if (errorAtleti) throw errorAtleti;
-            atletiCache = atleti || [];
-            
-            console.log(`📊 Caricati ${atletiCache.length} atleti`);
-            
-            // Carica TUTTE le presenze
-            const { data: presenze, error: errorPresenze } = await supabaseClient
-                .from('presenze')
-                .select('*');
-                
-            if (errorPresenze) throw errorPresenze;
-            
-            presenzeCache = presenze || [];
-            
-            console.log(`📊 Caricate ${presenzeCache.length} presenze in cache`);
-            
-            renderTabella();
-            renderAdminList();
-            
-            document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze - ${atletiCache.length} atleti`;
-            
-        } catch (error) {
-            console.error('❌ Errore caricamento dati:', error);
-            document.getElementById('status-auto').innerText = "❌ Errore caricamento";
-            throw error;
-        }
-    }
-
-    // Ricarica solo le presenze
-    async function ricaricaPresenze() {
-        try {
-            const { data: presenze, error } = await supabaseClient
-                .from('presenze')
-                .select('*');
-                
-            if (error) throw error;
-            
-            if (presenze && presenze.length !== presenzeCache.length) {
-                console.log(`🔄 Aggiornate presenze: ${presenze.length} (era ${presenzeCache.length})`);
-                presenzeCache = presenze || [];
-                renderTabella();
-                document.getElementById('status-auto').innerHTML = `✅ ${presenze.length} presenze - ${atletiCache.length} atleti`;
-            }
-            
-        } catch (error) {
-            console.error('❌ Errore ricarica presenze:', error);
-        }
-    }
-
-    // Sottoscrizione Realtime
-    async function sottoscriviRealtime() {
-        // Rimuovi canali esistenti
-        canaliRealtime.forEach(channel => {
-            supabaseClient.removeChannel(channel);
-        });
+        popolaSelettori(m, a);
+        await caricaDati();
+        sottoscriviRealtime();
         
-        // Canale per le PRESENZE
-        const channelPresenze = supabaseClient.channel('presenze-realtime')
+        // Ripristina sezione precedente
+        const lastSez = sessionStorage.getItem('last_sez');
+        if (lastSez) mostraSezione(lastSez);
+        
+        // Carica preferenze
+        caricaStatoNumericInput();
+        caricaStatoBackupAuto();
+        
+        // Mostra pulsante installazione
+        setTimeout(showInstallButton, 3000);
+        
+        console.log('✅ Applicazione inizializzata');
+    }
+
+    function sottoscriviRealtime() {
+        supabaseClient.channel('db-changes')
             .on('postgres_changes', 
                 { event: '*', schema: 'public', table: 'presenze' }, 
-                async (payload) => {
-                    console.log('🔄 Cambiamento presenze:', payload.eventType);
-                    
-                    const ora = Date.now();
-                    if (ora - ultimoAggiornamentoManuale > 500) {
-                        await gestisciCambiamentoPresenza(payload);
-                    }
+                async () => {
+                    const { data: pres } = await supabaseClient.from('presenze')
+                        .select('*')
+                        .gte('data', `${dataAttuale.getFullYear()}-01-01`)
+                        .lte('data', `${dataAttuale.getFullYear()}-12-31`);
+                    presenzeCache = pres || []; 
+                    renderTabella();
                 })
-            .subscribe((status) => {
-                console.log('📡 Stato canale presenze:', status);
-            });
-
-        // Canale per gli ATLETI
-        const channelAtleti = supabaseClient.channel('atleti-realtime')
             .on('postgres_changes', 
                 { event: '*', schema: 'public', table: 'atleti' }, 
-                async () => {
-                    console.log('🔄 Cambiamento atleti, ricarico...');
-                    await caricaTuttiIDati();
+                async () => { 
+                    await caricaDati(); 
                 })
             .subscribe();
-
-        canaliRealtime = [channelPresenze, channelAtleti];
-    }
-
-    // Gestisci cambiamento presenza
-    async function gestisciCambiamentoPresenza(payload) {
-        const { eventType, new: nuovo, old: vecchio } = payload;
-        const record = eventType === 'DELETE' ? vecchio : nuovo;
-        
-        if (!record) return;
-        
-        // Aggiorna cache
-        if (eventType === 'DELETE') {
-            presenzeCache = presenzeCache.filter(p => 
-                !(p.atleta_id === record.atleta_id && p.data === record.data)
-            );
-        } else {
-            const idx = presenzeCache.findIndex(p => 
-                p.atleta_id === record.atleta_id && p.data === record.data
-            );
-            
-            if (idx >= 0) {
-                presenzeCache[idx] = record;
-            } else {
-                presenzeCache.push(record);
-            }
-        }
-        
-        // Aggiorna UI
-        aggiornaCellaDaRecord(record, eventType);
-        document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze - ${atletiCache.length} atleti`;
-    }
-
-    // Aggiorna cella specifica
-    function aggiornaCellaDaRecord(record, eventType) {
-        const { atleta_id, data, stato } = record;
-        
-        document.querySelectorAll('.section-active table tbody tr').forEach(row => {
-            const atletaId = row.dataset.atletaId;
-            if (parseInt(atletaId) === atleta_id) {
-                const giorno = parseInt(data.split('-')[2]) - 1;
-                const cells = row.querySelectorAll('.day-cell');
-                
-                if (cells[giorno]) {
-                    const cell = cells[giorno];
-                    
-                    if (eventType === 'DELETE') {
-                        cell.classList.remove('p-partecipa');
-                        cell.innerText = '';
-                    } else {
-                        cell.classList.add('p-partecipa');
-                        if (stato && stato.includes('numero:')) {
-                            cell.innerText = stato.split(':')[1];
-                        } else {
-                            cell.innerText = '✔';
-                        }
-                    }
-                    
-                    aggiornaTotaleRiga(row);
-                }
-            }
-        });
-    }
-
-    function aggiornaTotaleRiga(row) {
-        const totCell = row.querySelector('.tot-cell');
-        if (!totCell) return;
-        
-        const dayCells = row.querySelectorAll('.day-cell');
-        let total = 0;
-        
-        dayCells.forEach(cell => {
-            if (cell.classList.contains('p-partecipa')) {
-                total++;
-            }
-        });
-        
-        totCell.innerText = total;
     }
 
     function popolaSelettori(m, a) {
@@ -1127,10 +841,12 @@
         sm.innerHTML = ""; 
         sa.innerHTML = "";
         
+        // Mesi
         nomiMesi.forEach((nome, i) => {
             sm.add(new Option(nome, i));
         });
         
+        // Anni (2024-2050)
         for(let i = 2024; i <= 2050; i++) {
             sa.add(new Option(i, i));
         }
@@ -1139,19 +855,53 @@
         sa.value = a;
     }
 
+    async function caricaDati() {
+        try {
+            document.getElementById('status-auto').innerText = "⏳ Caricamento dati...";
+            
+            // Carica atleti
+            const { data: atleti, error: errorAtleti } = await supabaseClient
+                .from('atleti')
+                .select('*')
+                .order('nome');
+                
+            if (errorAtleti) throw errorAtleti;
+            atletiCache = atleti || [];
+            
+            // Carica presenze anno corrente
+            const { data: presenze, error: errorPresenze } = await supabaseClient
+                .from('presenze')
+                .select('*')
+                .gte('data', `${dataAttuale.getFullYear()}-01-01`)
+                .lte('data', `${dataAttuale.getFullYear()}-12-31`);
+                
+            if (errorPresenze) throw errorPresenze;
+            presenzeCache = presenze || [];
+            
+            // Render
+            renderTabella(); 
+            renderAdminList();
+            
+            document.getElementById('status-auto').innerText = "✅ Sistema Pronto";
+            
+        } catch (error) {
+            console.error('❌ Errore caricamento dati:', error);
+            document.getElementById('status-auto').innerText = "❌ Errore di connessione";
+        }
+    }
+
     function renderTabella() {
         const anno = dataAttuale.getFullYear();
         const mese = dataAttuale.getMonth();
         const giorniMese = new Date(anno, mese + 1, 0).getDate();
         const oggiStr = new Date().toLocaleDateString('en-CA');
         
-        console.log(`🎨 Render tabella per ${nomiMesi[mese]} ${anno} con ${presenzeCache.length} presenze in cache`);
-        
+        // Per ogni categoria
         ["cuccioli", "piccoli", "grandi"].forEach(tipo => {
             const table = document.getElementById(`tab-${tipo}`);
             if (!table) return;
             
-            // Intestazione
+            // HEADER
             let head = `<tr><th class="sticky-col">ATLETA</th>`;
             for(let i = 1; i <= giorniMese; i++) {
                 const giorno = new Date(anno, mese, i);
@@ -1160,7 +910,7 @@
             head += `<th>TOT</th></tr>`;
             table.querySelector('thead').innerHTML = head;
             
-            // Filtra atleti per categoria
+            // BODY
             const cats = tipo === 'cuccioli' ? CAT_CUCCIOLI : 
                         (tipo === 'piccoli' ? CAT_PICCOLI : CAT_GRANDI);
             
@@ -1169,34 +919,29 @@
                 (a.archiviato === false || a.archiviato === null)
             );
             
-            // Conta presenze mese
-            let presenzeMese = 0;
-            
-            // Corpo tabella
             let body = "";
             filtrati.forEach(a => {
-                body += `<tr data-atleta-id="${a.id}"><td class="sticky-col" title="${a.categoria}">${a.nome.toUpperCase()}</td>`;
+                body += `<tr><td class="sticky-col" title="${a.categoria}">${a.nome.toUpperCase()}</td>`;
                 let totMese = 0;
                 
                 for(let i = 1; i <= giorniMese; i++) {
                     const dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
                     const p = presenzeCache.find(x => x.atleta_id === a.id && x.data === dStr);
                     
+                    // Controlla se c'è un numero
                     const hasNumber = p && p.stato && p.stato.includes('numero:');
                     const numberValue = hasNumber ? p.stato.split(':')[1] : '';
                     const isGreen = p && (p.stato === 'partecipa' || hasNumber);
                     
-                    if(isGreen) {
-                        totMese++;
-                        presenzeMese++;
-                    }
+                    if(isGreen) totMese++;
                     
+                    // Long press attributes se input numerico attivo
                     const longPressAttrs = numericInputAttivo ? 
                         `onmousedown="startLongPress(this, ${a.id}, '${dStr}')" 
-                         onmouseup="endLongPress()" 
+                         onmouseup="endLongPress(this, ${a.id}, '${dStr}')" 
                          onmouseleave="cancelLongPress()"
                          ontouchstart="startLongPress(this, ${a.id}, '${dStr}')" 
-                         ontouchend="endLongPress()" 
+                         ontouchend="endLongPress(this, ${a.id}, '${dStr}')" 
                          ontouchcancel="cancelLongPress()"` : '';
                     
                     body += `<td class="day-cell ${isGreen?'p-partecipa':''} ${dStr===oggiStr?'today-cell':''}" 
@@ -1210,25 +955,24 @@
             });
             
             table.querySelector('tbody').innerHTML = body;
-            
-            if (tipo === 'cuccioli') {
-                console.log(`📅 Nel mese di ${nomiMesi[mese]} ci sono ${presenzeMese} presenze visualizzate`);
-            }
         });
     }
 
-    // =================== GESTIONE CLICK E LONG PRESS ===================
+    // =================== INPUT NUMERICO ===================
     
     function toggleNumericInput() {
         numericInputAttivo = !numericInputAttivo;
         const btn = document.getElementById('btn-numeric-input');
+        const status = document.getElementById('status-auto');
         
         if (numericInputAttivo) {
             btn.innerHTML = "🔢 NUM ON";
             btn.classList.add('attivo');
+            status.innerText = "✅ Input numerico ATTIVATO - Long press per numeri";
         } else {
             btn.innerHTML = "🔢 NUM OFF";
             btn.classList.remove('attivo');
+            status.innerText = "⏸️ Input numerico DISATTIVATO";
         }
         
         renderTabella();
@@ -1249,6 +993,8 @@
             }
         }
     }
+    
+    // =================== GESTIONE LONG PRESS ===================
     
     function startLongPress(el, aId, data) {
         if (!numericInputAttivo) return;
@@ -1287,112 +1033,51 @@
         toggleCellState(el, aId, data);
     }
     
-    // =================== FUNZIONE CON DEBUG AVANZATO ===================
     async function toggleCellState(el, aId, data) {
-        ultimoAggiornamentoManuale = Date.now();
+        const currentText = el.innerText.trim();
+        const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
         
-        console.log('========== DEBUG CLICK ==========');
-        console.log('📌 ID Atleta cliccato:', aId);
-        console.log('📅 Data:', data);
-        
-        // Trova l'atleta nella cache
-        const atletaInCache = atletiCache.find(a => a.id === aId);
-        console.log('👤 Atleta in cache:', atletaInCache ? atletaInCache.nome : 'NON TROVATO');
-        
-        if (!atletaInCache) {
-            console.error('❌ Atleta non trovato in cache!');
-            document.getElementById('status-auto').innerText = "❌ Errore: Atleta non in cache";
-            return;
+        // Se c'è già un numero, cancella tutto
+        if (p && p.stato && p.stato.includes('numero:')) {
+            await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
+            el.classList.remove('p-partecipa');
+            el.innerText = '';
+        } 
+        // Se è già presente (✔), rimuovi
+        else if (p && p.stato === 'partecipa') {
+            await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
+            el.classList.remove('p-partecipa');
+            el.innerText = '';
+        } 
+        // Altrimenti aggiungi presenza
+        else {
+            await supabaseClient.from('presenze').upsert({ 
+                atleta_id: aId, 
+                data: data, 
+                stato: 'partecipa' 
+            }, { onConflict: 'atleta_id, data' });
+            el.classList.add('p-partecipa');
+            el.innerText = '✔';
         }
         
-        try {
-            // Verifica direttamente nel database
-            const { data: atletaDB, error: dbError } = await supabaseClient
-                .from('atleti')
-                .select('id, nome')
-                .eq('id', aId);
-            
-            console.log('🔍 Ricerca atleta nel database:', atletaDB);
-            
-            if (dbError) {
-                console.error('❌ Errore query database:', dbError);
-            }
-            
-            if (!atletaDB || atletaDB.length === 0) {
-                console.error('❌ Atleta NON TROVATO nel database!');
-                console.log('📊 Atleti in cache:', atletiCache.map(a => ({ id: a.id, nome: a.nome })));
-                document.getElementById('status-auto').innerText = `❌ Atleta ID ${aId} non esiste nel database`;
-                return;
-            }
-            
-            console.log('✅ Atleta trovato nel database:', atletaDB[0]);
-            
-            const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
-            console.log('📝 Presenza esistente:', p || 'nessuna');
-            
-            let result;
-            
-            if (p && p.stato && p.stato.includes('numero:')) {
-                console.log('🗑️ Rimozione numero');
-                result = await supabaseClient
-                    .from('presenze')
-                    .delete()
-                    .eq('atleta_id', aId)
-                    .eq('data', data);
-            } 
-            else if (p && p.stato === 'partecipa') {
-                console.log('🗑️ Rimozione presenza');
-                result = await supabaseClient
-                    .from('presenze')
-                    .delete()
-                    .eq('atleta_id', aId)
-                    .eq('data', data);
-            } 
-            else {
-                console.log('➕ Aggiunta presenza');
-                result = await supabaseClient
-                    .from('presenze')
-                    .upsert({ 
-                        atleta_id: aId, 
-                        data: data, 
-                        stato: 'partecipa' 
-                    }, { 
-                        onConflict: 'atleta_id, data'
-                    });
-            }
-            
-            console.log('📦 Risposta Supabase:', result);
-            
-            if (result.error) {
-                console.error('❌ ERRORE:', result.error);
-                document.getElementById('status-auto').innerText = `❌ Errore: ${result.error.message}`;
-                return;
-            }
-            
-            // Aggiorna UI
-            if (p) {
-                el.classList.remove('p-partecipa');
-                el.innerText = '';
-                const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-                if (idx > -1) presenzeCache.splice(idx, 1);
+        // Aggiorna cache locale
+        const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
+        if (el.classList.contains('p-partecipa')) {
+            const stato = currentText && !['✔', ''].includes(currentText) ? `numero:${currentText}` : 'partecipa';
+            if (idx > -1) {
+                presenzeCache[idx].stato = stato;
             } else {
-                el.classList.add('p-partecipa');
-                el.innerText = '✔';
-                presenzeCache.push({ atleta_id: aId, data: data, stato: 'partecipa' });
+                presenzeCache.push({ atleta_id: aId, data: data, stato: stato });
             }
-            
-            const row = el.closest('tr');
-            if (row) aggiornaTotaleRiga(row);
-            
-            document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze - ${atletiCache.length} atleti`;
-            
-            if (backupAutomaticoAttivo) {
-                avviaTimerBackup();
-            }
-            
-        } catch (error) {
-            console.error('❌ ECCEZIONE:', error);
-            document.getElementById('status-auto').innerText = "❌ Errore: " + error.message;
+        } else if (idx > -1) {
+            presenzeCache.splice(idx, 1);
+        }
+        
+        updateTotalCell(el);
+        
+        // Backup automatico
+        if (backupAutomaticoAttivo) {
+            avviaTimerBackup();
         }
     }
     
@@ -1429,47 +1114,26 @@
         if (currentCellData && numberValue !== '') {
             const { el, aId, data } = currentCellData;
             
-            ultimoAggiornamentoManuale = Date.now();
+            await supabaseClient.from('presenze').upsert({ 
+                atleta_id: aId, 
+                data: data, 
+                stato: `numero:${numberValue}`
+            }, { onConflict: 'atleta_id, data' });
             
-            try {
-                console.log('➕ Aggiunta numero per', aId, data, numberValue);
-                
-                const result = await supabaseClient
-                    .from('presenze')
-                    .upsert({ 
-                        atleta_id: aId, 
-                        data: data, 
-                        stato: `numero:${numberValue}`
-                    }, { 
-                        onConflict: 'atleta_id, data'
-                    });
-                
-                if (result.error) {
-                    console.error('❌ ERRORE:', result.error);
-                    document.getElementById('status-auto').innerText = `❌ Errore: ${result.error.message}`;
-                } else {
-                    el.classList.add('p-partecipa');
-                    el.innerText = numberValue;
-                    
-                    const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
-                    if (idx >= 0) {
-                        presenzeCache[idx] = { atleta_id: aId, data: data, stato: `numero:${numberValue}` };
-                    } else {
-                        presenzeCache.push({ atleta_id: aId, data: data, stato: `numero:${numberValue}` });
-                    }
-                    
-                    const row = el.closest('tr');
-                    if (row) aggiornaTotaleRiga(row);
-                    
-                    document.getElementById('status-auto').innerHTML = `✅ ${presenzeCache.length} presenze - ${atletiCache.length} atleti`;
-                    
-                    if (backupAutomaticoAttivo) {
-                        avviaTimerBackup();
-                    }
-                }
-            } catch (error) {
-                console.error('❌ ECCEZIONE:', error);
-                document.getElementById('status-auto').innerText = "❌ Errore: " + error.message;
+            el.classList.add('p-partecipa');
+            el.innerText = numberValue;
+            
+            const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
+            if (idx > -1) {
+                presenzeCache[idx].stato = `numero:${numberValue}`;
+            } else {
+                presenzeCache.push({ atleta_id: aId, data: data, stato: `numero:${numberValue}` });
+            }
+            
+            updateTotalCell(el);
+            
+            if (backupAutomaticoAttivo) {
+                avviaTimerBackup();
             }
         }
         
@@ -1477,75 +1141,22 @@
         currentCellData = null;
     }
     
-    // =================== TEST SCRITTURA ===================
-    
-    async function testScrittura() {
-        try {
-            if (atletiCache.length === 0) {
-                alert('Nessun atleta trovato!');
-                return;
-            }
-            
-            const atletaTest = atletiCache[0];
-            const oggi = new Date().toISOString().split('T')[0];
-            
-            console.log('🧪 Test con atleta:', atletaTest);
-            
-            const result = await supabaseClient
-                .from('presenze')
-                .upsert({ 
-                    atleta_id: atletaTest.id, 
-                    data: oggi, 
-                    stato: 'test' 
-                }, { 
-                    onConflict: 'atleta_id, data'
-                });
-            
-            if (result.error) {
-                alert(`❌ ERRORE TEST: ${result.error.message}`);
-            } else {
-                alert(`✅ TEST RIUSCITO con atleta ${atletaTest.nome} (ID: ${atletaTest.id})`);
-                
-                // Pulisci il test
-                await supabaseClient
-                    .from('presenze')
-                    .delete()
-                    .eq('atleta_id', atletaTest.id)
-                    .eq('data', oggi);
-            }
-        } catch (error) {
-            alert('Errore test: ' + error.message);
-        }
-    }
-    
-    // =================== STATISTICHE ===================
-    
-    function mostraStatistiche() {
-        if (presenzeCache.length === 0) {
-            alert("Nessuna presenza in cache");
-            return;
-        }
+    function updateTotalCell(el) {
+        const row = el.parentElement;
+        if (!row) return;
         
-        const stats = {};
-        presenzeCache.forEach(p => {
-            const annoMese = p.data.substring(0, 7);
-            if (!stats[annoMese]) stats[annoMese] = 0;
-            stats[annoMese]++;
+        const totCell = row.querySelector('.tot-cell');
+        if (!totCell) return;
+        
+        let total = 0;
+        const dayCells = row.querySelectorAll('.day-cell');
+        dayCells.forEach(cell => {
+            if (cell.classList.contains('p-partecipa')) {
+                total++;
+            }
         });
         
-        let msg = `📊 TOTALE PRESENZE: ${presenzeCache.length}\n`;
-        msg += `👤 TOTALE ATLETI: ${atletiCache.length}\n\n`;
-        msg += "DISTRIBUZIONE PER MESE:\n";
-        
-        Object.keys(stats).sort().forEach(annoMese => {
-            const [anno, mese] = annoMese.split('-');
-            const nomeMese = nomiMesi[parseInt(mese) - 1];
-            msg += `📅 ${nomeMese} ${anno}: ${stats[annoMese]} presenze\n`;
-        });
-        
-        msg += `\n📍 MESE CORRENTE: ${nomiMesi[dataAttuale.getMonth()]} ${dataAttuale.getFullYear()}`;
-        
-        alert(msg);
+        totCell.innerText = total;
     }
     
     // =================== BACKUP AUTOMATICO ===================
@@ -1576,10 +1187,23 @@
             btn.innerHTML = "▶️ AUTO ON";
             btn.classList.add('attivo');
             status.innerText = "✅ Backup automatico ATTIVATO";
+            
+            // Reset timer se attivo
+            if (secondiMancanti < 10 && timerBackup) {
+                clearInterval(timerBackup);
+                secondiMancanti = 10;
+                status.innerText = "Sistema Pronto";
+            }
         } else {
             btn.innerHTML = "⏸️ AUTO OFF";
             btn.classList.remove('attivo');
             status.innerText = "⏸️ Backup automatico DISATTIVATO";
+            
+            // Ferma timer
+            if (timerBackup) {
+                clearInterval(timerBackup);
+                timerBackup = null;
+            }
         }
         
         localStorage.setItem('backup_auto_attivo', backupAutomaticoAttivo);
@@ -1615,13 +1239,16 @@
                 if (m > 0) doc.addPage();
                 const g = new Date(annoC, m + 1, 0).getDate();
                 
+                // Header tabella
                 const header = [["ATLETA", ...Array.from({length: g}, (_, i) => 
                     `${nomiGiorni[new Date(annoC, m, i + 1).getDay()]}\n${i + 1}`), "TOT"]];
                 
+                // Titolo pagina
                 doc.setFontSize(16); 
                 doc.setTextColor(52, 58, 64); 
                 doc.text(`REGISTRO PRESENZE - ${nomiMesi[m].toUpperCase()} ${annoC}`, 14, 12);
                 
+                // Stili colonne
                 const colStyles = { 
                     0: { halign: 'left', cellWidth: 35, fontStyle: 'bold' } 
                 };
@@ -1629,6 +1256,7 @@
                 for (let i = 1; i <= g; i++) colStyles[i] = { cellWidth: larghezzaGiorno };
                 colStyles[g + 1] = { cellWidth: 10, fillColor: [248, 249, 250], fontStyle: 'bold' };
 
+                // Config PDF
                 const config = { 
                     head: header, 
                     startY: 20, 
@@ -1651,12 +1279,18 @@
                     didParseCell: function(data) { 
                         if (data.section === 'body' && data.column.index > 0 && 
                             data.column.index <= g && data.cell.text[0] !== '') { 
-                            data.cell.styles.fillColor = [46, 204, 113];
-                            data.cell.styles.textColor = [255, 255, 255];
+                            if (data.cell.text[0] !== '✔' && !isNaN(parseInt(data.cell.text[0]))) {
+                                data.cell.styles.fillColor = [46, 204, 113];
+                                data.cell.styles.textColor = [255, 255, 255];
+                            } else if (data.cell.text[0] === '✔') {
+                                data.cell.styles.fillColor = [46, 204, 113];
+                                data.cell.styles.textColor = [255, 255, 255];
+                            }
                         } 
                     } 
                 };
                 
+                // Aggiungi tabelle per categoria
                 doc.autoTable({...config, body: preparaDatiPDF(CAT_CUCCIOLI, annoC, m, g)});
                 doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g), 
                               startY: doc.lastAutoTable.finalY + 10});
@@ -1664,9 +1298,11 @@
                               startY: doc.lastAutoTable.finalY + 10});
             }
             
+            // Converti in base64
             const b64 = doc.output('datauristring').split(',')[1];
             status.innerText = "☁️ SALVATAGGIO SU DRIVE...";
             
+            // Invia a Google Drive
             const resp = await fetch(WEB_APP_DRIVE_URL, { 
                 method: 'POST', 
                 body: JSON.stringify({ 
@@ -1693,7 +1329,19 @@
         return atletiCache.filter(a => {
             const inCat = cats.includes((a.categoria || "").trim().toUpperCase());
             if (!inCat) return false;
-            return (a.archiviato === false || a.archiviato === null);
+            
+            // Mostra anche atleti archiviati se hanno presenze
+            if (a.archiviato === false || a.archiviato === null) return true;
+            
+            const dInizio = `${anno}-${String(mese+1).padStart(2,'0')}-01`;
+            const dFine = `${anno}-${String(mese+1).padStart(2,'0')}-${giorni}`;
+            
+            return presenzeCache.some(p => 
+                p.atleta_id === a.id && 
+                p.data >= dInizio && 
+                p.data <= dFine && 
+                (p.stato === 'partecipa' || p.stato.includes('numero:'))
+            );
         }).map(a => {
             let riga = [a.nome.toUpperCase()], tot = 0;
             
@@ -1729,7 +1377,7 @@
         
         const target = active.querySelector('.today-cell'); 
         const wrapper = active.querySelector('.table-wrapper');
-        const stickyWidth = active.querySelector('.sticky-col')?.offsetWidth || 130; 
+        const stickyWidth = active.querySelector('.sticky-col').offsetWidth; 
         
         if (target && wrapper) {
             wrapper.scrollTo({ 
@@ -1743,6 +1391,7 @@
         sessionStorage.setItem('last_sez', s); 
         document.getElementById('main-menu').style.display = 'none';
         
+        // Mostra sezione selezionata
         document.getElementById('sez-cuccioli').className = 
             (s === 'cuccioli') ? 'section-active' : 'section-container';
         document.getElementById('sez-piccoli').className = 
@@ -1750,6 +1399,7 @@
         document.getElementById('sez-grandi').className = 
             (s === 'grandi') ? 'section-active' : 'section-container';
         
+        // Scroll a oggi dopo 300ms
         setTimeout(scrollOggi, 300);
     }
     
@@ -1759,19 +1409,14 @@
     }
     
     function cambiaData() { 
-        const mese = document.getElementById('select-mese').value;
-        const anno = document.getElementById('select-anno').value;
-        localStorage.setItem('p_mese', mese); 
-        localStorage.setItem('p_anno', anno); 
-        dataAttuale = new Date(parseInt(anno), parseInt(mese), 1);
-        renderTabella();
-        setTimeout(scrollOggi, 300);
+        localStorage.setItem('p_mese', document.getElementById('select-mese').value); 
+        localStorage.setItem('p_anno', document.getElementById('select-anno').value); 
+        location.reload(); 
     }
     
     function toggleAdmin() { 
         const ov = document.getElementById('admin-overlay'); 
         ov.style.display = (ov.style.display === 'flex') ? 'none' : 'flex'; 
-        if (ov.style.display === 'flex') renderAdminList();
     }
     
     function apriFileDrive() { 
@@ -1796,15 +1441,18 @@
         }
         
         document.getElementById('status-auto').innerText = "⏳ Salvataggio atleta...";
+        let res;
         
         try {
             if(id) {
-                await supabaseClient
+                // Modifica atleta esistente
+                res = await supabaseClient
                     .from('atleti')
                     .update({ nome, categoria: cat })
                     .eq('id', id);
             } else {
-                await supabaseClient
+                // Nuovo atleta
+                res = await supabaseClient
                     .from('atleti')
                     .insert([{ 
                         nome, 
@@ -1814,8 +1462,10 @@
                     }]);
             }
             
+            if (res.error) throw res.error;
+            
             resetForm(); 
-            await caricaTuttiIDati();
+            await caricaDati();
             document.getElementById('status-auto').innerText = "✅ Atleta salvato";
             
         } catch(error) { 
@@ -1858,7 +1508,7 @@
                 </div>
                 <div style="display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end;">
                     <button style="background:#4285F4; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;" 
-                        onclick='preparaModifica(${a.id}, "${a.nome.replace(/"/g, '\\"')}", "${a.categoria}")'>
+                        onclick="preparaModifica(${a.id}, '${a.nome.replace(/'/g, "\\'")}', '${a.categoria}')">
                         MODIFICA
                     </button>
                     <button style="background:${a.archiviato ? '#34a853' : '#f39c12'}; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;" 
@@ -1881,7 +1531,7 @@
                 .update({ archiviato: stato })
                 .eq('id', id);
                 
-            await caricaTuttiIDati();
+            await caricaDati();
             document.getElementById('status-auto').innerText = 
                 stato ? "✅ Atleta archiviato" : "✅ Atleta ripristinato";
                 
@@ -1896,9 +1546,8 @@
         
         if(confirm(`ATTENZIONE: Eliminando "${atleta.nome}" sparirà da TUTTI i PDF futuri e passati.\n\nSei sicuro di voler procedere?`)) { 
             try {
-                await supabaseClient.from('presenze').delete().eq('atleta_id', id);
                 await supabaseClient.from('atleti').delete().eq('id', id); 
-                await caricaTuttiIDati();
+                await caricaDati();
                 document.getElementById('status-auto').innerText = "✅ Atleta eliminato";
             } catch(error) {
                 alert("Errore durante l'eliminazione: " + error.message);
