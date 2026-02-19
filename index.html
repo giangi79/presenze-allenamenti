@@ -691,12 +691,10 @@
         <div id="sez-cuccioli" class="section-container">
             <div class="table-container">
                 <div class="table-wrapper" id="wrapper-cuccioli" onscroll="handleVirtualScroll('cuccioli')">
-                    <div class="virtual-scroll-sentinel" id="sentinel-top-cuccioli"></div>
                     <table id="tab-cuccioli">
-                        <thead></thead>
+                        <thead id="thead-cuccioli"></thead>
                         <tbody id="tbody-cuccioli"></tbody>
                     </table>
-                    <div class="virtual-scroll-sentinel" id="sentinel-bottom-cuccioli"></div>
                 </div>
                 <div style="text-align: center; padding: 15px; color: #666; font-size: 14px;">
                     <span id="virtual-info-cuccioli"></span>
@@ -707,12 +705,10 @@
         <div id="sez-piccoli" class="section-container">
             <div class="table-container">
                 <div class="table-wrapper" id="wrapper-piccoli" onscroll="handleVirtualScroll('piccoli')">
-                    <div class="virtual-scroll-sentinel" id="sentinel-top-piccoli"></div>
                     <table id="tab-piccoli">
-                        <thead></thead>
+                        <thead id="thead-piccoli"></thead>
                         <tbody id="tbody-piccoli"></tbody>
                     </table>
-                    <div class="virtual-scroll-sentinel" id="sentinel-bottom-piccoli"></div>
                 </div>
                 <div style="text-align: center; padding: 15px; color: #666; font-size: 14px;">
                     <span id="virtual-info-piccoli"></span>
@@ -723,12 +719,10 @@
         <div id="sez-grandi" class="section-container">
             <div class="table-container">
                 <div class="table-wrapper" id="wrapper-grandi" onscroll="handleVirtualScroll('grandi')">
-                    <div class="virtual-scroll-sentinel" id="sentinel-top-grandi"></div>
                     <table id="tab-grandi">
-                        <thead></thead>
+                        <thead id="thead-grandi"></thead>
                         <tbody id="tbody-grandi"></tbody>
                     </table>
-                    <div class="virtual-scroll-sentinel" id="sentinel-bottom-grandi"></div>
                 </div>
                 <div style="text-align: center; padding: 15px; color: #666; font-size: 14px;">
                     <span id="virtual-info-grandi"></span>
@@ -967,54 +961,33 @@
             return presenzePerMese[key] || [];
         }
 
-        // =================== VIRTUAL SCROLLING ===================
+        // =================== FUNZIONI DI RENDERING ===================
 
-        function initVirtualScroll(sezione) {
-            const wrapper = document.getElementById(`wrapper-${sezione}`);
-            if (!wrapper) return;
+        function renderHeader(sezione) {
+            const anno = dataAttuale.getFullYear();
+            const mese = dataAttuale.getMonth();
+            const giorniMese = new Date(anno, mese + 1, 0).getDate();
             
-            virtualScrollStates[sezione].container = wrapper;
-            virtualScrollStates[sezione].rowHeight = 55; // Altezza riga in px
+            const thead = document.getElementById(`thead-${sezione}`);
+            if (!thead) return;
             
-            // Calcola quante righe visibili
-            const wrapperHeight = wrapper.clientHeight;
-            virtualScrollStates[sezione].visibleRows = Math.ceil(wrapperHeight / 55) + 5; // +5 per buffer
-            
-            // Aggiungi observer per rilevare cambiamenti di altezza
-            const resizeObserver = new ResizeObserver(() => {
-                const newHeight = wrapper.clientHeight;
-                virtualScrollStates[sezione].visibleRows = Math.ceil(newHeight / 55) + 5;
-                renderVirtualScroll(sezione);
-            });
-            resizeObserver.observe(wrapper);
+            let head = `<tr><th class="sticky-col">ATLETA</th>`;
+            for(let i = 1; i <= giorniMese; i++) {
+                const giorno = new Date(anno, mese, i);
+                head += `<th>${nomiGiorni[giorno.getDay()]}<br>${i}</th>`;
+            }
+            head += `<th>TOT</th></tr>`;
+            thead.innerHTML = head;
         }
 
-        function handleVirtualScroll(sezione) {
-            if (!virtualScrollStates[sezione].container) return;
+        function getAtletiFiltrati(sezione) {
+            const cats = sezione === 'cuccioli' ? CAT_CUCCIOLI : 
+                        (sezione === 'piccoli' ? CAT_PICCOLI : CAT_GRANDI);
             
-            const wrapper = virtualScrollStates[sezione].container;
-            const scrollTop = wrapper.scrollTop;
-            const rowHeight = virtualScrollStates[sezione].rowHeight;
-            const totalRows = virtualScrollStates[sezione].totalRows;
-            
-            // Calcola nuove righe visibili
-            const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - 5);
-            const endIndex = Math.min(totalRows, Math.ceil((scrollTop + wrapper.clientHeight) / rowHeight) + 5);
-            
-            if (startIndex !== virtualScrollStates[sezione].startIndex || 
-                endIndex !== virtualScrollStates[sezione].endIndex) {
-                virtualScrollStates[sezione].startIndex = startIndex;
-                virtualScrollStates[sezione].endIndex = endIndex;
-                renderVirtualScroll(sezione);
-            }
-            
-            // Carica mesi vicini quando ci si avvicina ai bordi
-            const visibleMiddle = Math.floor((startIndex + endIndex) / 2);
-            const atletiFiltrati = getAtletiFiltrati(sezione);
-            if (atletiFiltrati[visibleMiddle]) {
-                const atleta = atletiFiltrati[visibleMiddle];
-                // Qui potresti implementare il caricamento di mesi aggiuntivi se necessario
-            }
+            return atletiCache.filter(a => 
+                cats.includes((a.categoria || "").trim().toUpperCase()) && 
+                (a.archiviato === false || a.archiviato === null)
+            );
         }
 
         function renderVirtualScroll(sezione) {
@@ -1022,15 +995,36 @@
             const infoSpan = document.getElementById(`virtual-info-${sezione}`);
             if (!tbody) return;
             
+            // Prima renderizza l'header se non esiste
+            renderHeader(sezione);
+            
             const atletiFiltrati = getAtletiFiltrati(sezione);
             const totalRows = atletiFiltrati.length;
             virtualScrollStates[sezione].totalRows = totalRows;
             
-            const { startIndex, endIndex, rowHeight } = virtualScrollStates[sezione];
+            // Se non ci sono atleti, mostra un messaggio
+            if (totalRows === 0) {
+                tbody.innerHTML = `<tr><td colspan="100" style="text-align: center; padding: 50px; color: #666; font-size: 16px;">
+                    Nessun atleta in questa categoria
+                </td></tr>`;
+                if (infoSpan) infoSpan.innerHTML = '0 atleti';
+                return;
+            }
             
-            // Calcola padding top/bottom per mantenere lo scroll corretto
-            const paddingTop = startIndex * rowHeight;
-            const paddingBottom = (totalRows - endIndex) * rowHeight;
+            const wrapper = document.getElementById(`wrapper-${sezione}`);
+            if (wrapper && virtualScrollStates[sezione].rowHeight) {
+                const scrollTop = wrapper.scrollTop;
+                const wrapperHeight = wrapper.clientHeight;
+                
+                // Calcola nuove righe visibili
+                const startIndex = Math.max(0, Math.floor(scrollTop / virtualScrollStates[sezione].rowHeight) - 5);
+                const endIndex = Math.min(totalRows, Math.ceil((scrollTop + wrapperHeight) / virtualScrollStates[sezione].rowHeight) + 5);
+                
+                virtualScrollStates[sezione].startIndex = startIndex;
+                virtualScrollStates[sezione].endIndex = endIndex;
+            }
+            
+            const { startIndex, endIndex, rowHeight } = virtualScrollStates[sezione];
             
             // Prepara HTML solo per le righe visibili
             let html = '';
@@ -1074,9 +1068,36 @@
                 html += `<td class="tot-cell">${totMese}</td></tr>`;
             }
             
-            // Applica padding e contenuto
+            // Applica contenuto
             tbody.innerHTML = html;
+            
+            // Aggiungi padding superiore e inferiore per mantenere lo scroll
+            const paddingTop = startIndex * rowHeight;
+            const paddingBottom = (totalRows - endIndex) * rowHeight;
+            
             tbody.style.display = 'table-row-group';
+            
+            // Crea un div per il padding se non esiste
+            let paddingTopEl = document.getElementById(`padding-top-${sezione}`);
+            let paddingBottomEl = document.getElementById(`padding-bottom-${sezione}`);
+            
+            if (!paddingTopEl) {
+                paddingTopEl = document.createElement('tr');
+                paddingTopEl.id = `padding-top-${sezione}`;
+                paddingTopEl.style.height = '0px';
+                paddingTopEl.style.visibility = 'hidden';
+                tbody.prepend(paddingTopEl);
+            }
+            paddingTopEl.style.height = paddingTop + 'px';
+            
+            if (!paddingBottomEl) {
+                paddingBottomEl = document.createElement('tr');
+                paddingBottomEl.id = `padding-bottom-${sezione}`;
+                paddingBottomEl.style.height = '0px';
+                paddingBottomEl.style.visibility = 'hidden';
+                tbody.appendChild(paddingBottomEl);
+            }
+            paddingBottomEl.style.height = paddingBottom + 'px';
             
             // Aggiorna info virtual scroll
             if (infoSpan) {
@@ -1087,14 +1108,51 @@
             aggiornaStatistiche();
         }
 
-        function getAtletiFiltrati(sezione) {
-            const cats = sezione === 'cuccioli' ? CAT_CUCCIOLI : 
-                        (sezione === 'piccoli' ? CAT_PICCOLI : CAT_GRANDI);
+        // =================== VIRTUAL SCROLLING ===================
+
+        function initVirtualScroll(sezione) {
+            const wrapper = document.getElementById(`wrapper-${sezione}`);
+            if (!wrapper) return;
             
-            return atletiCache.filter(a => 
-                cats.includes((a.categoria || "").trim().toUpperCase()) && 
-                (a.archiviato === false || a.archiviato === null)
-            );
+            virtualScrollStates[sezione].container = wrapper;
+            virtualScrollStates[sezione].rowHeight = 55; // Altezza riga in px
+            
+            // Calcola quante righe visibili
+            const wrapperHeight = wrapper.clientHeight;
+            virtualScrollStates[sezione].visibleRows = Math.ceil(wrapperHeight / 55) + 5; // +5 per buffer
+            
+            // Forza un primo render
+            setTimeout(() => {
+                renderVirtualScroll(sezione);
+            }, 100);
+            
+            // Aggiungi observer per rilevare cambiamenti di altezza
+            const resizeObserver = new ResizeObserver(() => {
+                const newHeight = wrapper.clientHeight;
+                virtualScrollStates[sezione].visibleRows = Math.ceil(newHeight / 55) + 5;
+                renderVirtualScroll(sezione);
+            });
+            resizeObserver.observe(wrapper);
+        }
+
+        function handleVirtualScroll(sezione) {
+            if (!virtualScrollStates[sezione].container) return;
+            
+            const wrapper = virtualScrollStates[sezione].container;
+            const scrollTop = wrapper.scrollTop;
+            const rowHeight = virtualScrollStates[sezione].rowHeight;
+            const totalRows = virtualScrollStates[sezione].totalRows;
+            
+            // Calcola nuove righe visibili
+            const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - 5);
+            const endIndex = Math.min(totalRows, Math.ceil((scrollTop + wrapper.clientHeight) / rowHeight) + 5);
+            
+            if (startIndex !== virtualScrollStates[sezione].startIndex || 
+                endIndex !== virtualScrollStates[sezione].endIndex) {
+                virtualScrollStates[sezione].startIndex = startIndex;
+                virtualScrollStates[sezione].endIndex = endIndex;
+                renderVirtualScroll(sezione);
+            }
         }
 
         // =================== FUNZIONI PRINCIPALI ===================
@@ -1113,12 +1171,19 @@
             
             // Inizializza virtual scroll per ogni sezione
             setTimeout(() => {
-                ['cuccioli', 'piccoli', 'grandi'].forEach(sez => initVirtualScroll(sez));
+                ['cuccioli', 'piccoli', 'grandi'].forEach(sez => {
+                    initVirtualScroll(sez);
+                });
             }, 500);
             
             // Ripristina sezione precedente
             const lastSez = sessionStorage.getItem('last_sez');
-            if (lastSez) mostraSezione(lastSez);
+            if (lastSez) {
+                mostraSezione(lastSez);
+            } else {
+                // Mostra il menu principale
+                document.getElementById('main-menu').style.display = 'flex';
+            }
             
             // Carica preferenze
             caricaStatoNumericInput();
@@ -1171,7 +1236,8 @@
                             
                             // Se il mese è quello corrente, aggiorna la vista
                             if (anno === dataAttuale.getFullYear() && mese === dataAttuale.getMonth()) {
-                                renderVirtualScroll(getSezioneCorrente());
+                                const sezione = getSezioneCorrente();
+                                renderVirtualScroll(sezione);
                             }
                         }
                     })
@@ -1181,7 +1247,8 @@
                         const { data: atleti } = await supabaseClient.from('atleti').select('*').order('nome');
                         atletiCache = atleti || []; 
                         renderAdminList();
-                        renderVirtualScroll(getSezioneCorrente());
+                        const sezione = getSezioneCorrente();
+                        renderVirtualScroll(sezione);
                     })
                 .subscribe();
         }
@@ -1190,7 +1257,7 @@
             if (document.getElementById('sez-cuccioli').classList.contains('section-active')) return 'cuccioli';
             if (document.getElementById('sez-piccoli').classList.contains('section-active')) return 'piccoli';
             if (document.getElementById('sez-grandi').classList.contains('section-active')) return 'grandi';
-            return 'cuccioli';
+            return null;
         }
 
         function popolaSelettori(m, a) {
@@ -1230,7 +1297,8 @@
                 document.getElementById('status-auto').innerText = "⏸️ Input numerico DISATTIVATO";
             }
             
-            renderVirtualScroll(getSezioneCorrente());
+            const sezione = getSezioneCorrente();
+            if (sezione) renderVirtualScroll(sezione);
             localStorage.setItem('numeric_input_attivo', numericInputAttivo);
         }
 
@@ -1490,13 +1558,22 @@
             
             // Presenze oggi
             const oggiStr = new Date().toLocaleDateString('en-CA');
-            const presenzeOggi = Object.values(presenzePerMese).flat().filter(p => p.data === oggiStr).length;
+            let presenzeOggi = 0;
+            Object.values(presenzePerMese).forEach(mesePresenze => {
+                presenzeOggi += mesePresenze.filter(p => p.data === oggiStr).length;
+            });
             document.getElementById('stat-presenze-oggi').innerText = presenzeOggi;
             
             // Presenze mese corrente
             const presenzeMese = getPresenzeMese(anno, mese);
             document.getElementById('stat-presenze-mese').innerText = presenzeMese.length;
-            document.getElementById('total-presenze-anno').innerText = Object.values(presenzePerMese).flat().length;
+            
+            // Totale presenze anno
+            let totaleAnno = 0;
+            Object.values(presenzePerMese).forEach(mesePresenze => {
+                totaleAnno += mesePresenze.length;
+            });
+            document.getElementById('total-presenze-anno').innerText = totaleAnno;
             
             // Media presenze per giorno
             const giorniMese = new Date(anno, mese + 1, 0).getDate();
@@ -1554,7 +1631,8 @@
             document.getElementById('sez-grandi').className = 
                 (s === 'grandi') ? 'section-active' : 'section-container';
             
-            // Render virtual scroll
+            // Render header e virtual scroll
+            renderHeader(s);
             setTimeout(() => {
                 renderVirtualScroll(s);
                 scrollOggi();
@@ -1579,7 +1657,10 @@
             await caricaMesiVicini(nuovoAnno, nuovoMese, 1);
             
             const sezione = getSezioneCorrente();
-            renderVirtualScroll(sezione);
+            if (sezione) {
+                renderHeader(sezione);
+                renderVirtualScroll(sezione);
+            }
             document.getElementById('status-auto').innerText = "✅ Mese caricato";
             scrollOggi();
         }
@@ -1587,6 +1668,11 @@
         function toggleAdmin() { 
             const ov = document.getElementById('admin-overlay'); 
             ov.style.display = (ov.style.display === 'flex') ? 'none' : 'flex'; 
+            
+            // Aggiorna lista atleti quando si apre
+            if (ov.style.display === 'flex') {
+                renderAdminList();
+            }
         }
 
         function apriFileDrive() { 
@@ -1612,6 +1698,9 @@
                 for (let m = 0; m < 12; m++) {
                     if (m > 0) doc.addPage();
                     const g = new Date(annoC, m + 1, 0).getDate();
+                    
+                    // Assicurati che i dati del mese siano caricati
+                    await caricaMese(annoC, m);
                     
                     // Header tabella
                     const header = [["ATLETA", ...Array.from({length: g}, (_, i) => 
@@ -1783,6 +1872,13 @@
                 atletiCache = atleti || []; 
                 renderAdminList();
                 
+                // Aggiorna la vista corrente
+                const sezione = getSezioneCorrente();
+                if (sezione) {
+                    renderHeader(sezione);
+                    renderVirtualScroll(sezione);
+                }
+                
                 document.getElementById('status-auto').innerText = "✅ Atleta salvato";
                 
             } catch(error) { 
@@ -1852,6 +1948,13 @@
                 atletiCache = atleti || []; 
                 renderAdminList();
                 
+                // Aggiorna la vista corrente
+                const sezione = getSezioneCorrente();
+                if (sezione) {
+                    renderHeader(sezione);
+                    renderVirtualScroll(sezione);
+                }
+                
                 document.getElementById('status-auto').innerText = 
                     stato ? "✅ Atleta archiviato" : "✅ Atleta ripristinato";
                     
@@ -1870,6 +1973,14 @@
                     const { data: atleti } = await supabaseClient.from('atleti').select('*').order('nome');
                     atletiCache = atleti || []; 
                     renderAdminList();
+                    
+                    // Aggiorna la vista corrente
+                    const sezione = getSezioneCorrente();
+                    if (sezione) {
+                        renderHeader(sezione);
+                        renderVirtualScroll(sezione);
+                    }
+                    
                     document.getElementById('status-auto').innerText = "✅ Atleta eliminato";
                 } catch(error) {
                     alert("Errore durante l'eliminazione: " + error.message);
