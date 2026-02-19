@@ -30,6 +30,9 @@
     <!-- === META DESCRIPTION === -->
     <meta name="description" content="Registro digitale presenze atleti - Gruppo Sportivo 2050">
 
+    <!-- === SERVICE WORKER REGISTRATION (Spostato in fondo) === -->
+    <!-- Rimuovi lo script duplicato qui, lo mettiamo in fondo -->
+
     <!-- === LIBRERIE ESTERNE === -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -399,46 +402,6 @@
         .input-btn.cancel { background: #e74c3c; }
         .input-btn.clear { background: #f39c12; }
         
-        /* STILI PER LISTA ATLETI ADMIN */
-        .atleta-item { 
-            background: #f8f9fa; 
-            padding: 15px; 
-            margin-bottom: 10px; 
-            border-radius: 12px; 
-            border: 2px solid #e9ecef;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .atleta-item.archiviato {
-            opacity: 0.6;
-            background: #e9ecef;
-        }
-        
-        .atleta-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .atleta-name {
-            font-weight: 900;
-            font-size: 16px;
-            color: #343a40;
-        }
-        
-        .atleta-cat {
-            background: #007bff;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
         /* BANNER INSTALLAZIONE */
         #install-banner {
             position: fixed;
@@ -512,7 +475,7 @@
     <div class="header">
         <!-- LOGO con fallback SVG -->
         <img src="./logo.png" alt="Logo Registro Presenze" class="logo" 
-             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQzYTQwIiByeD0iMTAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+R1JVUFBPIDIwNTA8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9IjFlbSI+UkVHSVNUUk8gUFJFU0VOWkU8L3RleHQ+PC9zdmc+'">
+             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQzYTQwIiByeD0iMTAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj9sYXN0IGRheT8/bWlkZGxlIiBkeT0iLjNlbSI+R1JVUFBPIDIwNTA8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9IjFlbSI+UkVHSVNUUk8gUFJFU0VOWkU8L3RleHQ+PC9zdmc+'">
         
         <!-- CONTROLLI DATA -->
         <div class="controls-container">
@@ -679,6 +642,7 @@
 
     // =================== FUNZIONI INSTALLAZIONE PWA ===================
     
+    // Funzione per mostrare le istruzioni di installazione
     function showInstallInstructions() {
         let message = '';
         if (isIOS) {
@@ -703,14 +667,17 @@
         hideInstallBanner();
     }
     
+    // Funzione per mostrare il prompt di installazione
     function promptInstall() {
         if (!deferredPrompt) {
             showInstallInstructions();
             return;
         }
         
+        // Mostra il prompt di installazione
         deferredPrompt.prompt();
         
+        // Attendi la scelta dell'utente
         deferredPrompt.userChoice.then((choiceResult) => {
             console.log('Scelta utente:', choiceResult.outcome);
             
@@ -722,6 +689,7 @@
                 console.log('❌ Utente ha rifiutato l\'installazione');
             }
             
+            // Resetta deferredPrompt
             deferredPrompt = null;
         });
     }
@@ -733,6 +701,7 @@
     }
     
     function showInstallButton() {
+        // Non mostrare se già installata o utente ha chiuso
         if (isStandalone || localStorage.getItem('hideInstallBanner') === 'true') {
             return;
         }
@@ -743,29 +712,44 @@
         if (deferredPrompt && installBtn) {
             installBtn.style.display = 'flex';
             
+            // Nascondi dopo 60 secondi
             setTimeout(() => {
                 installBtn.style.display = 'none';
                 if (banner) banner.style.display = 'none';
             }, 60000);
         }
         
+        // Mostra banner per iOS/Android
         if ((isIOS || isAndroid) && banner && !isStandalone) {
             banner.style.display = 'block';
         }
     }
     
+    // Evento che si attiva quando il browser può mostrare il banner di installazione
     window.addEventListener('beforeinstallprompt', (e) => {
         console.log('🚀 beforeinstallprompt event catturato');
+        
+        // Previeni il comportamento predefinito
         e.preventDefault();
+        
+        // Salva l'evento per usarlo dopo
         deferredPrompt = e;
+        
+        // Mostra il pulsante di installazione
         showInstallButton();
     });
     
+    // Evento quando l'app viene installata
     window.addEventListener('appinstalled', () => {
         console.log('🎉 App installata con successo!');
+        
+        // Nascondi i pulsanti di installazione
         document.getElementById('install-button').style.display = 'none';
         document.getElementById('install-banner').style.display = 'none';
+        
         deferredPrompt = null;
+        
+        // Messaggio di conferma
         alert('🎉 App installata con successo! Ora puoi aprirla dalla schermata home.');
     });
     
@@ -777,6 +761,7 @@
                 .then((registration) => {
                     console.log('✅ Service Worker registrato:', registration.scope);
                     
+                    // Controlla se c'è un aggiornamento del Service Worker
                     registration.addEventListener('updatefound', () => {
                         const newWorker = registration.installing;
                         console.log('🔄 Nuova versione del Service Worker trovata');
@@ -784,6 +769,7 @@
                         newWorker.addEventListener('statechange', () => {
                             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                 console.log('🔄 Nuova versione disponibile! Ricarica per aggiornare.');
+                                // Opzionale: mostra un banner per chiedere all'utente di ricaricare
                             }
                         });
                     });
@@ -805,6 +791,7 @@
     async function inizializza() {
         console.log('🚀 Inizializzazione applicazione...');
         
+        // Carica data salvata
         const m = localStorage.getItem('p_mese') || dataAttuale.getMonth();
         const a = localStorage.getItem('p_anno') || dataAttuale.getFullYear();
         dataAttuale = new Date(a, m, 1);
@@ -813,12 +800,15 @@
         await caricaDati();
         sottoscriviRealtime();
         
+        // Ripristina sezione precedente
         const lastSez = sessionStorage.getItem('last_sez');
         if (lastSez) mostraSezione(lastSez);
         
+        // Carica preferenze
         caricaStatoNumericInput();
         caricaStatoBackupAuto();
         
+        // Mostra pulsante installazione
         setTimeout(showInstallButton, 3000);
         
         console.log('✅ Applicazione inizializzata');
@@ -851,10 +841,12 @@
         sm.innerHTML = ""; 
         sa.innerHTML = "";
         
+        // Mesi
         nomiMesi.forEach((nome, i) => {
             sm.add(new Option(nome, i));
         });
         
+        // Anni (2024-2050)
         for(let i = 2024; i <= 2050; i++) {
             sa.add(new Option(i, i));
         }
@@ -867,6 +859,7 @@
         try {
             document.getElementById('status-auto').innerText = "⏳ Caricamento dati...";
             
+            // Carica atleti
             const { data: atleti, error: errorAtleti } = await supabaseClient
                 .from('atleti')
                 .select('*')
@@ -875,6 +868,7 @@
             if (errorAtleti) throw errorAtleti;
             atletiCache = atleti || [];
             
+            // Carica presenze anno corrente
             const { data: presenze, error: errorPresenze } = await supabaseClient
                 .from('presenze')
                 .select('*')
@@ -884,8 +878,9 @@
             if (errorPresenze) throw errorPresenze;
             presenzeCache = presenze || [];
             
+            // Render
             renderTabella(); 
-            renderAdminList(); // <-- FUNZIONE MANCANTE AGGIUNTA
+            renderAdminList();
             
             document.getElementById('status-auto').innerText = "✅ Sistema Pronto";
             
@@ -895,51 +890,18 @@
         }
     }
 
-    // =================== FUNZIONE RENDER ADMIN LIST (AGGIUNTA) ===================
-    
-    function renderAdminList() {
-        const container = document.getElementById('lista-atleti-admin');
-        if (!container) return;
-        
-        if (atletiCache.length === 0) {
-            container.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">Nessun atleta registrato</div>';
-            return;
-        }
-        
-        container.innerHTML = atletiCache.map(a => `
-            <div class="atleta-item ${a.archiviato ? 'archiviato' : ''}">
-                <div class="atleta-info">
-                    <span class="atleta-name">${a.nome} ${a.archiviato ? '(ARCHIVIATO)' : ''}</span>
-                    <span class="atleta-cat">${a.categoria}</span>
-                </div>
-                <div style="display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end;">
-                    <button style="background:#4285F4; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;" 
-                        onclick="preparaModifica(${a.id}, '${a.nome.replace(/'/g, "\\'")}', '${a.categoria}')">
-                        MODIFICA
-                    </button>
-                    <button style="background:${a.archiviato ? '#34a853' : '#f39c12'}; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;" 
-                        onclick="setArchiviazione(${a.id}, ${!a.archiviato})">
-                        ${a.archiviato ? 'RIPRISTINA' : 'ARCHIVIA'}
-                    </button>
-                    <button style="background:#e74c3c; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;" 
-                        onclick="eliminaDefinitivo(${a.id})">
-                        ELIMINA
-                    </button>
-                </div>
-            </div>
-        `).join('');
-    }
-
     function renderTabella() {
         const anno = dataAttuale.getFullYear();
         const mese = dataAttuale.getMonth();
         const giorniMese = new Date(anno, mese + 1, 0).getDate();
         const oggiStr = new Date().toLocaleDateString('en-CA');
         
+        // Per ogni categoria
         ["cuccioli", "piccoli", "grandi"].forEach(tipo => {
             const table = document.getElementById(`tab-${tipo}`);
             if (!table) return;
             
+            // HEADER
             let head = `<tr><th class="sticky-col">ATLETA</th>`;
             for(let i = 1; i <= giorniMese; i++) {
                 const giorno = new Date(anno, mese, i);
@@ -948,6 +910,7 @@
             head += `<th>TOT</th></tr>`;
             table.querySelector('thead').innerHTML = head;
             
+            // BODY
             const cats = tipo === 'cuccioli' ? CAT_CUCCIOLI : 
                         (tipo === 'piccoli' ? CAT_PICCOLI : CAT_GRANDI);
             
@@ -965,12 +928,14 @@
                     const dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
                     const p = presenzeCache.find(x => x.atleta_id === a.id && x.data === dStr);
                     
+                    // Controlla se c'è un numero
                     const hasNumber = p && p.stato && p.stato.includes('numero:');
                     const numberValue = hasNumber ? p.stato.split(':')[1] : '';
                     const isGreen = p && (p.stato === 'partecipa' || hasNumber);
                     
                     if(isGreen) totMese++;
                     
+                    // Long press attributes se input numerico attivo
                     const longPressAttrs = numericInputAttivo ? 
                         `onmousedown="startLongPress(this, ${a.id}, '${dStr}')" 
                          onmouseup="endLongPress(this, ${a.id}, '${dStr}')" 
@@ -1072,16 +1037,19 @@
         const currentText = el.innerText.trim();
         const p = presenzeCache.find(x => x.atleta_id === aId && x.data === data);
         
+        // Se c'è già un numero, cancella tutto
         if (p && p.stato && p.stato.includes('numero:')) {
             await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
             el.classList.remove('p-partecipa');
             el.innerText = '';
         } 
+        // Se è già presente (✔), rimuovi
         else if (p && p.stato === 'partecipa') {
             await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
             el.classList.remove('p-partecipa');
             el.innerText = '';
         } 
+        // Altrimenti aggiungi presenza
         else {
             await supabaseClient.from('presenze').upsert({ 
                 atleta_id: aId, 
@@ -1092,6 +1060,7 @@
             el.innerText = '✔';
         }
         
+        // Aggiorna cache locale
         const idx = presenzeCache.findIndex(x => x.atleta_id === aId && x.data === data);
         if (el.classList.contains('p-partecipa')) {
             const stato = currentText && !['✔', ''].includes(currentText) ? `numero:${currentText}` : 'partecipa';
@@ -1106,6 +1075,7 @@
         
         updateTotalCell(el);
         
+        // Backup automatico
         if (backupAutomaticoAttivo) {
             avviaTimerBackup();
         }
@@ -1218,6 +1188,7 @@
             btn.classList.add('attivo');
             status.innerText = "✅ Backup automatico ATTIVATO";
             
+            // Reset timer se attivo
             if (secondiMancanti < 10 && timerBackup) {
                 clearInterval(timerBackup);
                 secondiMancanti = 10;
@@ -1228,6 +1199,7 @@
             btn.classList.remove('attivo');
             status.innerText = "⏸️ Backup automatico DISATTIVATO";
             
+            // Ferma timer
             if (timerBackup) {
                 clearInterval(timerBackup);
                 timerBackup = null;
@@ -1267,13 +1239,16 @@
                 if (m > 0) doc.addPage();
                 const g = new Date(annoC, m + 1, 0).getDate();
                 
+                // Header tabella
                 const header = [["ATLETA", ...Array.from({length: g}, (_, i) => 
                     `${nomiGiorni[new Date(annoC, m, i + 1).getDay()]}\n${i + 1}`), "TOT"]];
                 
+                // Titolo pagina
                 doc.setFontSize(16); 
                 doc.setTextColor(52, 58, 64); 
                 doc.text(`REGISTRO PRESENZE - ${nomiMesi[m].toUpperCase()} ${annoC}`, 14, 12);
                 
+                // Stili colonne
                 const colStyles = { 
                     0: { halign: 'left', cellWidth: 35, fontStyle: 'bold' } 
                 };
@@ -1281,6 +1256,7 @@
                 for (let i = 1; i <= g; i++) colStyles[i] = { cellWidth: larghezzaGiorno };
                 colStyles[g + 1] = { cellWidth: 10, fillColor: [248, 249, 250], fontStyle: 'bold' };
 
+                // Config PDF
                 const config = { 
                     head: header, 
                     startY: 20, 
@@ -1314,6 +1290,7 @@
                     } 
                 };
                 
+                // Aggiungi tabelle per categoria
                 doc.autoTable({...config, body: preparaDatiPDF(CAT_CUCCIOLI, annoC, m, g)});
                 doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g), 
                               startY: doc.lastAutoTable.finalY + 10});
@@ -1321,9 +1298,11 @@
                               startY: doc.lastAutoTable.finalY + 10});
             }
             
+            // Converti in base64
             const b64 = doc.output('datauristring').split(',')[1];
             status.innerText = "☁️ SALVATAGGIO SU DRIVE...";
             
+            // Invia a Google Drive
             const resp = await fetch(WEB_APP_DRIVE_URL, { 
                 method: 'POST', 
                 body: JSON.stringify({ 
@@ -1351,6 +1330,7 @@
             const inCat = cats.includes((a.categoria || "").trim().toUpperCase());
             if (!inCat) return false;
             
+            // Mostra anche atleti archiviati se hanno presenze
             if (a.archiviato === false || a.archiviato === null) return true;
             
             const dInizio = `${anno}-${String(mese+1).padStart(2,'0')}-01`;
@@ -1411,6 +1391,7 @@
         sessionStorage.setItem('last_sez', s); 
         document.getElementById('main-menu').style.display = 'none';
         
+        // Mostra sezione selezionata
         document.getElementById('sez-cuccioli').className = 
             (s === 'cuccioli') ? 'section-active' : 'section-container';
         document.getElementById('sez-piccoli').className = 
@@ -1418,6 +1399,7 @@
         document.getElementById('sez-grandi').className = 
             (s === 'grandi') ? 'section-active' : 'section-container';
         
+        // Scroll a oggi dopo 300ms
         setTimeout(scrollOggi, 300);
     }
     
@@ -1463,11 +1445,13 @@
         
         try {
             if(id) {
+                // Modifica atleta esistente
                 res = await supabaseClient
                     .from('atleti')
                     .update({ nome, categoria: cat })
                     .eq('id', id);
             } else {
+                // Nuovo atleta
                 res = await supabaseClient
                     .from('atleti')
                     .insert([{ 
@@ -1505,6 +1489,39 @@
         document.getElementById('new-cat').selectedIndex = 0;
         document.getElementById('btn-save-atleta').innerText = "➕ AGGIUNGI ATLETA";
         document.getElementById('btn-cancel-edit').style.display = "none";
+    }
+    
+    function renderAdminList() {
+        const container = document.getElementById('lista-atleti-admin');
+        if (!container) return;
+        
+        if (atletiCache.length === 0) {
+            container.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">Nessun atleta registrato</div>';
+            return;
+        }
+        
+        container.innerHTML = atletiCache.map(a => `
+            <div class="atleta-item ${a.archiviato ? 'archiviato' : ''}">
+                <div class="atleta-info">
+                    <span class="atleta-name">${a.nome} ${a.archiviato ? '(ARCHIVIATO)' : ''}</span>
+                    <span class="atleta-cat">${a.categoria}</span>
+                </div>
+                <div style="display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end;">
+                    <button style="background:#4285F4; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;" 
+                        onclick="preparaModifica(${a.id}, '${a.nome.replace(/'/g, "\\'")}', '${a.categoria}')">
+                        MODIFICA
+                    </button>
+                    <button style="background:${a.archiviato ? '#34a853' : '#f39c12'}; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;" 
+                        onclick="setArchiviazione(${a.id}, ${!a.archiviato})">
+                        ${a.archiviato ? 'RIPRISTINA' : 'ARCHIVIA'}
+                    </button>
+                    <button style="background:#e74c3c; color:white; border:none; padding:8px 12px; border-radius:8px; font-weight:bold; font-size:12px; cursor:pointer;" 
+                        onclick="eliminaDefinitivo(${a.id})">
+                        ELIMINA
+                    </button>
+                </div>
+            </div>
+        `).join('');
     }
     
     async function setArchiviazione(id, stato) {
