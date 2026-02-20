@@ -31,7 +31,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
-    <!-- === STILI CSS OTTIMIZZATI CON CELLE PIÙ GRANDI === -->
+    <!-- === STILI CSS OTTIMIZZATI PER MASSIMO SPAZIO ORIZZONTALE === -->
     <style>
         /* RESET */
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -219,7 +219,7 @@
         .btn-piccoli { background: linear-gradient(135deg, #007bff, #0056b3); } 
         .btn-grandi { background: linear-gradient(135deg, #28a745, #1e7e34); }
         
-        /* TABELLA CON CELLE PIÙ GRANDI */
+        /* TABELLA CON CELLE COMPATTE PER VEDERE PIÙ GIORNI */
         .section-container { display: none; width: 100%; margin-top: 20px; } 
         .section-active { display: block; }
         
@@ -253,8 +253,8 @@
             background: linear-gradient(135deg, #343a40, #1d2124) !important; 
             color: white !important; 
             z-index: 20; 
-            padding: 15px 12px; /* Aumentato il padding */
-            font-size: 14px; /* Aumentato leggermente */
+            padding: 10px 5px; /* Padding ridotto */
+            font-size: 12px; /* Font più piccolo per intestazioni */
             border: 1px solid #454d55; 
             text-align: center; 
             white-space: nowrap;
@@ -267,7 +267,7 @@
             top: 0; 
             z-index: 30 !important; 
             background: linear-gradient(135deg, #343a40, #1d2124) !important;
-            min-width: 180px; /* Aumentato da 150px a 180px */
+            min-width: 120px; /* Ridotto da 180px a 120px */
         }
         
         .sticky-col { 
@@ -276,23 +276,26 @@
             background: white !important; 
             z-index: 15; 
             border-right: 3px solid #667eea; 
-            min-width: 180px; /* Aumentato da 150px a 180px */
-            max-width: 180px; 
-            padding: 15px 12px; /* Aumentato il padding */
+            min-width: 120px; /* Ridotto da 180px a 120px */
+            max-width: 120px; 
+            padding: 10px 8px; /* Padding ridotto */
             font-weight: 800; 
-            font-size: 15px; /* Aumentato leggermente */
+            font-size: 13px; /* Font leggermente ridotto */
             text-align: left; 
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .day-cell { 
-            width: 70px; /* Aumentato da 55px a 70px */
-            min-width: 70px; /* Aumentato da 55px a 70px */
-            height: 70px; /* Aumentato da 55px a 70px */
+            width: 40px; /* Ridotto da 70px a 40px per vedere più giorni */
+            min-width: 40px; 
+            height: 45px; /* Leggermente ridotto */
             border: 1px solid #eaeef2; 
             text-align: center; 
             cursor: pointer; 
             font-weight: bold; 
-            font-size: 20px; /* Aumentato da 18px a 20px */
+            font-size: 14px; /* Ridotto per stare in 40px */
             padding: 0; 
             user-select: none;
             transition: all 0.2s;
@@ -315,13 +318,13 @@
             text-align: center; 
             font-weight: 900; 
             background: #f1f3f5 !important; 
-            width: 70px; /* Aumentato da 60px a 70px */
-            min-width: 70px; /* Aumentato da 60px a 70px */
-            font-size: 20px; /* Aumentato da 18px a 20px */
+            width: 45px; /* Ridotto da 70px a 45px */
+            min-width: 45px; 
+            font-size: 14px; /* Ridotto */
             border-left: 3px solid #667eea; 
             z-index: 15; 
             color: #2c3e50;
-            padding: 15px 0; /* Aggiunto padding verticale */
+            padding: 10px 0;
         }
         
         thead th:last-child { 
@@ -330,7 +333,7 @@
             z-index: 30 !important; 
             background: linear-gradient(135deg, #343a40, #1d2124) !important; 
             border-left: 3px solid #667eea;
-            min-width: 70px; /* Allineato con la larghezza delle celle */
+            min-width: 45px; /* Allineato */
         }
         
         /* FOOTER SEMPLIFICATO - SENZA LINK */
@@ -448,43 +451,51 @@
         .atleta-name { font-weight: 800; font-size: 16px; display: block; color: #2c3e50; }
         .atleta-cat { font-size: 13px; color: #667eea; font-weight: 600; }
         
-        /* RESPONSIVE - CELLE ADATTIVE PER SCHERMI PICCOLI */
+        /* RESPONSIVE - OTTIMIZZATO PER MOBILE */
         @media (max-width: 768px) {
             .app-container { padding: 15px 10px 30px; }
             .top-bar { flex-direction: column; align-items: stretch; }
-            .sticky-col { min-width: 160px; max-width: 160px; font-size: 14px; }
+            .sticky-col { 
+                min-width: 100px; /* Ancora più piccolo su mobile */
+                max-width: 100px; 
+                font-size: 12px; 
+                padding: 8px 5px;
+            }
             .day-cell { 
-                width: 60px; /* Più grandi anche su mobile */
-                min-width: 60px; 
-                height: 60px; 
-                font-size: 18px; 
+                width: 35px; /* Più piccolo su mobile per vedere più giorni */
+                min-width: 35px; 
+                height: 40px; 
+                font-size: 12px; 
             }
             .tot-cell { 
-                width: 60px; 
-                min-width: 60px; 
-                font-size: 18px; 
+                width: 40px; 
+                min-width: 40px; 
+                font-size: 12px; 
             }
-            .btn-menu { padding: 25px 15px; font-size: 22px; }
-            .btn-menu span { font-size: 12px; }
+            thead th { 
+                font-size: 10px; 
+                padding: 8px 3px; 
+            }
+            .btn-menu { padding: 20px 15px; font-size: 20px; }
+            .btn-menu span { font-size: 11px; }
         }
         
         /* PER SCHERMI MOLTO PICCOLI */
         @media (max-width: 480px) {
             .day-cell { 
-                width: 55px; /* Leggermente ridotto ma sempre più grande dell'originale */
-                min-width: 55px; 
-                height: 55px; 
-                font-size: 16px; 
+                width: 32px; /* Ancora più piccolo */
+                min-width: 32px; 
+                height: 38px; 
+                font-size: 11px; 
             }
             .sticky-col { 
-                min-width: 140px; 
-                max-width: 140px; 
-                font-size: 13px; 
-                padding: 12px 8px;
+                min-width: 90px; 
+                max-width: 90px; 
+                font-size: 11px; 
             }
-            thead th { 
-                font-size: 12px; 
-                padding: 12px 8px; 
+            .tot-cell { 
+                width: 35px; 
+                min-width: 35px; 
             }
         }
         
@@ -676,11 +687,11 @@
         let timerBackup = null;
         let secondiMancanti = 10;
         
-        // Aggiornato rowHeight per celle più grandi (70px invece di 55px)
+        // Aggiornato rowHeight per celle più compatte
         const virtualScrollStates = {
-            cuccioli: { startIndex: 0, endIndex: 0, rowHeight: 70, visibleRows: 15, totalRows: 0, container: null },
-            piccoli: { startIndex: 0, endIndex: 0, rowHeight: 70, visibleRows: 15, totalRows: 0, container: null },
-            grandi: { startIndex: 0, endIndex: 0, rowHeight: 70, visibleRows: 15, totalRows: 0, container: null }
+            cuccioli: { startIndex: 0, endIndex: 0, rowHeight: 45, visibleRows: 15, totalRows: 0, container: null },
+            piccoli: { startIndex: 0, endIndex: 0, rowHeight: 45, visibleRows: 15, totalRows: 0, container: null },
+            grandi: { startIndex: 0, endIndex: 0, rowHeight: 45, visibleRows: 15, totalRows: 0, container: null }
         };
         
         let longPressTimer = null;
@@ -903,10 +914,10 @@
             if (!wrapper) return;
             
             virtualScrollStates[sezione].container = wrapper;
-            virtualScrollStates[sezione].rowHeight = 70; // Aumentato da 55 a 70
+            virtualScrollStates[sezione].rowHeight = 45; // Altezza ridotta per celle più compatte
             
             const wrapperHeight = wrapper.clientHeight;
-            virtualScrollStates[sezione].visibleRows = Math.ceil(wrapperHeight / 70) + 5; // Aumentato il divisore
+            virtualScrollStates[sezione].visibleRows = Math.ceil(wrapperHeight / 45) + 5;
             
             setTimeout(() => {
                 renderVirtualScroll(sezione);
@@ -1327,7 +1338,7 @@
             
             const target = active.querySelector('.today-cell'); 
             const wrapper = active.querySelector('.table-wrapper');
-            const stickyWidth = active.querySelector('.sticky-col')?.offsetWidth || 180; // Aumentato da 150 a 180
+            const stickyWidth = active.querySelector('.sticky-col')?.offsetWidth || 120; // Ridotto
             
             if (target && wrapper) {
                 wrapper.scrollTo({ 
