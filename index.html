@@ -193,7 +193,7 @@
         
         .btn-menu { 
             width: 100%; 
-            padding: 40px 20px; 
+            padding: 30px 20px; 
             font-weight: 900; 
             font-size: 24px; 
             border-radius: 30px; 
@@ -203,8 +203,18 @@
             text-transform: uppercase; 
             box-shadow: 0 15px 30px rgba(0,0,0,0.2); 
             transition: all 0.3s; 
+            line-height: 1.4;
         }
         .btn-menu:active { transform: scale(0.98); }
+        .btn-menu span {
+            display: block;
+            font-size: 14px;
+            font-weight: 400;
+            text-transform: none;
+            opacity: 0.9;
+            margin-top: 8px;
+            letter-spacing: 0.5px;
+        }
         .btn-cuccioli { background: linear-gradient(135deg, #e91e63, #c2185b); } 
         .btn-piccoli { background: linear-gradient(135deg, #007bff, #0056b3); } 
         .btn-grandi { background: linear-gradient(135deg, #28a745, #1e7e34); }
@@ -337,36 +347,19 @@
             border-left: 3px solid #667eea;
         }
         
-        /* FOOTER SEMPLIFICATO */
+        /* FOOTER SEMPLIFICATO - SENZA LINK */
         .app-footer {
             margin-top: 40px;
-            padding: 20px;
+            padding: 30px 20px 20px;
             background: white;
             border-radius: 20px;
             text-align: center;
         }
         
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            flex-wrap: wrap;
-            margin: 15px 0 10px;
-        }
-        
-        .footer-link {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-            padding: 8px 15px;
-            border-radius: 25px;
-            background: #f0f3ff;
-        }
-        
         .copyright {
             color: #adb5bd;
             font-size: 13px;
-            margin-top: 15px;
+            line-height: 1.6;
         }
         
         /* PANNELLO ADMIN */
@@ -475,7 +468,8 @@
             .top-bar { flex-direction: column; align-items: stretch; }
             .sticky-col { min-width: 130px; max-width: 130px; font-size: 13px; }
             .day-cell, .tot-cell { width: 48px; min-width: 48px; height: 48px; font-size: 16px; }
-            .btn-menu { padding: 30px 15px; font-size: 20px; }
+            .btn-menu { padding: 25px 15px; font-size: 22px; }
+            .btn-menu span { font-size: 12px; }
         }
         
         /* ANIMAZIONI CARICAMENTO */
@@ -529,16 +523,19 @@
             </div>
         </div>
 
-        <!-- === MENU PRINCIPALE CATEGORIE === -->
+        <!-- === MENU PRINCIPALE CATEGORIE CON SOTTOCATEGORIE === -->
         <div class="menu-container" id="main-menu">
             <button class="btn-menu btn-cuccioli" onclick="mostraSezione('cuccioli')">
                 🧸 CUCCIOLI
+                <span>CUCCIOLI</span>
             </button>
             <button class="btn-menu btn-piccoli" onclick="mostraSezione('piccoli')">
                 👦 PICCOLI
+                <span>GIOVANISSIMI • ESORDIENTI</span>
             </button>
             <button class="btn-menu btn-grandi" onclick="mostraSezione('grandi')">
                 🏃 GRANDI
+                <span>R12 • RAGAZZI • ALLIEVI • JUNIOR • SENIOR • ALLIEVE</span>
             </button>
         </div>
 
@@ -585,16 +582,8 @@
             </div>
         </div>
 
-        <!-- === FOOTER SEMPLIFICATO === -->
+        <!-- === FOOTER SEMPLIFICATO - SENZA LINK === -->
         <div class="app-footer">
-            <div class="footer-links">
-                <a href="#" class="footer-link" onclick="mostraSezione('cuccioli')">📊 Cuccioli</a>
-                <a href="#" class="footer-link" onclick="mostraSezione('piccoli')">📊 Piccoli</a>
-                <a href="#" class="footer-link" onclick="mostraSezione('grandi')">📊 Grandi</a>
-                <a href="#" class="footer-link" onclick="toggleAdmin()">⚙️ Admin</a>
-                <a href="#" class="footer-link" onclick="aggiornaBackupDrive()">📥 Esporta PDF</a>
-            </div>
-            
             <div class="copyright">
                 © 2024-2025 Gruppo Sportivo 2050 - Registro Presenze Digitale<br>
                 <small>Ultimo aggiornamento: <span id="last-update">Caricamento...</span></small>
