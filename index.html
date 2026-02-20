@@ -31,7 +31,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
-    <!-- === STILI CSS CON NOMI SU DUE RIGHE === -->
+    <!-- === STILI CSS CON CELLE MOBILE PIÙ LARGHE === -->
     <style>
         /* RESET */
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -219,7 +219,7 @@
         .btn-piccoli { background: linear-gradient(135deg, #007bff, #0056b3); } 
         .btn-grandi { background: linear-gradient(135deg, #28a745, #1e7e34); }
         
-        /* TABELLA CON CELLE COMPATTE E NOMI SU DUE RIGHE */
+        /* TABELLA CON CELLE MOBILE PIÙ LARGHE */
         .section-container { display: none; width: 100%; margin-top: 20px; } 
         .section-active { display: block; }
         
@@ -253,8 +253,8 @@
             background: linear-gradient(135deg, #343a40, #1d2124) !important; 
             color: white !important; 
             z-index: 20; 
-            padding: 8px 3px; /* Padding ancora più ridotto */
-            font-size: 11px; /* Font più piccolo per intestazioni */
+            padding: 10px 5px;
+            font-size: 12px;
             border: 1px solid #454d55; 
             text-align: center; 
             white-space: nowrap;
@@ -268,7 +268,7 @@
             top: 0; 
             z-index: 30 !important; 
             background: linear-gradient(135deg, #343a40, #1d2124) !important;
-            min-width: 80px; /* Ridotto drasticamente per nomi su due righe */
+            min-width: 90px;
         }
         
         .sticky-col { 
@@ -277,13 +277,13 @@
             background: white !important; 
             z-index: 15; 
             border-right: 3px solid #667eea; 
-            min-width: 80px; /* Larghezza minima ridotta */
-            max-width: 80px; 
-            padding: 8px 4px; /* Padding ridotto */
+            min-width: 90px;
+            max-width: 90px; 
+            padding: 8px 4px;
             font-weight: 800; 
-            font-size: 11px; /* Font più piccolo */
-            text-align: center; /* Centrato per due righe */
-            white-space: normal; /* Permette il wrap su più righe */
+            font-size: 11px;
+            text-align: center;
+            white-space: normal;
             word-wrap: break-word;
             line-height: 1.3;
             display: flex;
@@ -324,14 +324,14 @@
         }
         
         .day-cell { 
-            width: 38px; /* Ancora più stretto */
-            min-width: 38px; 
-            height: 50px; /* Leggermente più alto per bilanciare */
+            width: 45px;
+            min-width: 45px; 
+            height: 52px;
             border: 1px solid #eaeef2; 
             text-align: center; 
             cursor: pointer; 
             font-weight: bold; 
-            font-size: 13px; 
+            font-size: 14px;
             padding: 0; 
             user-select: none;
             transition: all 0.2s;
@@ -354,9 +354,9 @@
             text-align: center; 
             font-weight: 900; 
             background: #f1f3f5 !important; 
-            width: 42px; /* Leggermente più stretto */
-            min-width: 42px; 
-            font-size: 13px; 
+            width: 48px;
+            min-width: 48px; 
+            font-size: 14px;
             border-left: 3px solid #667eea; 
             z-index: 15; 
             color: #2c3e50;
@@ -369,7 +369,7 @@
             z-index: 30 !important; 
             background: linear-gradient(135deg, #343a40, #1d2124) !important; 
             border-left: 3px solid #667eea;
-            min-width: 42px;
+            min-width: 48px;
         }
         
         /* FOOTER SEMPLIFICATO - SENZA LINK */
@@ -487,13 +487,15 @@
         .atleta-name { font-weight: 800; font-size: 16px; display: block; color: #2c3e50; }
         .atleta-cat { font-size: 13px; color: #667eea; font-weight: 600; }
         
-        /* RESPONSIVE - OTTIMIZZATO PER MOBILE CON NOMI SU DUE RIGHE */
+        /* RESPONSIVE - CELLE MOBILE PIÙ LARGHE */
         @media (max-width: 768px) {
             .app-container { padding: 15px 10px 30px; }
             .top-bar { flex-direction: column; align-items: stretch; }
+            
+            /* CELLE PIÙ LARGHE SU MOBILE - MODIFICATE */
             .sticky-col { 
-                min-width: 70px; /* Ancora più piccolo su mobile */
-                max-width: 70px; 
+                min-width: 85px;
+                max-width: 85px; 
                 font-size: 10px; 
                 padding: 6px 2px;
             }
@@ -502,43 +504,44 @@
                 padding: 1px 2px;
             }
             .day-cell { 
-                width: 32px; 
-                min-width: 32px; 
-                height: 45px; 
-                font-size: 11px; 
+                width: 42px;  /* Aumentato da 35px a 42px */
+                min-width: 42px; 
+                height: 48px; 
+                font-size: 13px;  /* Aumentato da 11px a 13px */
             }
             .tot-cell { 
-                width: 38px; 
-                min-width: 38px; 
-                font-size: 11px; 
+                width: 42px;  /* Aumentato da 38px a 42px */
+                min-width: 42px; 
+                font-size: 13px;  /* Aumentato da 11px a 13px */
             }
             thead th { 
-                font-size: 9px; 
+                font-size: 10px; 
                 padding: 6px 2px; 
             }
             .btn-menu { padding: 20px 15px; font-size: 20px; }
             .btn-menu span { font-size: 11px; }
         }
         
-        /* PER SCHERMI MOLTO PICCOLI */
+        /* PER SCHERMI MOLTO PICCOLI - CELLE ANCORA PIÙ LARGHE */
         @media (max-width: 480px) {
             .day-cell { 
-                width: 30px; 
-                min-width: 30px; 
-                height: 42px; 
-                font-size: 10px; 
+                width: 40px;  /* Aumentato da 30px a 40px */
+                min-width: 40px; 
+                height: 46px; 
+                font-size: 12px;  /* Aumentato da 10px a 12px */
             }
             .sticky-col { 
-                min-width: 65px; 
-                max-width: 65px; 
-                font-size: 9px; 
+                min-width: 80px;  /* Aumentato da 65px a 80px */
+                max-width: 80px; 
+                font-size: 10px; 
             }
             .categoria-badge {
-                font-size: 7px;
+                font-size: 8px;
             }
             .tot-cell { 
-                width: 35px; 
-                min-width: 35px; 
+                width: 40px;  /* Aumentato da 35px a 40px */
+                min-width: 40px; 
+                font-size: 12px; 
             }
         }
         
@@ -730,11 +733,11 @@
         let timerBackup = null;
         let secondiMancanti = 10;
         
-        // Aggiornato rowHeight per celle con nome su due righe (leggermente più alte)
+        // Aggiornato rowHeight per celle più alte
         const virtualScrollStates = {
-            cuccioli: { startIndex: 0, endIndex: 0, rowHeight: 50, visibleRows: 15, totalRows: 0, container: null },
-            piccoli: { startIndex: 0, endIndex: 0, rowHeight: 50, visibleRows: 15, totalRows: 0, container: null },
-            grandi: { startIndex: 0, endIndex: 0, rowHeight: 50, visibleRows: 15, totalRows: 0, container: null }
+            cuccioli: { startIndex: 0, endIndex: 0, rowHeight: 52, visibleRows: 15, totalRows: 0, container: null },
+            piccoli: { startIndex: 0, endIndex: 0, rowHeight: 52, visibleRows: 15, totalRows: 0, container: null },
+            grandi: { startIndex: 0, endIndex: 0, rowHeight: 52, visibleRows: 15, totalRows: 0, container: null }
         };
         
         let longPressTimer = null;
@@ -962,10 +965,10 @@
             if (!wrapper) return;
             
             virtualScrollStates[sezione].container = wrapper;
-            virtualScrollStates[sezione].rowHeight = 50; // Altezza per nome su due righe
+            virtualScrollStates[sezione].rowHeight = 52; // Altezza per nome su due righe
             
             const wrapperHeight = wrapper.clientHeight;
-            virtualScrollStates[sezione].visibleRows = Math.ceil(wrapperHeight / 50) + 5;
+            virtualScrollStates[sezione].visibleRows = Math.ceil(wrapperHeight / 52) + 5;
             
             setTimeout(() => {
                 renderVirtualScroll(sezione);
@@ -1386,7 +1389,7 @@
             
             const target = active.querySelector('.today-cell'); 
             const wrapper = active.querySelector('.table-wrapper');
-            const stickyWidth = active.querySelector('.sticky-col')?.offsetWidth || 80;
+            const stickyWidth = active.querySelector('.sticky-col')?.offsetWidth || 90;
             
             if (target && wrapper) {
                 wrapper.scrollTo({ 
