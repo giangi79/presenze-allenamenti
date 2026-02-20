@@ -31,7 +31,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
-    <!-- === STILI CSS OTTIMIZZATI === -->
+    <!-- === STILI CSS OTTIMIZZATI CON CELLE PIÙ GRANDI === -->
     <style>
         /* RESET */
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -219,7 +219,7 @@
         .btn-piccoli { background: linear-gradient(135deg, #007bff, #0056b3); } 
         .btn-grandi { background: linear-gradient(135deg, #28a745, #1e7e34); }
         
-        /* TABELLA */
+        /* TABELLA CON CELLE PIÙ GRANDI */
         .section-container { display: none; width: 100%; margin-top: 20px; } 
         .section-active { display: block; }
         
@@ -253,8 +253,8 @@
             background: linear-gradient(135deg, #343a40, #1d2124) !important; 
             color: white !important; 
             z-index: 20; 
-            padding: 12px 8px; 
-            font-size: 13px; 
+            padding: 15px 12px; /* Aumentato il padding */
+            font-size: 14px; /* Aumentato leggermente */
             border: 1px solid #454d55; 
             text-align: center; 
             white-space: nowrap;
@@ -267,7 +267,7 @@
             top: 0; 
             z-index: 30 !important; 
             background: linear-gradient(135deg, #343a40, #1d2124) !important;
-            min-width: 150px;
+            min-width: 180px; /* Aumentato da 150px a 180px */
         }
         
         .sticky-col { 
@@ -276,23 +276,23 @@
             background: white !important; 
             z-index: 15; 
             border-right: 3px solid #667eea; 
-            min-width: 150px; 
-            max-width: 150px; 
-            padding: 12px 10px; 
+            min-width: 180px; /* Aumentato da 150px a 180px */
+            max-width: 180px; 
+            padding: 15px 12px; /* Aumentato il padding */
             font-weight: 800; 
-            font-size: 14px; 
+            font-size: 15px; /* Aumentato leggermente */
             text-align: left; 
         }
         
         .day-cell { 
-            width: 55px; 
-            min-width: 55px; 
-            height: 55px; 
+            width: 70px; /* Aumentato da 55px a 70px */
+            min-width: 70px; /* Aumentato da 55px a 70px */
+            height: 70px; /* Aumentato da 55px a 70px */
             border: 1px solid #eaeef2; 
             text-align: center; 
             cursor: pointer; 
             font-weight: bold; 
-            font-size: 18px; 
+            font-size: 20px; /* Aumentato da 18px a 20px */
             padding: 0; 
             user-select: none;
             transition: all 0.2s;
@@ -315,12 +315,13 @@
             text-align: center; 
             font-weight: 900; 
             background: #f1f3f5 !important; 
-            width: 60px; 
-            min-width: 60px; 
-            font-size: 18px; 
+            width: 70px; /* Aumentato da 60px a 70px */
+            min-width: 70px; /* Aumentato da 60px a 70px */
+            font-size: 20px; /* Aumentato da 18px a 20px */
             border-left: 3px solid #667eea; 
             z-index: 15; 
             color: #2c3e50;
+            padding: 15px 0; /* Aggiunto padding verticale */
         }
         
         thead th:last-child { 
@@ -329,6 +330,7 @@
             z-index: 30 !important; 
             background: linear-gradient(135deg, #343a40, #1d2124) !important; 
             border-left: 3px solid #667eea;
+            min-width: 70px; /* Allineato con la larghezza delle celle */
         }
         
         /* FOOTER SEMPLIFICATO - SENZA LINK */
@@ -446,14 +448,44 @@
         .atleta-name { font-weight: 800; font-size: 16px; display: block; color: #2c3e50; }
         .atleta-cat { font-size: 13px; color: #667eea; font-weight: 600; }
         
-        /* RESPONSIVE */
+        /* RESPONSIVE - CELLE ADATTIVE PER SCHERMI PICCOLI */
         @media (max-width: 768px) {
             .app-container { padding: 15px 10px 30px; }
             .top-bar { flex-direction: column; align-items: stretch; }
-            .sticky-col { min-width: 130px; max-width: 130px; font-size: 13px; }
-            .day-cell, .tot-cell { width: 48px; min-width: 48px; height: 48px; font-size: 16px; }
+            .sticky-col { min-width: 160px; max-width: 160px; font-size: 14px; }
+            .day-cell { 
+                width: 60px; /* Più grandi anche su mobile */
+                min-width: 60px; 
+                height: 60px; 
+                font-size: 18px; 
+            }
+            .tot-cell { 
+                width: 60px; 
+                min-width: 60px; 
+                font-size: 18px; 
+            }
             .btn-menu { padding: 25px 15px; font-size: 22px; }
             .btn-menu span { font-size: 12px; }
+        }
+        
+        /* PER SCHERMI MOLTO PICCOLI */
+        @media (max-width: 480px) {
+            .day-cell { 
+                width: 55px; /* Leggermente ridotto ma sempre più grande dell'originale */
+                min-width: 55px; 
+                height: 55px; 
+                font-size: 16px; 
+            }
+            .sticky-col { 
+                min-width: 140px; 
+                max-width: 140px; 
+                font-size: 13px; 
+                padding: 12px 8px;
+            }
+            thead th { 
+                font-size: 12px; 
+                padding: 12px 8px; 
+            }
         }
         
         /* ANIMAZIONI CARICAMENTO */
@@ -644,10 +676,11 @@
         let timerBackup = null;
         let secondiMancanti = 10;
         
+        // Aggiornato rowHeight per celle più grandi (70px invece di 55px)
         const virtualScrollStates = {
-            cuccioli: { startIndex: 0, endIndex: 0, rowHeight: 55, visibleRows: 15, totalRows: 0, container: null },
-            piccoli: { startIndex: 0, endIndex: 0, rowHeight: 55, visibleRows: 15, totalRows: 0, container: null },
-            grandi: { startIndex: 0, endIndex: 0, rowHeight: 55, visibleRows: 15, totalRows: 0, container: null }
+            cuccioli: { startIndex: 0, endIndex: 0, rowHeight: 70, visibleRows: 15, totalRows: 0, container: null },
+            piccoli: { startIndex: 0, endIndex: 0, rowHeight: 70, visibleRows: 15, totalRows: 0, container: null },
+            grandi: { startIndex: 0, endIndex: 0, rowHeight: 70, visibleRows: 15, totalRows: 0, container: null }
         };
         
         let longPressTimer = null;
@@ -870,10 +903,10 @@
             if (!wrapper) return;
             
             virtualScrollStates[sezione].container = wrapper;
-            virtualScrollStates[sezione].rowHeight = 55;
+            virtualScrollStates[sezione].rowHeight = 70; // Aumentato da 55 a 70
             
             const wrapperHeight = wrapper.clientHeight;
-            virtualScrollStates[sezione].visibleRows = Math.ceil(wrapperHeight / 55) + 5;
+            virtualScrollStates[sezione].visibleRows = Math.ceil(wrapperHeight / 70) + 5; // Aumentato il divisore
             
             setTimeout(() => {
                 renderVirtualScroll(sezione);
@@ -1294,7 +1327,7 @@
             
             const target = active.querySelector('.today-cell'); 
             const wrapper = active.querySelector('.table-wrapper');
-            const stickyWidth = active.querySelector('.sticky-col')?.offsetWidth || 150; 
+            const stickyWidth = active.querySelector('.sticky-col')?.offsetWidth || 180; // Aumentato da 150 a 180
             
             if (target && wrapper) {
                 wrapper.scrollTo({ 
@@ -1664,4 +1697,3 @@
     </script>
 </body>
 </html>
-
