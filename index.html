@@ -31,11 +31,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
-    <!-- === STILI CSS CON CELLE MOBILE PIÙ LARGHE === -->
+    <!-- === STILI CSS CORRETTI === -->
     <style>
         /* RESET */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { width: 100%; height: 100%; overflow-x: hidden; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        html, body { 
+            width: 100%; 
+            height: 100%; 
+            overflow-x: hidden; 
+        }
+        
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -45,6 +55,77 @@
             min-height: 100vh;
         }
         
+        /* SKIP LINK PER ACCESSIBILITÀ */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: #343a40;
+            color: white;
+            padding: 8px;
+            z-index: 10001;
+            text-decoration: none;
+            border-radius: 0 0 5px 0;
+        }
+        
+        .skip-link:focus {
+            top: 0;
+        }
+        
+        /* TOAST NOTIFICATIONS */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+        
+        .toast {
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            animation: slideUp 0.3s ease;
+            pointer-events: auto;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .toast-success {
+            background: rgba(46, 204, 113, 0.95);
+        }
+        
+        .toast-error {
+            background: rgba(231, 76, 60, 0.95);
+        }
+        
+        .toast-info {
+            background: rgba(52, 152, 219, 0.95);
+        }
+        
+        .toast-warning {
+            background: rgba(241, 196, 15, 0.95);
+            color: #2c3e50;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
         /* CONTENITORE PRINCIPALE */
         .app-container {
             max-width: 1400px;
@@ -52,7 +133,6 @@
             padding: 20px 15px 40px;
             min-height: 100vh;
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
             box-shadow: 0 0 50px rgba(0,0,0,0.1);
         }
         
@@ -107,6 +187,11 @@
             cursor: pointer;
         }
         
+        select:focus, input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+        }
+        
         /* PULSANTI AZIONE */
         .actions-container { 
             display: flex; 
@@ -129,10 +214,22 @@
             font-size: 15px; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
             text-transform: uppercase; 
-            transition: all 0.3s; 
+            transition: transform 0.3s;
         }
         
-        .btn-action:active { transform: translateY(2px); }
+        .btn-action:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-action:active { 
+            transform: translateY(2px); 
+        }
+        
+        .btn-action:focus-visible {
+            outline: 3px solid #ffbf47;
+            outline-offset: 2px;
+        }
+        
         .btn-drive { background: linear-gradient(135deg, #4285F4, #0d47a1); } 
         .btn-open-drive { background: linear-gradient(135deg, #34a853, #1e7e34); } 
         .btn-admin { background: linear-gradient(135deg, #6c757d, #343a40); } 
@@ -171,6 +268,7 @@
             padding: 8px 20px; 
             border-radius: 30px; 
             display: inline-block;
+            transition: background-color 0.3s, color 0.3s;
         }
         
         .stats-info {
@@ -202,10 +300,23 @@
             cursor: pointer; 
             text-transform: uppercase; 
             box-shadow: 0 15px 30px rgba(0,0,0,0.2); 
-            transition: all 0.3s; 
+            transition: transform 0.3s;
             line-height: 1.4;
         }
-        .btn-menu:active { transform: scale(0.98); }
+        
+        .btn-menu:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-menu:active { 
+            transform: scale(0.98); 
+        }
+        
+        .btn-menu:focus-visible {
+            outline: 3px solid #ffbf47;
+            outline-offset: 2px;
+        }
+        
         .btn-menu span {
             display: block;
             font-size: 14px;
@@ -219,7 +330,7 @@
         .btn-piccoli { background: linear-gradient(135deg, #007bff, #0056b3); } 
         .btn-grandi { background: linear-gradient(135deg, #28a745, #1e7e34); }
         
-        /* TABELLA CON CELLE MOBILE PIÙ LARGHE */
+        /* === TABELLA CORRETTA - CON PADDING PER VIRTUAL SCROLL === */
         .section-container { display: none; width: 100%; margin-top: 20px; } 
         .section-active { display: block; }
         
@@ -241,65 +352,58 @@
         }
         
         table { 
-            border-collapse: separate; 
-            border-spacing: 0; 
-            width: auto; 
-            min-width: 100%; 
+            border-collapse: collapse; 
+            width: 100%; 
+            table-layout: auto;
         }
         
+        /* Intestazione fissa */
         thead th { 
             position: sticky; 
             top: 0; 
             background: linear-gradient(135deg, #343a40, #1d2124) !important; 
             color: white !important; 
             z-index: 20; 
-            padding: 10px 5px;
+            padding: 12px 5px;
             font-size: 12px;
             border: 1px solid #454d55; 
             text-align: center; 
             white-space: nowrap;
             font-weight: 700;
-            line-height: 1.2;
         }
         
-        thead th.sticky-col { 
+        /* Colonna ATLETA sticky */
+        th.sticky-col, td.sticky-col { 
             position: sticky; 
             left: 0; 
-            top: 0; 
-            z-index: 30 !important; 
-            background: linear-gradient(135deg, #343a40, #1d2124) !important;
-            min-width: 90px;
-        }
-        
-        .sticky-col { 
-            position: sticky; 
-            left: 0; 
-            background: white !important; 
+            background: white; 
             z-index: 15; 
             border-right: 3px solid #667eea; 
-            min-width: 90px;
-            max-width: 90px; 
-            padding: 8px 4px;
+            min-width: 120px;
+            max-width: 120px;
+            width: 120px;
+            padding: 12px 4px;
             font-weight: 800; 
-            font-size: 11px;
+            font-size: 12px;
             text-align: center;
-            white-space: normal;
-            word-wrap: break-word;
-            line-height: 1.3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
+            vertical-align: middle;
         }
         
-        /* Contenitore per il nome su due righe */
+        /* Intestazione colonna ATLETA */
+        thead th.sticky-col { 
+            background: linear-gradient(135deg, #343a40, #1d2124) !important;
+            color: white !important;
+            border-right: 3px solid #667eea;
+            z-index: 30 !important;
+        }
+        
+        /* Contenitore nome atleta */
         .nome-container {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             width: 100%;
-            height: 100%;
             word-break: break-word;
         }
         
@@ -307,34 +411,39 @@
             font-weight: 800;
             text-align: center;
             width: 100%;
+            font-size: 12px;
+            line-height: 1.3;
         }
         
         .categoria-badge {
             font-size: 9px;
             background: #667eea;
             color: white;
-            padding: 2px 4px;
-            border-radius: 10px;
-            margin-top: 2px;
+            padding: 3px 6px;
+            border-radius: 12px;
+            margin-top: 4px;
             display: inline-block;
-            max-width: 100%;
             white-space: nowrap;
+            max-width: 100%;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         
+        /* Celle giorni */
         .day-cell { 
             width: 45px;
-            min-width: 45px; 
-            height: 52px;
+            min-width: 45px;
+            max-width: 45px;
+            height: 60px;
             border: 1px solid #eaeef2; 
             text-align: center; 
             cursor: pointer; 
             font-weight: bold; 
             font-size: 14px;
-            padding: 0; 
+            padding: 4px 0; 
             user-select: none;
-            transition: all 0.2s;
+            transition: background-color 0.2s;
+            vertical-align: middle;
         }
         
         .p-partecipa { 
@@ -348,19 +457,22 @@
             border: 3px solid #0c5460 !important; 
         }
         
+        /* Colonna totale */
         .tot-cell { 
             position: sticky; 
             right: 0; 
             text-align: center; 
             font-weight: 900; 
-            background: #f1f3f5 !important; 
+            background: #f1f3f5; 
             width: 48px;
-            min-width: 48px; 
+            min-width: 48px;
+            max-width: 48px;
             font-size: 14px;
             border-left: 3px solid #667eea; 
             z-index: 15; 
             color: #2c3e50;
-            padding: 8px 0;
+            padding: 12px 0;
+            vertical-align: middle;
         }
         
         thead th:last-child { 
@@ -372,7 +484,24 @@
             min-width: 48px;
         }
         
-        /* FOOTER SEMPLIFICATO - SENZA LINK */
+        /* Righe della tabella */
+        tbody tr {
+            border-bottom: 1px solid #eaeef2;
+            transition: background-color 0.2s;
+        }
+        
+        tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* Padding rows per virtual scroll */
+        .virtual-padding-row {
+            height: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        
+        /* FOOTER */
         .app-footer {
             margin-top: 40px;
             padding: 30px 20px 20px;
@@ -396,7 +525,6 @@
             width: 100%; 
             height: 100%; 
             background: rgba(0,0,0,0.8); 
-            backdrop-filter: blur(10px); 
             z-index: 1000; 
             justify-content: center; 
             align-items: center; 
@@ -430,6 +558,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: transform 0.2s;
+        }
+        
+        .close-admin:hover {
+            transform: rotate(90deg);
+        }
+        
+        .close-admin:focus-visible {
+            outline: 3px solid #ffbf47;
         }
         
         /* INPUT NUMERICO */
@@ -440,7 +577,6 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(8px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -469,6 +605,11 @@
             background: #f8f9fa;
         }
         
+        .number-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+        }
+        
         /* LISTA ATLETI ADMIN */
         .atleta-item { 
             display: flex; 
@@ -487,61 +628,71 @@
         .atleta-name { font-weight: 800; font-size: 16px; display: block; color: #2c3e50; }
         .atleta-cat { font-size: 13px; color: #667eea; font-weight: 600; }
         
-        /* RESPONSIVE - CELLE MOBILE PIÙ LARGHE */
+        /* RESPONSIVE */
         @media (max-width: 768px) {
             .app-container { padding: 15px 10px 30px; }
             .top-bar { flex-direction: column; align-items: stretch; }
             
-            /* CELLE PIÙ LARGHE SU MOBILE - MODIFICATE */
-            .sticky-col { 
-                min-width: 85px;
-                max-width: 85px; 
+            th.sticky-col, td.sticky-col { 
+                min-width: 100px;
+                max-width: 100px;
+                width: 100px;
                 font-size: 10px; 
-                padding: 6px 2px;
             }
+            
             .categoria-badge {
                 font-size: 8px;
-                padding: 1px 2px;
+                padding: 2px 4px;
             }
+            
             .day-cell { 
-                width: 42px;  /* Aumentato da 35px a 42px */
-                min-width: 42px; 
-                height: 48px; 
-                font-size: 13px;  /* Aumentato da 11px a 13px */
+                width: 38px;
+                min-width: 38px;
+                max-width: 38px;
+                height: 55px; 
+                font-size: 12px;
             }
+            
             .tot-cell { 
-                width: 42px;  /* Aumentato da 38px a 42px */
-                min-width: 42px; 
-                font-size: 13px;  /* Aumentato da 11px a 13px */
+                width: 40px;
+                min-width: 40px;
+                max-width: 40px;
+                font-size: 12px;
             }
+            
             thead th { 
                 font-size: 10px; 
-                padding: 6px 2px; 
+                padding: 8px 2px; 
             }
             .btn-menu { padding: 20px 15px; font-size: 20px; }
             .btn-menu span { font-size: 11px; }
         }
         
-        /* PER SCHERMI MOLTO PICCOLI - CELLE ANCORA PIÙ LARGHE */
         @media (max-width: 480px) {
             .day-cell { 
-                width: 40px;  /* Aumentato da 30px a 40px */
-                min-width: 40px; 
-                height: 46px; 
-                font-size: 12px;  /* Aumentato da 10px a 12px */
+                width: 35px;
+                min-width: 35px;
+                max-width: 35px;
+                height: 50px; 
+                font-size: 11px;
             }
-            .sticky-col { 
-                min-width: 80px;  /* Aumentato da 65px a 80px */
-                max-width: 80px; 
+            
+            th.sticky-col, td.sticky-col { 
+                min-width: 90px;
+                max-width: 90px;
+                width: 90px;
                 font-size: 10px; 
             }
+            
             .categoria-badge {
-                font-size: 8px;
+                font-size: 7px;
             }
+            
             .tot-cell { 
-                width: 40px;  /* Aumentato da 35px a 40px */
-                min-width: 40px; 
-                font-size: 12px; 
+                width: 35px;
+                min-width: 35px;
+                max-width: 35px;
+                font-size: 11px; 
             }
         }
         
@@ -559,61 +710,67 @@
     </style>
 </head>
 <body>
-    <div class="app-container">
+    <!-- SKIP LINK PER ACCESSIBILITÀ -->
+    <a href="#main-content" class="skip-link">Salta al contenuto principale</a>
+    
+    <!-- CONTAINER PER TOAST NOTIFICATIONS -->
+    <div id="toast-container" class="toast-container"></div>
+    
+    <div class="app-container" id="main-content">
         <!-- === HEADER === -->
         <div class="header">
             <!-- LOGO -->
-            <img src="./logo.png" alt="Logo Registro Presenze" class="logo" 
+            <img src="./logo.png" alt="Logo Registro Presenze Gruppo Sportivo 2050" class="logo" 
                  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQzYTQwIiByeD0iMTUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjMyIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+R1JVUFBPIDIwNTA8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyMCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9IjFlbSI+UkVHSVNUUk8gUFJFU0VOWkU8L3RleHQ+PC9zdmc+'">
             
             <!-- TOP BAR CON CONTROLLI -->
             <div class="top-bar">
                 <div class="date-controls">
-                    <select id="select-mese" onchange="cambiaData()"></select>
-                    <select id="select-anno" onchange="cambiaData()"></select>
-                    <button class="btn-action btn-oggi" onclick="scrollOggi()" title="Vai a oggi">🎯</button>
+                    <select id="select-mese" onchange="cambiaData()" aria-label="Seleziona mese"></select>
+                    <select id="select-anno" onchange="cambiaData()" aria-label="Seleziona anno"></select>
+                    <button class="btn-action btn-oggi" onclick="scrollOggi()" title="Vai a oggi" aria-label="Vai al giorno corrente">🎯</button>
                 </div>
-                <button class="btn-action btn-home" onclick="vaiAllaHome()" title="Home">🏠 HOME</button>
+                <button class="btn-action btn-home" onclick="vaiAllaHome()" title="Home" aria-label="Torna alla home">🏠 HOME</button>
             </div>
             
             <!-- STATUS BAR CON STATISTICHE BASE -->
             <div class="status-container">
-                <div id="status-auto">✅ Sistema Pronto</div>
+                <div id="status-auto" role="status" aria-live="polite">✅ Sistema Pronto</div>
                 <div class="stats-info">
-                    <div><span id="stat-atleti">0</span> Atleti</div>
-                    <div><span id="stat-presenze-oggi">0</span> Oggi</div>
-                    <div><span id="stat-presenze-mese">0</span> Questo Mese</div>
+                    <div><span id="stat-atleti" aria-label="Numero atleti">0</span> Atleti</div>
+                    <div><span id="stat-presenze-oggi" aria-label="Presenze oggi">0</span> Oggi</div>
+                    <div><span id="stat-presenze-mese" aria-label="Presenze questo mese">0</span> Questo Mese</div>
                 </div>
             </div>
             
             <!-- PULSANTI AZIONE -->
             <div class="actions-container">
-                <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()" title="Crea backup PDF">☁️ BACKUP PDF</button>
-                <button class="btn-action btn-open-drive" onclick="apriFileDrive()" title="Apri ultimo backup">📂 APRI DRIVE</button>
-                <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input" title="Input numerico">🔢 NUM OFF</button>
-                <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto" title="Backup automatico">▶️ AUTO ON</button>
-                <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti">⚙️ GESTISCI ATLETI</button>
+                <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()" title="Crea backup PDF" aria-label="Crea backup PDF su Drive">☁️ BACKUP PDF</button>
+                <button class="btn-action btn-open-drive" onclick="apriFileDrive()" title="Apri ultimo backup" aria-label="Apri ultimo backup su Drive">📂 APRI DRIVE</button>
+                <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input" title="Input numerico" aria-label="Attiva o disattiva input numerico">🔢 NUM OFF</button>
+                <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto" title="Backup automatico" aria-label="Attiva o disattiva backup automatico">▶️ AUTO ON</button>
+                <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti" aria-label="Apri pannello gestione atleti">⚙️ GESTISCI ATLETI</button>
             </div>
         </div>
 
-        <!-- === MENU PRINCIPALE CATEGORIE CON SOTTOCATEGORIE === -->
-        <div class="menu-container" id="main-menu">
-            <button class="btn-menu btn-cuccioli" onclick="mostraSezione('cuccioli')">
+        <!-- === MENU PRINCIPALE CATEGORIE === -->
+        <div class="menu-container" id="main-menu" role="tablist">
+            <button class="btn-menu btn-cuccioli" onclick="mostraSezione('cuccioli')" role="tab" aria-selected="false" aria-controls="sez-cuccioli">
                 🧸 CUCCIOLI
                 <span>CUCCIOLI</span>
             </button>
-            <button class="btn-menu btn-piccoli" onclick="mostraSezione('piccoli')">
+            <button class="btn-menu btn-piccoli" onclick="mostraSezione('piccoli')" role="tab" aria-selected="false" aria-controls="sez-piccoli">
                 👦 PICCOLI
                 <span>GIOVANISSIMI • ESORDIENTI</span>
             </button>
-            <button class="btn-menu btn-grandi" onclick="mostraSezione('grandi')">
+            <button class="btn-menu btn-grandi" onclick="mostraSezione('grandi')" role="tab" aria-selected="false" aria-controls="sez-grandi">
                 🏃 GRANDI
                 <span>R12 • RAGAZZI • ALLIEVI • JUNIOR • SENIOR</span>
             </button>
         </div>
 
         <!-- === SEZIONI TABELLE === -->
-        <div id="sez-cuccioli" class="section-container">
+        <div id="sez-cuccioli" class="section-container" role="tabpanel" aria-labelledby="tab-cuccioli">
             <div class="table-container">
                 <div class="table-wrapper" id="wrapper-cuccioli" onscroll="handleVirtualScroll('cuccioli')">
                     <table id="tab-cuccioli">
@@ -627,7 +784,7 @@
             </div>
         </div>
         
-        <div id="sez-piccoli" class="section-container">
+        <div id="sez-piccoli" class="section-container" role="tabpanel" aria-labelledby="tab-piccoli">
             <div class="table-container">
                 <div class="table-wrapper" id="wrapper-piccoli" onscroll="handleVirtualScroll('piccoli')">
                     <table id="tab-piccoli">
@@ -641,7 +798,7 @@
             </div>
         </div>
         
-        <div id="sez-grandi" class="section-container">
+        <div id="sez-grandi" class="section-container" role="tabpanel" aria-labelledby="tab-grandi">
             <div class="table-container">
                 <div class="table-wrapper" id="wrapper-grandi" onscroll="handleVirtualScroll('grandi')">
                     <table id="tab-grandi">
@@ -655,7 +812,7 @@
             </div>
         </div>
 
-        <!-- === FOOTER SEMPLIFICATO - SENZA LINK === -->
+        <!-- === FOOTER === -->
         <div class="app-footer">
             <div class="copyright">
                 © 2024-2025 Gruppo Sportivo 2050 - Registro Presenze Digitale<br>
@@ -665,18 +822,20 @@
     </div>
 
     <!-- === PANNELLO ADMIN === -->
-    <div id="admin-overlay">
+    <div id="admin-overlay" role="dialog" aria-labelledby="admin-title" aria-modal="true">
         <div id="admin-panel">
-            <span class="close-admin" onclick="toggleAdmin()">&times;</span>
-            <h2 style="margin-bottom: 25px; color: #343a40; font-size: 28px;">👤 GESTIONE ATLETI</h2>
+            <span class="close-admin" onclick="toggleAdmin()" role="button" tabindex="0" aria-label="Chiudi pannello admin">&times;</span>
+            <h2 id="admin-title" style="margin-bottom: 25px; color: #343a40; font-size: 28px;">👤 GESTIONE ATLETI</h2>
             
             <div id="admin-form" style="background: #f8f9fa; padding: 25px; border-radius: 20px; margin-bottom: 25px;">
                 <input type="hidden" id="edit-id">
                 
                 <input type="text" id="new-nome" placeholder="NOME E COGNOME" 
-                       style="width:100%; margin-bottom:15px; padding: 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 16px; outline: none;">
+                       style="width:100%; margin-bottom:15px; padding: 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 16px; outline: none;"
+                       aria-label="Nome atleta" required>
                 
-                <select id="new-cat" style="width:100%; margin-bottom:20px; padding: 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 16px; outline: none;">
+                <select id="new-cat" style="width:100%; margin-bottom:20px; padding: 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 16px; outline: none;"
+                        aria-label="Categoria atleta" required>
                     <option value="CUCCIOLI">CUCCIOLI</option>
                     <option value="GIOVANISSIMI">GIOVANISSIMI</option>
                     <option value="ESORDIENTI">ESORDIENTI</option>
@@ -689,43 +848,50 @@
                 
                 <button id="btn-save-atleta" class="btn-action" 
                         style="width:100%; justify-content:center; padding: 16px; font-size: 18px; background: linear-gradient(135deg, #34a853, #1e7e34);" 
-                        onclick="salvaAtleta()">
+                        onclick="salvaAtleta()"
+                        aria-label="Aggiungi o aggiorna atleta">
                     ➕ AGGIUNGI ATLETA
                 </button>
                 
                 <button id="btn-cancel-edit" 
                         style="display:none; width:100%; margin-top:12px; background:transparent; border:none; color:#666; font-size:15px; cursor:pointer; padding: 12px;" 
-                        onclick="resetForm()">
+                        onclick="resetForm()"
+                        aria-label="Annulla modifica">
                     ❌ ANNULLA MODIFICA
                 </button>
             </div>
             
-            <div id="lista-atleti-admin" style="overflow-y: auto; flex-grow: 1; padding-right: 10px; max-height: 400px;"></div>
+            <div id="lista-atleti-admin" style="overflow-y: auto; flex-grow: 1; padding-right: 10px; max-height: 400px;" role="list" aria-label="Lista atleti"></div>
         </div>
     </div>
 
     <!-- === OVERLAY INPUT NUMERICO === -->
-    <div id="number-input-overlay" class="number-input-overlay" style="display: none;">
+    <div id="number-input-overlay" class="number-input-overlay" style="display: none;" role="dialog" aria-labelledby="number-input-title" aria-modal="true">
         <div class="number-input-container">
-            <h3 style="margin: 0 0 20px 0; color: #343a40; font-size: 24px;">🔢 INSERISCI NUMERO</h3>
+            <h3 id="number-input-title" style="margin: 0 0 20px 0; color: #343a40; font-size: 24px;">🔢 INSERISCI NUMERO</h3>
             <input type="number" id="number-input" class="number-input" min="0" max="999" value="1" 
-                   pattern="[0-9]*" inputmode="numeric" autofocus>
+                   pattern="[0-9]*" inputmode="numeric" autofocus
+                   aria-label="Inserisci numero" aria-describedby="number-input-description">
+            <div id="number-input-description" style="display: none;">Inserisci un numero da 0 a 999</div>
             <div class="input-buttons" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                <button class="input-btn clear" onclick="clearNumberInput()" style="background: #f39c12; padding: 14px 28px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; flex: 1; min-width: 100px;">PULISCI</button>
-                <button class="input-btn cancel" onclick="cancelNumberInput()" style="background: #e74c3c; padding: 14px 28px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; flex: 1; min-width: 100px;">ANNULLA</button>
-                <button class="input-btn confirm" onclick="confirmNumberInput()" style="background: #2ecc71; padding: 14px 28px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; flex: 1; min-width: 100px;">OK</button>
+                <button class="input-btn clear" onclick="clearNumberInput()" style="background: #f39c12; padding: 14px 28px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; flex: 1; min-width: 100px;" aria-label="Pulisci campo">PULISCI</button>
+                <button class="input-btn cancel" onclick="cancelNumberInput()" style="background: #e74c3c; padding: 14px 28px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; flex: 1; min-width: 100px;" aria-label="Annulla">ANNULLA</button>
+                <button class="input-btn confirm" onclick="confirmNumberInput()" style="background: #2ecc71; padding: 14px 28px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; flex: 1; min-width: 100px;" aria-label="Conferma">OK</button>
             </div>
         </div>
     </div>
 
     <script>
         // =================== CONFIGURAZIONE ===================
-        const SB_URL = 'https://jiktdsvwerqstrlthwxu.supabase.co';
-        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3Rkc3Z3ZXJxc3RybHRod3h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDkxMDEsImV4cCI6MjA4MzgyNTEwMX0.wmEnME6GaHXrvLoQH7MDijiTU4dZfoi9wOcrqs9fP10';
+        const CONFIG = {
+            supabaseUrl: 'https://jiktdsvwerqstrlthwxu.supabase.co',
+            supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3Rkc3Z3ZXJxc3RybHRod3h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDkxMDEsImV4cCI6MjA4MzgyNTEwMX0.wmEnME6GaHXrvLoQH7MDijiTU4dZfoi9wOcrqs9fP10'
+        };
+        
         const WEB_APP_DRIVE_URL = "https://script.google.com/macros/s/AKfycbx1mEyj7Ul-XjAS1EwIZybiHDc2ti1TLe9fY22nTpxK_W0eAgOWwcSEltvoerB6YuB8WQ/exec";
 
         // =================== VARIABILI GLOBALI ===================
-        const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
+        const supabaseClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
         let dataAttuale = new Date();
         let atletiCache = [];
         let presenzePerMese = {};
@@ -733,11 +899,38 @@
         let timerBackup = null;
         let secondiMancanti = 10;
         
-        // Aggiornato rowHeight per celle più alte
+        // Virtual scroll - con buffer per evitare sfarfallio
         const virtualScrollStates = {
-            cuccioli: { startIndex: 0, endIndex: 0, rowHeight: 52, visibleRows: 15, totalRows: 0, container: null },
-            piccoli: { startIndex: 0, endIndex: 0, rowHeight: 52, visibleRows: 15, totalRows: 0, container: null },
-            grandi: { startIndex: 0, endIndex: 0, rowHeight: 52, visibleRows: 15, totalRows: 0, container: null }
+            cuccioli: { 
+                startIndex: 0, 
+                endIndex: 0, 
+                rowHeight: 60, 
+                visibleRows: 15, 
+                totalRows: 0, 
+                container: null,
+                bufferSize: 10,
+                renderTimeout: null
+            },
+            piccoli: { 
+                startIndex: 0, 
+                endIndex: 0, 
+                rowHeight: 60, 
+                visibleRows: 15, 
+                totalRows: 0, 
+                container: null,
+                bufferSize: 10,
+                renderTimeout: null
+            },
+            grandi: { 
+                startIndex: 0, 
+                endIndex: 0, 
+                rowHeight: 60, 
+                visibleRows: 15, 
+                totalRows: 0, 
+                container: null,
+                bufferSize: 10,
+                renderTimeout: null
+            }
         };
         
         let longPressTimer = null;
@@ -755,8 +948,71 @@
         const CAT_PICCOLI = ['GIOVANISSIMI', 'ESORDIENTI'];
         const CAT_GRANDI = ['R12', 'RAGAZZI', 'ALLIEVI', 'JUNIOR', 'JUNIORES', 'SENIOR'];
 
-        // =================== FUNZIONI CARICAMENTO MENSILE ===================
+        // =================== TOAST NOTIFICATIONS ===================
+        function mostraToast(messaggio, tipo = 'successo', durata = 3000) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${tipo}`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.textContent = messaggio;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideUp 0.3s reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, durata);
+        }
 
+        // =================== VALIDAZIONE DATI ===================
+        function validaAtleta(nome, categoria, id = null) {
+            const errori = [];
+            
+            if (!nome || nome.trim().length < 2) {
+                errori.push('Il nome deve avere almeno 2 caratteri');
+            }
+            
+            if (!categoria) {
+                errori.push('Seleziona una categoria');
+            }
+            
+            const nomeNormalizzato = nome.trim().toUpperCase();
+            const esistente = atletiCache.find(a => 
+                a.nome.toUpperCase() === nomeNormalizzato && 
+                a.categoria === categoria &&
+                (id === null || a.id !== id) &&
+                !a.archiviato
+            );
+            
+            if (esistente) {
+                errori.push('Esiste già un atleta con questo nome in questa categoria');
+            }
+            
+            return errori;
+        }
+
+        // =================== GESTIONE ERRORI CON RETRY ===================
+        async function gestisciRichiesta(asyncFn, messaggioErrore, retryCount = 3) {
+            for (let i = 0; i < retryCount; i++) {
+                try {
+                    return await asyncFn();
+                } catch (error) {
+                    console.error(`Tentativo ${i + 1} fallito:`, error);
+                    
+                    if (i === retryCount - 1) {
+                        mostraToast(messaggioErrore, 'error');
+                        throw error;
+                    }
+                    
+                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+                }
+            }
+        }
+
+        // =================== FUNZIONI CARICAMENTO MENSILE ===================
         async function caricaMese(anno, mese, force = false) {
             const key = `${anno}-${mese}`;
             
@@ -768,11 +1024,14 @@
                 const primoGiorno = `${anno}-${String(mese+1).padStart(2,'0')}-01`;
                 const ultimoGiorno = `${anno}-${String(mese+1).padStart(2,'0')}-${new Date(anno, mese+1, 0).getDate()}`;
                 
-                const { data, error } = await supabaseClient
-                    .from('presenze')
-                    .select('*')
-                    .gte('data', primoGiorno)
-                    .lte('data', ultimoGiorno);
+                const { data, error } = await gestisciRichiesta(
+                    () => supabaseClient
+                        .from('presenze')
+                        .select('*')
+                        .gte('data', primoGiorno)
+                        .lte('data', ultimoGiorno),
+                    'Errore nel caricamento delle presenze'
+                );
                 
                 if (error) throw error;
                 
@@ -783,6 +1042,7 @@
                 
             } catch (error) {
                 console.error(`❌ Errore caricamento mese ${mese+1}:`, error);
+                mostraToast(`Errore caricamento mese ${nomiMesi[mese]}`, 'error');
                 return [];
             }
         }
@@ -819,8 +1079,7 @@
             return presenzePerMese[key] || [];
         }
 
-        // =================== FUNZIONI DI RENDERING ===================
-
+        // =================== FUNZIONI DI RENDERING CORRETTE - CON PADDING ===================
         function renderHeader(sezione) {
             const anno = dataAttuale.getFullYear();
             const mese = dataAttuale.getMonth();
@@ -829,12 +1088,12 @@
             const thead = document.getElementById(`thead-${sezione}`);
             if (!thead) return;
             
-            let head = `<tr><th class="sticky-col">ATLETA</th>`;
+            let head = `<tr><th class="sticky-col" scope="col">ATLETA</th>`;
             for(let i = 1; i <= giorniMese; i++) {
                 const giorno = new Date(anno, mese, i);
-                head += `<th>${nomiGiorni[giorno.getDay()]}<br>${i}</th>`;
+                head += `<th scope="col">${nomiGiorni[giorno.getDay()]}<br>${i}</th>`;
             }
-            head += `<th>TOT</th></tr>`;
+            head += `<th scope="col">TOT</th></tr>`;
             thead.innerHTML = head;
         }
 
@@ -853,111 +1112,115 @@
             const infoSpan = document.getElementById(`virtual-info-${sezione}`);
             if (!tbody) return;
             
-            renderHeader(sezione);
-            
-            const atletiFiltrati = getAtletiFiltrati(sezione);
-            const totalRows = atletiFiltrati.length;
-            virtualScrollStates[sezione].totalRows = totalRows;
-            
-            if (totalRows === 0) {
-                tbody.innerHTML = `<tr><td colspan="100" style="text-align: center; padding: 50px; color: #666; font-size: 16px;">
-                    Nessun atleta in questa categoria
-                </td></tr>`;
-                if (infoSpan) infoSpan.innerHTML = '0 atleti';
-                return;
+            // Cancella timeout precedente
+            if (virtualScrollStates[sezione].renderTimeout) {
+                cancelAnimationFrame(virtualScrollStates[sezione].renderTimeout);
             }
             
-            const wrapper = document.getElementById(`wrapper-${sezione}`);
-            if (wrapper && virtualScrollStates[sezione].rowHeight) {
+            virtualScrollStates[sezione].renderTimeout = requestAnimationFrame(() => {
+                renderHeader(sezione);
+                
+                const atletiFiltrati = getAtletiFiltrati(sezione);
+                const totalRows = atletiFiltrati.length;
+                
+                virtualScrollStates[sezione].totalRows = totalRows;
+                
+                if (totalRows === 0) {
+                    tbody.innerHTML = `<tr><td colspan="100" style="text-align: center; padding: 50px; color: #666; font-size: 16px;">
+                        Nessun atleta in questa categoria
+                    </td></tr>`;
+                    if (infoSpan) infoSpan.innerHTML = '0 atleti';
+                    return;
+                }
+                
+                const wrapper = document.getElementById(`wrapper-${sezione}`);
+                if (!wrapper) return;
+                
                 const scrollTop = wrapper.scrollTop;
                 const wrapperHeight = wrapper.clientHeight;
+                const rowHeight = virtualScrollStates[sezione].rowHeight;
+                const bufferSize = virtualScrollStates[sezione].bufferSize;
                 
-                const startIndex = Math.max(0, Math.floor(scrollTop / virtualScrollStates[sezione].rowHeight) - 5);
-                const endIndex = Math.min(totalRows, Math.ceil((scrollTop + wrapperHeight) / virtualScrollStates[sezione].rowHeight) + 5);
+                // Calcola indici con buffer
+                const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - bufferSize);
+                const endIndex = Math.min(totalRows, Math.ceil((scrollTop + wrapperHeight) / rowHeight) + bufferSize);
                 
                 virtualScrollStates[sezione].startIndex = startIndex;
                 virtualScrollStates[sezione].endIndex = endIndex;
-            }
-            
-            const { startIndex, endIndex, rowHeight } = virtualScrollStates[sezione];
-            
-            let html = '';
-            const anno = dataAttuale.getFullYear();
-            const mese = dataAttuale.getMonth();
-            const giorniMese = new Date(anno, mese + 1, 0).getDate();
-            const oggiStr = new Date().toLocaleDateString('en-CA');
-            const presenzeMese = getPresenzeMese(anno, mese);
-            
-            for (let i = startIndex; i < endIndex && i < totalRows; i++) {
-                const a = atletiFiltrati[i];
-                html += `<tr style="height: ${rowHeight}px;">`;
                 
-                // Nome su due righe con categoria in piccolo sotto
-                html += `<td class="sticky-col"><div class="nome-container">
-                    <span class="nome-cognome">${a.nome.toUpperCase()}</span>
-                    <span class="categoria-badge">${a.categoria}</span>
-                </div></td>`;
+                // Calcola padding top e bottom
+                const paddingTop = startIndex * rowHeight;
+                const paddingBottom = (totalRows - endIndex) * rowHeight;
                 
-                let totMese = 0;
-                for(let d = 1; d <= giorniMese; d++) {
-                    const dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                    const p = presenzeMese.find(x => x.atleta_id === a.id && x.data === dStr);
-                    
-                    const hasNumber = p && p.stato && p.stato.includes('numero:');
-                    const numberValue = hasNumber ? p.stato.split(':')[1] : '';
-                    const isGreen = p && (p.stato === 'partecipa' || hasNumber);
-                    
-                    if(isGreen) totMese++;
-                    
-                    const longPressAttrs = numericInputAttivo ? 
-                        `onmousedown="startLongPress(this, ${a.id}, '${dStr}', '${sezione}')" 
-                         onmouseup="endLongPress()" 
-                         onmouseleave="cancelLongPress()"
-                         ontouchstart="startLongPress(this, ${a.id}, '${dStr}', '${sezione}')" 
-                         ontouchend="endLongPress()" 
-                         ontouchcancel="cancelLongPress()"` : '';
-                    
-                    html += `<td class="day-cell ${isGreen?'p-partecipa':''} ${dStr===oggiStr?'today-cell':''}" 
-                        ${longPressAttrs}
-                        onclick="handleCellClick(event, this, ${a.id}, '${dStr}', '${sezione}')"
-                        title="${dStr}">
-                        ${hasNumber ? numberValue : (isGreen ? '✔' : '')}
-                    </td>`;
+                // Costruisci HTML
+                let html = '';
+                
+                // Padding top
+                if (paddingTop > 0) {
+                    html += `<tr class="virtual-padding-row" style="height: ${paddingTop}px;"><td colspan="100"></td></tr>`;
                 }
-                html += `<td class="tot-cell">${totMese}</td></tr>`;
-            }
-            
-            tbody.innerHTML = html;
-            
-            const paddingTop = startIndex * rowHeight;
-            const paddingBottom = (totalRows - endIndex) * rowHeight;
-            
-            let paddingTopEl = document.getElementById(`padding-top-${sezione}`);
-            let paddingBottomEl = document.getElementById(`padding-bottom-${sezione}`);
-            
-            if (!paddingTopEl) {
-                paddingTopEl = document.createElement('tr');
-                paddingTopEl.id = `padding-top-${sezione}`;
-                paddingTopEl.style.height = '0px';
-                paddingTopEl.style.visibility = 'hidden';
-                tbody.prepend(paddingTopEl);
-            }
-            paddingTopEl.style.height = paddingTop + 'px';
-            
-            if (!paddingBottomEl) {
-                paddingBottomEl = document.createElement('tr');
-                paddingBottomEl.id = `padding-bottom-${sezione}`;
-                paddingBottomEl.style.height = '0px';
-                paddingBottomEl.style.visibility = 'hidden';
-                tbody.appendChild(paddingBottomEl);
-            }
-            paddingBottomEl.style.height = paddingBottom + 'px';
-            
-            if (infoSpan) {
-                infoSpan.innerHTML = `Mostrando atleti ${startIndex+1}-${Math.min(endIndex, totalRows)} di ${totalRows}`;
-            }
-            
-            aggiornaStatistiche();
+                
+                const anno = dataAttuale.getFullYear();
+                const mese = dataAttuale.getMonth();
+                const giorniMese = new Date(anno, mese + 1, 0).getDate();
+                const oggiStr = new Date().toLocaleDateString('en-CA');
+                const presenzeMese = getPresenzeMese(anno, mese);
+                
+                // Righe visibili
+                for (let i = startIndex; i < endIndex && i < totalRows; i++) {
+                    const a = atletiFiltrati[i];
+                    html += `<tr>`;
+                    
+                    // Colonna ATLETA sticky
+                    html += `<td class="sticky-col" scope="row"><div class="nome-container">
+                        <span class="nome-cognome">${a.nome.toUpperCase()}</span>
+                        <span class="categoria-badge">${a.categoria}</span>
+                    </div></td>`;
+                    
+                    let totMese = 0;
+                    for(let d = 1; d <= giorniMese; d++) {
+                        const dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                        const p = presenzeMese.find(x => x.atleta_id === a.id && x.data === dStr);
+                        
+                        const hasNumber = p && p.stato && p.stato.includes('numero:');
+                        const numberValue = hasNumber ? p.stato.split(':')[1] : '';
+                        const isGreen = p && (p.stato === 'partecipa' || hasNumber);
+                        
+                        if(isGreen) totMese++;
+                        
+                        const longPressAttrs = numericInputAttivo ? 
+                            `onmousedown="startLongPress(this, ${a.id}, '${dStr}', '${sezione}')" 
+                             onmouseup="endLongPress()" 
+                             onmouseleave="cancelLongPress()"
+                             ontouchstart="startLongPress(this, ${a.id}, '${dStr}', '${sezione}')" 
+                             ontouchend="endLongPress()" 
+                             ontouchcancel="cancelLongPress()"` : '';
+                        
+                        html += `<td class="day-cell ${isGreen?'p-partecipa':''} ${dStr===oggiStr?'today-cell':''}" 
+                            ${longPressAttrs}
+                            onclick="handleCellClick(event, this, ${a.id}, '${dStr}', '${sezione}')"
+                            title="${dStr}"
+                            role="gridcell"
+                            aria-label="${dStr} ${isGreen ? 'Presente' : 'Assente'}">
+                            ${hasNumber ? numberValue : (isGreen ? '✔' : '')}
+                        </td>`;
+                    }
+                    html += `<td class="tot-cell" role="gridcell" aria-label="Totale mese: ${totMese}">${totMese}</td></tr>`;
+                }
+                
+                // Padding bottom
+                if (paddingBottom > 0) {
+                    html += `<tr class="virtual-padding-row" style="height: ${paddingBottom}px;"><td colspan="100"></td></tr>`;
+                }
+                
+                tbody.innerHTML = html;
+                
+                if (infoSpan) {
+                    infoSpan.innerHTML = `Mostrando atleti ${startIndex+1}-${Math.min(endIndex, totalRows)} di ${totalRows}`;
+                }
+                
+                aggiornaStatistiche();
+            });
         }
 
         function initVirtualScroll(sezione) {
@@ -965,10 +1228,20 @@
             if (!wrapper) return;
             
             virtualScrollStates[sezione].container = wrapper;
-            virtualScrollStates[sezione].rowHeight = 52; // Altezza per nome su due righe
             
             const wrapperHeight = wrapper.clientHeight;
-            virtualScrollStates[sezione].visibleRows = Math.ceil(wrapperHeight / 52) + 5;
+            virtualScrollStates[sezione].visibleRows = Math.ceil(wrapperHeight / virtualScrollStates[sezione].rowHeight) + virtualScrollStates[sezione].bufferSize;
+            
+            // Debounce scroll
+            let scrollTimeout;
+            wrapper.addEventListener('scroll', () => {
+                if (scrollTimeout) {
+                    cancelAnimationFrame(scrollTimeout);
+                }
+                scrollTimeout = requestAnimationFrame(() => {
+                    handleVirtualScroll(sezione);
+                });
+            });
             
             setTimeout(() => {
                 renderVirtualScroll(sezione);
@@ -982,20 +1255,29 @@
             const scrollTop = wrapper.scrollTop;
             const rowHeight = virtualScrollStates[sezione].rowHeight;
             const totalRows = virtualScrollStates[sezione].totalRows;
+            const bufferSize = virtualScrollStates[sezione].bufferSize;
+            const wrapperHeight = wrapper.clientHeight;
             
-            const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - 5);
-            const endIndex = Math.min(totalRows, Math.ceil((scrollTop + wrapper.clientHeight) / rowHeight) + 5);
+            const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - bufferSize);
+            const endIndex = Math.min(totalRows, Math.ceil((scrollTop + wrapperHeight) / rowHeight) + bufferSize);
             
-            if (startIndex !== virtualScrollStates[sezione].startIndex || 
-                endIndex !== virtualScrollStates[sezione].endIndex) {
-                virtualScrollStates[sezione].startIndex = startIndex;
-                virtualScrollStates[sezione].endIndex = endIndex;
-                renderVirtualScroll(sezione);
+            // Render solo se necessario
+            if (Math.abs(startIndex - virtualScrollStates[sezione].startIndex) > 3 || 
+                Math.abs(endIndex - virtualScrollStates[sezione].endIndex) > 3) {
+                
+                if (virtualScrollStates[sezione].renderTimeout) {
+                    cancelAnimationFrame(virtualScrollStates[sezione].renderTimeout);
+                }
+                
+                virtualScrollStates[sezione].renderTimeout = requestAnimationFrame(() => {
+                    virtualScrollStates[sezione].startIndex = startIndex;
+                    virtualScrollStates[sezione].endIndex = endIndex;
+                    renderVirtualScroll(sezione);
+                });
             }
         }
 
         // =================== FUNZIONI PRINCIPALI ===================
-
         async function inizializza() {
             console.log('🚀 Inizializzazione applicazione...');
             
@@ -1022,16 +1304,21 @@
             
             caricaStatoNumericInput();
             caricaStatoBackupAuto();
+            
+            mostraToast('Applicazione pronta', 'success');
         }
 
         async function caricaDatiIniziali() {
             try {
                 document.getElementById('status-auto').innerHTML = `<span class="loading-spinner"></span> Caricamento atleti...`;
                 
-                const { data: atleti, error: errorAtleti } = await supabaseClient
-                    .from('atleti')
-                    .select('*')
-                    .order('nome');
+                const { data: atleti, error: errorAtleti } = await gestisciRichiesta(
+                    () => supabaseClient
+                        .from('atleti')
+                        .select('*')
+                        .order('nome'),
+                    'Errore nel caricamento degli atleti'
+                );
                     
                 if (errorAtleti) throw errorAtleti;
                 atletiCache = atleti || [];
@@ -1041,10 +1328,12 @@
                 renderAdminList();
                 
                 document.getElementById('status-auto').innerText = "✅ Sistema Pronto";
+                mostraToast('Dati caricati con successo', 'success');
                 
             } catch (error) {
                 console.error('❌ Errore caricamento dati:', error);
                 document.getElementById('status-auto').innerText = "❌ Errore di connessione";
+                mostraToast('Errore di connessione al server', 'error');
             }
         }
 
@@ -1095,7 +1384,8 @@
                 sm.add(new Option(nome, i));
             });
             
-            for(let i = 2024; i <= 2050; i++) {
+            const annoCorrente = new Date().getFullYear();
+            for(let i = annoCorrente - 5; i <= annoCorrente + 5; i++) {
                 sa.add(new Option(i, i));
             }
             
@@ -1104,7 +1394,6 @@
         }
 
         // =================== GESTIONE INPUT NUMERICO ===================
-
         function toggleNumericInput() {
             numericInputAttivo = !numericInputAttivo;
             const btn = document.getElementById('btn-numeric-input');
@@ -1113,10 +1402,12 @@
                 btn.innerHTML = "🔢 NUM ON";
                 btn.classList.add('attivo');
                 document.getElementById('status-auto').innerText = "✅ Input numerico ATTIVATO";
+                mostraToast('Input numerico attivato', 'info');
             } else {
                 btn.innerHTML = "🔢 NUM OFF";
                 btn.classList.remove('attivo');
                 document.getElementById('status-auto').innerText = "⏸️ Input numerico DISATTIVATO";
+                mostraToast('Input numerico disattivato', 'info');
             }
             
             const sezione = getSezioneCorrente();
@@ -1140,7 +1431,6 @@
         }
 
         // =================== GESTIONE LONG PRESS ===================
-
         function startLongPress(el, aId, data, sezione) {
             if (!numericInputAttivo) return;
             
@@ -1183,40 +1473,48 @@
             const presenzeMese = getPresenzeMese(anno, mese);
             const p = presenzeMese.find(x => x.atleta_id === aId && x.data === data);
             
-            if (p && p.stato && p.stato.includes('numero:')) {
-                await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
-                el.classList.remove('p-partecipa');
-                el.innerText = '';
-            } else if (p && p.stato === 'partecipa') {
-                await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
-                el.classList.remove('p-partecipa');
-                el.innerText = '';
-            } else {
-                await supabaseClient.from('presenze').upsert({ 
-                    atleta_id: aId, 
-                    data: data, 
-                    stato: 'partecipa' 
-                }, { onConflict: 'atleta_id, data' });
-                el.classList.add('p-partecipa');
-                el.innerText = '✔';
-            }
-            
-            const key = `${anno}-${mese}`;
-            const idx = presenzePerMese[key]?.findIndex(x => x.atleta_id === aId && x.data === data);
-            if (el.classList.contains('p-partecipa')) {
-                if (idx > -1 && presenzePerMese[key]) {
-                    presenzePerMese[key][idx].stato = 'partecipa';
-                } else if (presenzePerMese[key]) {
-                    presenzePerMese[key].push({ atleta_id: aId, data: data, stato: 'partecipa' });
+            try {
+                if (p && p.stato && p.stato.includes('numero:')) {
+                    await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
+                    el.classList.remove('p-partecipa');
+                    el.innerText = '';
+                } else if (p && p.stato === 'partecipa') {
+                    await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
+                    el.classList.remove('p-partecipa');
+                    el.innerText = '';
+                } else {
+                    await supabaseClient.from('presenze').upsert({ 
+                        atleta_id: aId, 
+                        data: data, 
+                        stato: 'partecipa' 
+                    }, { onConflict: 'atleta_id, data' });
+                    el.classList.add('p-partecipa');
+                    el.innerText = '✔';
                 }
-            } else if (idx > -1 && presenzePerMese[key]) {
-                presenzePerMese[key].splice(idx, 1);
-            }
-            
-            updateTotalCell(el, sezione);
-            
-            if (backupAutomaticoAttivo) {
-                avviaTimerBackup();
+                
+                const key = `${anno}-${mese}`;
+                const idx = presenzePerMese[key]?.findIndex(x => x.atleta_id === aId && x.data === data);
+                if (el.classList.contains('p-partecipa')) {
+                    if (idx > -1 && presenzePerMese[key]) {
+                        presenzePerMese[key][idx].stato = 'partecipa';
+                    } else if (presenzePerMese[key]) {
+                        presenzePerMese[key].push({ atleta_id: aId, data: data, stato: 'partecipa' });
+                    }
+                } else if (idx > -1 && presenzePerMese[key]) {
+                    presenzePerMese[key].splice(idx, 1);
+                }
+                
+                updateTotalCell(el, sezione);
+                
+                if (backupAutomaticoAttivo) {
+                    avviaTimerBackup();
+                }
+                
+                mostraToast('Presenza aggiornata', 'success', 1500);
+                
+            } catch (error) {
+                console.error('Errore aggiornamento presenza:', error);
+                mostraToast('Errore durante l\'aggiornamento', 'error');
             }
         }
 
@@ -1258,27 +1556,35 @@
                 const anno = dataAttuale.getFullYear();
                 const mese = dataAttuale.getMonth();
                 
-                await supabaseClient.from('presenze').upsert({ 
-                    atleta_id: aId, 
-                    data: data, 
-                    stato: `numero:${numberValue}`
-                }, { onConflict: 'atleta_id, data' });
-                
-                el.classList.add('p-partecipa');
-                el.innerText = numberValue;
-                
-                const key = `${anno}-${mese}`;
-                const idx = presenzePerMese[key]?.findIndex(x => x.atleta_id === aId && x.data === data);
-                if (idx > -1 && presenzePerMese[key]) {
-                    presenzePerMese[key][idx].stato = `numero:${numberValue}`;
-                } else if (presenzePerMese[key]) {
-                    presenzePerMese[key].push({ atleta_id: aId, data: data, stato: `numero:${numberValue}` });
-                }
-                
-                updateTotalCell(el, sezione);
-                
-                if (backupAutomaticoAttivo) {
-                    avviaTimerBackup();
+                try {
+                    await supabaseClient.from('presenze').upsert({ 
+                        atleta_id: aId, 
+                        data: data, 
+                        stato: `numero:${numberValue}`
+                    }, { onConflict: 'atleta_id, data' });
+                    
+                    el.classList.add('p-partecipa');
+                    el.innerText = numberValue;
+                    
+                    const key = `${anno}-${mese}`;
+                    const idx = presenzePerMese[key]?.findIndex(x => x.atleta_id === aId && x.data === data);
+                    if (idx > -1 && presenzePerMese[key]) {
+                        presenzePerMese[key][idx].stato = `numero:${numberValue}`;
+                    } else if (presenzePerMese[key]) {
+                        presenzePerMese[key].push({ atleta_id: aId, data: data, stato: `numero:${numberValue}` });
+                    }
+                    
+                    updateTotalCell(el, sezione);
+                    
+                    if (backupAutomaticoAttivo) {
+                        avviaTimerBackup();
+                    }
+                    
+                    mostraToast(`Numero ${numberValue} registrato`, 'success', 1500);
+                    
+                } catch (error) {
+                    console.error('Errore salvataggio numero:', error);
+                    mostraToast('Errore durante il salvataggio', 'error');
                 }
             }
             
@@ -1287,7 +1593,7 @@
         }
 
         function updateTotalCell(el, sezione) {
-            const row = el.parentElement;
+            const row = el.closest('tr');
             if (!row) return;
             
             const totCell = row.querySelector('.tot-cell');
@@ -1305,7 +1611,6 @@
         }
 
         // =================== BACKUP AUTOMATICO ===================
-
         function avviaTimerBackup() {
             if (!backupAutomaticoAttivo) return;
             
@@ -1331,10 +1636,12 @@
                 btn.innerHTML = "▶️ AUTO ON";
                 btn.classList.add('attivo');
                 document.getElementById('status-auto').innerText = "✅ Backup automatico ATTIVATO";
+                mostraToast('Backup automatico attivato', 'info');
             } else {
                 btn.innerHTML = "⏸️ AUTO OFF";
                 btn.classList.remove('attivo');
                 document.getElementById('status-auto').innerText = "⏸️ Backup automatico DISATTIVATO";
+                mostraToast('Backup automatico disattivato', 'info');
             }
             
             localStorage.setItem('backup_auto_attivo', backupAutomaticoAttivo);
@@ -1356,17 +1663,11 @@
         }
 
         // =================== STATISTICHE ===================
-
         function aggiornaStatistiche() {
             const anno = dataAttuale.getFullYear();
             const mese = dataAttuale.getMonth();
             
-            document.getElementById('total-atleti')?.remove();
-            document.getElementById('total-presenze-anno')?.remove();
-            document.getElementById('media-presenze')?.remove();
-            document.getElementById('top-atleta')?.remove();
-            
-            document.getElementById('stat-atleti').innerText = atletiCache.length;
+            document.getElementById('stat-atleti').innerText = atletiCache.filter(a => !a.archiviato).length;
             
             const oggiStr = new Date().toLocaleDateString('en-CA');
             let presenzeOggi = 0;
@@ -1382,7 +1683,6 @@
         }
 
         // =================== NAVIGAZIONE ===================
-
         function scrollOggi() {
             const active = document.querySelector('.section-active'); 
             if (!active) return;
@@ -1403,12 +1703,24 @@
             sessionStorage.setItem('last_sez', s); 
             document.getElementById('main-menu').style.display = 'none';
             
+            document.querySelectorAll('[role="tab"]').forEach(tab => {
+                tab.setAttribute('aria-selected', 'false');
+            });
+            
             document.getElementById('sez-cuccioli').className = 
                 (s === 'cuccioli') ? 'section-active' : 'section-container';
             document.getElementById('sez-piccoli').className = 
                 (s === 'piccoli') ? 'section-active' : 'section-container';
             document.getElementById('sez-grandi').className = 
                 (s === 'grandi') ? 'section-active' : 'section-container';
+            
+            if (s === 'cuccioli') {
+                document.querySelector('.btn-cuccioli').setAttribute('aria-selected', 'true');
+            } else if (s === 'piccoli') {
+                document.querySelector('.btn-piccoli').setAttribute('aria-selected', 'true');
+            } else if (s === 'grandi') {
+                document.querySelector('.btn-grandi').setAttribute('aria-selected', 'true');
+            }
             
             renderHeader(s);
             setTimeout(() => {
@@ -1462,7 +1774,6 @@
         }
 
         // =================== BACKUP PDF ===================
-
         async function aggiornaBackupDrive() {
             const status = document.getElementById('status-auto'); 
             status.innerText = "📄 GENERAZIONE PDF...";
@@ -1547,6 +1858,7 @@
                 if(res.fileUrl) { 
                     localStorage.setItem('ultimo_pdf_url', res.fileUrl); 
                     status.innerHTML = `✅ BACKUP COMPLETATO! <a href="${res.fileUrl}" target="_blank" style="color: #4285F4; font-weight: bold;">APRI PDF</a>`; 
+                    mostraToast('Backup completato con successo', 'success');
                 } else {
                     throw new Error('Nessun URL restituito');
                 }
@@ -1554,6 +1866,7 @@
             } catch(e) { 
                 status.innerText = "❌ ERRORE DURANTE IL BACKUP"; 
                 console.error('Backup error:', e); 
+                mostraToast('Errore durante il backup', 'error');
             }
         }
 
@@ -1602,15 +1915,15 @@
             });
         }
 
-        // =================== GESTIONE ATLETI ===================
-
+        // =================== GESTIONE ATLETI CON VALIDAZIONE ===================
         async function salvaAtleta() {
             const id = document.getElementById('edit-id').value;
             const nome = document.getElementById('new-nome').value.trim().toUpperCase();
             const cat = document.getElementById('new-cat').value;
             
-            if(!nome) {
-                alert("Inserisci il nome dell'atleta");
+            const errori = validaAtleta(nome, cat, id || null);
+            if (errori.length > 0) {
+                alert(errori.join('\n'));
                 return;
             }
             
@@ -1648,10 +1961,12 @@
                 }
                 
                 document.getElementById('status-auto').innerText = "✅ Atleta salvato";
+                mostraToast(id ? 'Atleta aggiornato' : 'Atleta aggiunto', 'success');
                 
             } catch(error) { 
-                alert("Errore: " + error.message); 
+                console.error('Errore salvataggio atleta:', error);
                 document.getElementById('status-auto').innerText = "❌ Errore salvataggio";
+                mostraToast('Errore durante il salvataggio', 'error');
             }
         }
 
@@ -1682,22 +1997,25 @@
             }
             
             container.innerHTML = atletiCache.map(a => `
-                <div class="atleta-item ${a.archiviato ? 'archiviato' : ''}">
+                <div class="atleta-item ${a.archiviato ? 'archiviato' : ''}" role="listitem">
                     <div class="atleta-info">
                         <span class="atleta-name">${a.nome} ${a.archiviato ? '(ARCHIVIATO)' : ''}</span>
                         <span class="atleta-cat">${a.categoria}</span>
                     </div>
                     <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
                         <button style="background:#4285F4; color:white; border:none; padding:10px 16px; border-radius:10px; font-weight:bold; font-size:13px; cursor:pointer;" 
-                            onclick="preparaModifica(${a.id}, '${a.nome.replace(/'/g, "\\'")}', '${a.categoria}')">
+                            onclick="preparaModifica(${a.id}, '${a.nome.replace(/'/g, "\\'")}', '${a.categoria}')"
+                            aria-label="Modifica ${a.nome}">
                             MODIFICA
                         </button>
                         <button style="background:${a.archiviato ? '#34a853' : '#f39c12'}; color:white; border:none; padding:10px 16px; border-radius:10px; font-weight:bold; font-size:13px; cursor:pointer;" 
-                            onclick="setArchiviazione(${a.id}, ${!a.archiviato})">
+                            onclick="setArchiviazione(${a.id}, ${!a.archiviato})"
+                            aria-label="${a.archiviato ? 'Ripristina' : 'Archivia'} ${a.nome}">
                             ${a.archiviato ? 'RIPRISTINA' : 'ARCHIVIA'}
                         </button>
                         <button style="background:#e74c3c; color:white; border:none; padding:10px 16px; border-radius:10px; font-weight:bold; font-size:13px; cursor:pointer;" 
-                            onclick="eliminaDefinitivo(${a.id})">
+                            onclick="eliminaDefinitivo(${a.id})"
+                            aria-label="Elimina definitivamente ${a.nome}">
                             ELIMINA
                         </button>
                     </div>
@@ -1724,9 +2042,11 @@
                 
                 document.getElementById('status-auto').innerText = 
                     stato ? "✅ Atleta archiviato" : "✅ Atleta ripristinato";
+                mostraToast(stato ? 'Atleta archiviato' : 'Atleta ripristinato', 'success');
                     
             } catch(error) {
-                alert("Errore: " + error.message);
+                console.error('Errore archiviazione:', error);
+                mostraToast('Errore durante l\'operazione', 'error');
             }
         }
 
@@ -1748,8 +2068,10 @@
                     }
                     
                     document.getElementById('status-auto').innerText = "✅ Atleta eliminato";
+                    mostraToast('Atleta eliminato', 'success');
                 } catch(error) {
-                    alert("Errore durante l'eliminazione: " + error.message);
+                    console.error('Errore eliminazione:', error);
+                    mostraToast('Errore durante l\'eliminazione', 'error');
                 }
             } 
         }
