@@ -246,6 +246,7 @@
         .btn-backup-auto.attivo { background: linear-gradient(135deg, #2ecc71, #27ae60); }
         .btn-numeric-input { background: linear-gradient(135deg, #8e44ad, #6c3483); }
         .btn-numeric-input.attivo { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .btn-quick-register { background: linear-gradient(135deg, #e67e22, #d35400); }
         
         /* STATUS BAR */
         .status-container {
@@ -628,6 +629,142 @@
         .atleta-name { font-weight: 800; font-size: 16px; display: block; color: #2c3e50; }
         .atleta-cat { font-size: 13px; color: #667eea; font-weight: 600; }
         
+        /* POPUP REGISTRAZIONE VELOCE */
+        #quick-register-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .quick-register-container {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px 20px;
+            border-radius: 40px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            animation: popIn 0.3s ease;
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .quick-register-header {
+            margin-bottom: 25px;
+        }
+        
+        .quick-register-header h2 {
+            font-size: 28px;
+            color: #343a40;
+            margin-bottom: 10px;
+        }
+        
+        .quick-register-header .progress {
+            font-size: 18px;
+            color: #667eea;
+            font-weight: 600;
+            background: #f8f9fa;
+            padding: 8px 20px;
+            border-radius: 50px;
+            display: inline-block;
+        }
+        
+        .quick-athlete-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 40px 20px;
+            border-radius: 30px;
+            margin: 20px 0 30px;
+            color: white;
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+        }
+        
+        .quick-athlete-name {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 15px;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+        
+        .quick-athlete-category {
+            font-size: 20px;
+            opacity: 0.9;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: inline-block;
+        }
+        
+        .quick-buttons {
+            display: flex;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .quick-btn {
+            flex: 1;
+            min-width: 100px;
+            padding: 20px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 900;
+            font-size: 20px;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.2s, opacity 0.2s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .quick-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .quick-btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .quick-btn-present {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .quick-btn-present.partecipa {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .quick-btn-next {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .quick-btn-prev {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+        
+        .quick-btn-close {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            min-width: 100%;
+        }
+        
+        .quick-status {
+            font-size: 18px;
+            margin: 15px 0 10px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .app-container { padding: 15px 10px 30px; }
@@ -666,6 +803,15 @@
             }
             .btn-menu { padding: 20px 15px; font-size: 20px; }
             .btn-menu span { font-size: 11px; }
+            
+            .quick-athlete-name {
+                font-size: 28px;
+            }
+            
+            .quick-btn {
+                padding: 15px;
+                font-size: 18px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -693,6 +839,15 @@
                 min-width: 35px;
                 max-width: 35px;
                 font-size: 11px; 
+            }
+            
+            .quick-athlete-name {
+                font-size: 24px;
+            }
+            
+            .quick-btn {
+                padding: 12px;
+                font-size: 16px;
             }
         }
         
@@ -745,6 +900,7 @@
             
             <!-- PULSANTI AZIONE -->
             <div class="actions-container">
+                <button class="btn-action btn-quick-register" onclick="avviaRegistrazioneVeloce()" title="Registrazione veloce" aria-label="Avvia registrazione veloce atleti">⚡ REGISTRA VELOCE</button>
                 <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()" title="Crea backup PDF" aria-label="Crea backup PDF su Drive">☁️ BACKUP PDF</button>
                 <button class="btn-action btn-open-drive" onclick="apriFileDrive()" title="Apri ultimo backup" aria-label="Apri ultimo backup su Drive">📂 APRI DRIVE</button>
                 <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input" title="Input numerico" aria-label="Attiva o disattiva input numerico">🔢 NUM OFF</button>
@@ -881,6 +1037,31 @@
         </div>
     </div>
 
+    <!-- === OVERLAY REGISTRAZIONE VELOCE === -->
+    <div id="quick-register-overlay" role="dialog" aria-labelledby="quick-title" aria-modal="true">
+        <div class="quick-register-container">
+            <div class="quick-register-header">
+                <h2 id="quick-title">📋 REGISTRA PRESENZE</h2>
+                <div class="progress" id="quick-progress">Atleta 1 / 10</div>
+            </div>
+            
+            <div class="quick-athlete-card">
+                <div class="quick-athlete-name" id="quick-athlete-name">Caricamento...</div>
+                <div class="quick-athlete-category" id="quick-athlete-category"></div>
+            </div>
+            
+            <div class="quick-buttons">
+                <button class="quick-btn quick-btn-prev" id="quick-btn-prev" onclick="prevQuickAthlete()" aria-label="Atleta precedente">◀ INDIETRO</button>
+                <button class="quick-btn quick-btn-present" id="quick-btn-present" onclick="toggleQuickPresent()">✅ PRESENTE</button>
+                <button class="quick-btn quick-btn-next" id="quick-btn-next" onclick="nextQuickAthlete()" aria-label="Prossimo atleta">PROSSIMO ▶</button>
+            </div>
+            
+            <div class="quick-status" id="quick-status"></div>
+            
+            <button class="quick-btn quick-btn-close" onclick="chiudiRegistrazioneVeloce()">✖️ CHIUDI</button>
+        </div>
+    </div>
+
     <script>
         // =================== CONFIGURAZIONE ===================
         const CONFIG = {
@@ -898,6 +1079,13 @@
         let mesiCaricati = new Set();
         let timerBackup = null;
         let secondiMancanti = 10;
+        
+        // Variabili per registrazione veloce
+        let quickRegisterActive = false;
+        let quickAthletes = [];
+        let quickCurrentIndex = 0;
+        let quickDate = '';
+        let quickSezione = '';
         
         // Virtual scroll - con buffer per evitare sfarfallio
         const virtualScrollStates = {
@@ -1351,6 +1539,11 @@
                             if (anno === dataAttuale.getFullYear() && mese === dataAttuale.getMonth()) {
                                 const sezione = getSezioneCorrente();
                                 renderVirtualScroll(sezione);
+                                
+                                // Aggiorna anche la registrazione veloce se attiva
+                                if (quickRegisterActive) {
+                                    aggiornaStatoVeloce();
+                                }
                             }
                         }
                     })
@@ -1362,6 +1555,11 @@
                         renderAdminList();
                         const sezione = getSezioneCorrente();
                         renderVirtualScroll(sezione);
+                        
+                        // Aggiorna anche la registrazione veloce se attiva
+                        if (quickRegisterActive) {
+                            aggiornaListaVeloce();
+                        }
                     })
                 .subscribe();
         }
@@ -2074,6 +2272,163 @@
                     mostraToast('Errore durante l\'eliminazione', 'error');
                 }
             } 
+        }
+
+        // =================== REGISTRAZIONE VELOCE ===================
+        function avviaRegistrazioneVeloce() {
+            const sezione = getSezioneCorrente();
+            if (!sezione) {
+                mostraToast('Seleziona prima una categoria', 'warning');
+                return;
+            }
+            
+            const atleti = getAtletiFiltrati(sezione);
+            if (atleti.length === 0) {
+                mostraToast('Nessun atleta in questa categoria', 'warning');
+                return;
+            }
+            
+            const oggi = new Date();
+            const oggiStr = oggi.toLocaleDateString('en-CA');
+            
+            quickAthletes = atleti;
+            quickCurrentIndex = 0;
+            quickDate = oggiStr;
+            quickSezione = sezione;
+            quickRegisterActive = true;
+            
+            document.getElementById('quick-register-overlay').style.display = 'flex';
+            aggiornaVeloceDisplay();
+            aggiornaStatoPulsantiNavigazione();
+        }
+
+        function aggiornaVeloceDisplay() {
+            if (!quickRegisterActive || quickAthletes.length === 0) return;
+            
+            const atleta = quickAthletes[quickCurrentIndex];
+            document.getElementById('quick-athlete-name').innerText = atleta.nome;
+            document.getElementById('quick-athlete-category').innerText = atleta.categoria;
+            document.getElementById('quick-progress').innerText = `Atleta ${quickCurrentIndex + 1} / ${quickAthletes.length}`;
+            
+            aggiornaStatoVeloce();
+            aggiornaStatoPulsantiNavigazione();
+        }
+
+        function aggiornaStatoVeloce() {
+            const atleta = quickAthletes[quickCurrentIndex];
+            const presenzeMese = getPresenzeMese(dataAttuale.getFullYear(), dataAttuale.getMonth());
+            const p = presenzeMese.find(x => x.atleta_id === atleta.id && x.data === quickDate);
+            
+            const btn = document.getElementById('quick-btn-present');
+            const statusDiv = document.getElementById('quick-status');
+            
+            if (p && (p.stato === 'partecipa' || p.stato.includes('numero:'))) {
+                btn.innerHTML = '❌ RIMUOVI';
+                btn.classList.add('partecipa');
+                statusDiv.innerHTML = '✅ Atleta segnato come presente';
+            } else {
+                btn.innerHTML = '✅ PRESENTE';
+                btn.classList.remove('partecipa');
+                statusDiv.innerHTML = '⏺️ Atleta non presente';
+            }
+        }
+
+        function aggiornaStatoPulsantiNavigazione() {
+            const prevBtn = document.getElementById('quick-btn-prev');
+            const nextBtn = document.getElementById('quick-btn-next');
+            
+            if (quickCurrentIndex === 0) {
+                prevBtn.disabled = true;
+            } else {
+                prevBtn.disabled = false;
+            }
+            
+            if (quickCurrentIndex === quickAthletes.length - 1) {
+                nextBtn.disabled = true;
+            } else {
+                nextBtn.disabled = false;
+            }
+        }
+
+        async function toggleQuickPresent() {
+            const atleta = quickAthletes[quickCurrentIndex];
+            const presenzeMese = getPresenzeMese(dataAttuale.getFullYear(), dataAttuale.getMonth());
+            const p = presenzeMese.find(x => x.atleta_id === atleta.id && x.data === quickDate);
+            
+            try {
+                if (p) {
+                    await supabaseClient.from('presenze').delete().eq('atleta_id', atleta.id).eq('data', quickDate);
+                } else {
+                    await supabaseClient.from('presenze').upsert({ 
+                        atleta_id: atleta.id, 
+                        data: quickDate, 
+                        stato: 'partecipa' 
+                    }, { onConflict: 'atleta_id, data' });
+                }
+                
+                await caricaMese(dataAttuale.getFullYear(), dataAttuale.getMonth(), true);
+                aggiornaStatoVeloce();
+                
+                const sezione = getSezioneCorrente();
+                if (sezione) renderVirtualScroll(sezione);
+                
+                // Passa automaticamente al prossimo atleta dopo aver segnato presente
+                if (quickCurrentIndex < quickAthletes.length - 1) {
+                    setTimeout(() => {
+                        nextQuickAthlete();
+                    }, 300); // Piccolo ritardo per mostrare il feedback visivo
+                } else {
+                    // Se è l'ultimo, mostra un messaggio e chiudi dopo un attimo
+                    mostraToast('Ultimo atleta! Premi PROSSIMO o CHIUDI', 'info');
+                }
+                
+            } catch (error) {
+                console.error('Errore registrazione veloce:', error);
+                mostraToast('Errore durante la registrazione', 'error');
+            }
+        }
+
+        function nextQuickAthlete() {
+            if (quickCurrentIndex < quickAthletes.length - 1) {
+                quickCurrentIndex++;
+                aggiornaVeloceDisplay();
+            } else {
+                // Ultimo atleta, chiudi il popup
+                chiudiRegistrazioneVeloce();
+                mostraToast('Registrazione completata!', 'success');
+            }
+        }
+
+        function prevQuickAthlete() {
+            if (quickCurrentIndex > 0) {
+                quickCurrentIndex--;
+                aggiornaVeloceDisplay();
+            }
+        }
+
+        function chiudiRegistrazioneVeloce() {
+            document.getElementById('quick-register-overlay').style.display = 'none';
+            quickRegisterActive = false;
+        }
+
+        function aggiornaListaVeloce() {
+            if (!quickRegisterActive) return;
+            
+            const sezione = getSezioneCorrente();
+            if (sezione === quickSezione) {
+                const atleti = getAtletiFiltrati(sezione);
+                quickAthletes = atleti;
+                
+                if (quickCurrentIndex >= quickAthletes.length) {
+                    quickCurrentIndex = Math.max(0, quickAthletes.length - 1);
+                }
+                
+                if (quickAthletes.length > 0) {
+                    aggiornaVeloceDisplay();
+                } else {
+                    chiudiRegistrazioneVeloce();
+                }
+            }
         }
 
         // =================== INIZIALIZZAZIONE ===================
