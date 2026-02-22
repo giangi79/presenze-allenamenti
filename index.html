@@ -72,58 +72,9 @@
             top: 0;
         }
         
-        /* TOAST NOTIFICATIONS */
+        /* TOAST NOTIFICATIONS - COMPLETAMENTE NASCOSTI */
         .toast-container {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-        }
-        
-        .toast {
-            padding: 12px 24px;
-            border-radius: 50px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            color: white;
-            font-weight: 600;
-            font-size: 14px;
-            animation: slideUp 0.3s ease;
-            pointer-events: auto;
-            min-width: 200px;
-            text-align: center;
-        }
-        
-        .toast-success {
-            background: rgba(46, 204, 113, 0.95);
-        }
-        
-        .toast-error {
-            background: rgba(231, 76, 60, 0.95);
-        }
-        
-        .toast-info {
-            background: rgba(52, 152, 219, 0.95);
-        }
-        
-        .toast-warning {
-            background: rgba(241, 196, 15, 0.95);
-            color: #2c3e50;
-        }
-        
-        @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            display: none !important;
         }
         
         /* CONTENITORE PRINCIPALE */
@@ -331,7 +282,7 @@
         .btn-piccoli { background: linear-gradient(135deg, #007bff, #0056b3); } 
         .btn-grandi { background: linear-gradient(135deg, #28a745, #1e7e34); }
         
-        /* === TABELLA CORRETTA - CON PADDING PER VIRTUAL SCROLL === */
+        /* === TABELLA CORRETTA - NOME SU DUE RIGHE, CATEGORIE NASCOSTE === */
         .section-container { display: none; width: 100%; margin-top: 20px; } 
         .section-active { display: block; }
         
@@ -383,7 +334,7 @@
             min-width: 120px;
             max-width: 120px;
             width: 120px;
-            padding: 12px 4px;
+            padding: 8px 4px;
             font-weight: 800; 
             font-size: 12px;
             text-align: center;
@@ -398,14 +349,16 @@
             z-index: 30 !important;
         }
         
-        /* Contenitore nome atleta */
+        /* Contenitore nome atleta - NOME SU DUE RIGHE, SENZA CATEGORIA */
         .nome-container {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             width: 100%;
+            white-space: normal; /* Permette il wrap */
             word-break: break-word;
+            padding: 4px 0;
         }
         
         .nome-cognome {
@@ -414,20 +367,49 @@
             width: 100%;
             font-size: 12px;
             line-height: 1.3;
+            white-space: normal; /* Permette il wrap */
+            word-break: break-word;
+            padding: 0 2px;
+            color: white; /* Il colore sarà impostato dinamicamente */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         
+        /* Colori per le diverse categorie - OGNI CATEGORIA COLORE DIVERSO */
+        .categoria-cuccioli .nome-cognome {
+            color: #e91e63; /* Rosa per cuccioli */
+        }
+        
+        .categoria-giovanissimi .nome-cognome {
+            color: #ff9800; /* Arancione per giovanissimi */
+        }
+        
+        .categoria-esordienti .nome-cognome {
+            color: #9c27b0; /* Viola per esordienti */
+        }
+        
+        .categoria-r12 .nome-cognome {
+            color: #00bcd4; /* Ciano per R12 */
+        }
+        
+        .categoria-ragazzi .nome-cognome {
+            color: #ff5722; /* Arancione scuro per ragazzi */
+        }
+        
+        .categoria-allievi .nome-cognome {
+            color: #3f51b5; /* Indaco per allievi */
+        }
+        
+        .categoria-junior .nome-cognome {
+            color: #009688; /* Verde acqua per junior */
+        }
+        
+        .categoria-senior .nome-cognome {
+            color: #f44336; /* Rosso per senior */
+        }
+        
+        /* Il badge della categoria è nascosto */
         .categoria-badge {
-            font-size: 9px;
-            background: #667eea;
-            color: white;
-            padding: 3px 6px;
-            border-radius: 12px;
-            margin-top: 4px;
-            display: inline-block;
-            white-space: nowrap;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            display: none !important;
         }
         
         /* Celle giorni */
@@ -629,7 +611,7 @@
         .atleta-name { font-weight: 800; font-size: 16px; display: block; color: #2c3e50; }
         .atleta-cat { font-size: 13px; color: #667eea; font-weight: 600; }
         
-        /* POPUP REGISTRAZIONE VELOCE */
+        /* POPUP REGISTRAZIONE VELOCE - CON CATEGORIE COLORATE DIVERSE */
         #quick-register-overlay {
             display: none;
             position: fixed;
@@ -682,12 +664,45 @@
         }
         
         .quick-athlete-card {
-            background: linear-gradient(135deg, #667eea, #764ba2);
             padding: 40px 20px;
             border-radius: 30px;
             margin: 20px 0 30px;
             color: white;
-            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transition: background-color 0.3s ease;
+        }
+        
+        /* Colori per le categorie nel box registrazione veloce - TUTTI DIVERSI */
+        .quick-categoria-cuccioli {
+            background: linear-gradient(135deg, #e91e63, #c2185b);
+        }
+        
+        .quick-categoria-giovanissimi {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+        
+        .quick-categoria-esordienti {
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+        }
+        
+        .quick-categoria-r12 {
+            background: linear-gradient(135deg, #00bcd4, #0097a7);
+        }
+        
+        .quick-categoria-ragazzi {
+            background: linear-gradient(135deg, #ff5722, #e64a19);
+        }
+        
+        .quick-categoria-allievi {
+            background: linear-gradient(135deg, #3f51b5, #303f9f);
+        }
+        
+        .quick-categoria-junior {
+            background: linear-gradient(135deg, #009688, #00796b);
+        }
+        
+        .quick-categoria-senior {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
         }
         
         .quick-athlete-name {
@@ -696,15 +711,19 @@
             margin-bottom: 15px;
             line-height: 1.3;
             word-break: break-word;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .quick-athlete-category {
-            font-size: 20px;
-            opacity: 0.9;
+            font-size: 24px;
+            font-weight: 700;
+            opacity: 0.95;
             background: rgba(255,255,255,0.2);
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 50px;
             display: inline-block;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
         }
         
         .quick-buttons {
@@ -777,9 +796,8 @@
                 font-size: 10px; 
             }
             
-            .categoria-badge {
-                font-size: 8px;
-                padding: 2px 4px;
+            .nome-cognome {
+                font-size: 10px;
             }
             
             .day-cell { 
@@ -808,6 +826,11 @@
                 font-size: 28px;
             }
             
+            .quick-athlete-category {
+                font-size: 20px;
+                padding: 10px 20px;
+            }
+            
             .quick-btn {
                 padding: 15px;
                 font-size: 18px;
@@ -830,8 +853,8 @@
                 font-size: 10px; 
             }
             
-            .categoria-badge {
-                font-size: 7px;
+            .nome-cognome {
+                font-size: 9px;
             }
             
             .tot-cell { 
@@ -843,6 +866,11 @@
             
             .quick-athlete-name {
                 font-size: 24px;
+            }
+            
+            .quick-athlete-category {
+                font-size: 18px;
+                padding: 8px 16px;
             }
             
             .quick-btn {
@@ -868,7 +896,7 @@
     <!-- SKIP LINK PER ACCESSIBILITÀ -->
     <a href="#main-content" class="skip-link">Salta al contenuto principale</a>
     
-    <!-- CONTAINER PER TOAST NOTIFICATIONS -->
+    <!-- CONTAINER PER TOAST NOTIFICATIONS - COMPLETAMENTE NASCOSTO -->
     <div id="toast-container" class="toast-container"></div>
     
     <div class="app-container" id="main-content">
@@ -1037,7 +1065,7 @@
         </div>
     </div>
 
-    <!-- === OVERLAY REGISTRAZIONE VELOCE === -->
+    <!-- === OVERLAY REGISTRAZIONE VELOCE - CON CATEGORIE COLORATE DIVERSE === -->
     <div id="quick-register-overlay" role="dialog" aria-labelledby="quick-title" aria-modal="true">
         <div class="quick-register-container">
             <div class="quick-register-header">
@@ -1045,7 +1073,7 @@
                 <div class="progress" id="quick-progress">Atleta 1 / 10</div>
             </div>
             
-            <div class="quick-athlete-card">
+            <div class="quick-athlete-card" id="quick-athlete-card">
                 <div class="quick-athlete-name" id="quick-athlete-name">Caricamento...</div>
                 <div class="quick-athlete-category" id="quick-athlete-category"></div>
             </div>
@@ -1136,23 +1164,10 @@
         const CAT_PICCOLI = ['GIOVANISSIMI', 'ESORDIENTI'];
         const CAT_GRANDI = ['R12', 'RAGAZZI', 'ALLIEVI', 'JUNIOR', 'JUNIORES', 'SENIOR'];
 
-        // =================== TOAST NOTIFICATIONS ===================
+        // =================== TOAST NOTIFICATIONS DISATTIVATE ===================
         function mostraToast(messaggio, tipo = 'successo', durata = 3000) {
-            const container = document.getElementById('toast-container');
-            if (!container) return;
-            
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${tipo}`;
-            toast.setAttribute('role', 'alert');
-            toast.setAttribute('aria-live', 'assertive');
-            toast.textContent = messaggio;
-            
-            container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.animation = 'slideUp 0.3s reverse';
-                setTimeout(() => toast.remove(), 300);
-            }, durata);
+            // Funzione completamente vuota - nessun toast viene mostrato
+            console.log(`Toast disattivato: ${messaggio} (${tipo})`);
         }
 
         // =================== VALIDAZIONE DATI ===================
@@ -1191,7 +1206,7 @@
                     console.error(`Tentativo ${i + 1} fallito:`, error);
                     
                     if (i === retryCount - 1) {
-                        mostraToast(messaggioErrore, 'error');
+                        console.error(messaggioErrore);
                         throw error;
                     }
                     
@@ -1230,7 +1245,6 @@
                 
             } catch (error) {
                 console.error(`❌ Errore caricamento mese ${mese+1}:`, error);
-                mostraToast(`Errore caricamento mese ${nomiMesi[mese]}`, 'error');
                 return [];
             }
         }
@@ -1267,7 +1281,7 @@
             return presenzePerMese[key] || [];
         }
 
-        // =================== FUNZIONI DI RENDERING CORRETTE - CON PADDING ===================
+        // =================== FUNZIONI DI RENDERING CORRETTE ===================
         function renderHeader(sezione) {
             const anno = dataAttuale.getFullYear();
             const mese = dataAttuale.getMonth();
@@ -1293,6 +1307,39 @@
                 cats.includes((a.categoria || "").trim().toUpperCase()) && 
                 (a.archiviato === false || a.archiviato === null)
             );
+        }
+
+        // Funzione per ottenere la classe CSS in base alla categoria (per la tabella)
+        function getCategoriaClass(categoria) {
+            const catMap = {
+                'CUCCIOLI': 'categoria-cuccioli',
+                'GIOVANISSIMI': 'categoria-giovanissimi',
+                'ESORDIENTI': 'categoria-esordienti',
+                'R12': 'categoria-r12',
+                'RAGAZZI': 'categoria-ragazzi',
+                'ALLIEVI': 'categoria-allievi',
+                'JUNIOR': 'categoria-junior',
+                'JUNIORES': 'categoria-junior',
+                'SENIOR': 'categoria-senior'
+            };
+            return catMap[categoria] || '';
+        }
+
+        // Funzione per ottenere la classe CSS per il box registrazione veloce - TUTTE DIVERSE
+        function getQuickCategoriaClass(categoria) {
+            const catMap = {
+                'CUCCIOLI': 'quick-categoria-cuccioli',
+                'GIOVANISSIMI': 'quick-categoria-giovanissimi',
+                'ESORDIENTI': 'quick-categoria-esordienti',
+                'R12': 'quick-categoria-r12',
+                'RAGAZZI': 'quick-categoria-ragazzi',
+                'ALLIEVI': 'quick-categoria-allievi',
+                'JUNIOR': 'quick-categoria-junior',
+                'JUNIORES': 'quick-categoria-junior',
+                'SENIOR': 'quick-categoria-senior'
+            };
+            
+            return catMap[categoria] || 'quick-categoria-senior';
         }
 
         function renderVirtualScroll(sezione) {
@@ -1357,12 +1404,13 @@
                 // Righe visibili
                 for (let i = startIndex; i < endIndex && i < totalRows; i++) {
                     const a = atletiFiltrati[i];
+                    const categoriaClass = getCategoriaClass(a.categoria);
+                    
                     html += `<tr>`;
                     
-                    // Colonna ATLETA sticky
-                    html += `<td class="sticky-col" scope="row"><div class="nome-container">
+                    // Colonna ATLETA sticky - SENZA CATEGORIA, NOME SU DUE RIGHE CON COLORE
+                    html += `<td class="sticky-col ${categoriaClass}" scope="row"><div class="nome-container">
                         <span class="nome-cognome">${a.nome.toUpperCase()}</span>
-                        <span class="categoria-badge">${a.categoria}</span>
                     </div></td>`;
                     
                     let totMese = 0;
@@ -1492,8 +1540,6 @@
             
             caricaStatoNumericInput();
             caricaStatoBackupAuto();
-            
-            mostraToast('Applicazione pronta', 'success');
         }
 
         async function caricaDatiIniziali() {
@@ -1516,12 +1562,10 @@
                 renderAdminList();
                 
                 document.getElementById('status-auto').innerText = "✅ Sistema Pronto";
-                mostraToast('Dati caricati con successo', 'success');
                 
             } catch (error) {
                 console.error('❌ Errore caricamento dati:', error);
                 document.getElementById('status-auto').innerText = "❌ Errore di connessione";
-                mostraToast('Errore di connessione al server', 'error');
             }
         }
 
@@ -1600,12 +1644,10 @@
                 btn.innerHTML = "🔢 NUM ON";
                 btn.classList.add('attivo');
                 document.getElementById('status-auto').innerText = "✅ Input numerico ATTIVATO";
-                mostraToast('Input numerico attivato', 'info');
             } else {
                 btn.innerHTML = "🔢 NUM OFF";
                 btn.classList.remove('attivo');
                 document.getElementById('status-auto').innerText = "⏸️ Input numerico DISATTIVATO";
-                mostraToast('Input numerico disattivato', 'info');
             }
             
             const sezione = getSezioneCorrente();
@@ -1708,11 +1750,8 @@
                     avviaTimerBackup();
                 }
                 
-                mostraToast('Presenza aggiornata', 'success', 1500);
-                
             } catch (error) {
                 console.error('Errore aggiornamento presenza:', error);
-                mostraToast('Errore durante l\'aggiornamento', 'error');
             }
         }
 
@@ -1778,11 +1817,8 @@
                         avviaTimerBackup();
                     }
                     
-                    mostraToast(`Numero ${numberValue} registrato`, 'success', 1500);
-                    
                 } catch (error) {
                     console.error('Errore salvataggio numero:', error);
-                    mostraToast('Errore durante il salvataggio', 'error');
                 }
             }
             
@@ -1834,12 +1870,10 @@
                 btn.innerHTML = "▶️ AUTO ON";
                 btn.classList.add('attivo');
                 document.getElementById('status-auto').innerText = "✅ Backup automatico ATTIVATO";
-                mostraToast('Backup automatico attivato', 'info');
             } else {
                 btn.innerHTML = "⏸️ AUTO OFF";
                 btn.classList.remove('attivo');
                 document.getElementById('status-auto').innerText = "⏸️ Backup automatico DISATTIVATO";
-                mostraToast('Backup automatico disattivato', 'info');
             }
             
             localStorage.setItem('backup_auto_attivo', backupAutomaticoAttivo);
@@ -2056,7 +2090,6 @@
                 if(res.fileUrl) { 
                     localStorage.setItem('ultimo_pdf_url', res.fileUrl); 
                     status.innerHTML = `✅ BACKUP COMPLETATO! <a href="${res.fileUrl}" target="_blank" style="color: #4285F4; font-weight: bold;">APRI PDF</a>`; 
-                    mostraToast('Backup completato con successo', 'success');
                 } else {
                     throw new Error('Nessun URL restituito');
                 }
@@ -2064,7 +2097,6 @@
             } catch(e) { 
                 status.innerText = "❌ ERRORE DURANTE IL BACKUP"; 
                 console.error('Backup error:', e); 
-                mostraToast('Errore durante il backup', 'error');
             }
         }
 
@@ -2159,12 +2191,10 @@
                 }
                 
                 document.getElementById('status-auto').innerText = "✅ Atleta salvato";
-                mostraToast(id ? 'Atleta aggiornato' : 'Atleta aggiunto', 'success');
                 
             } catch(error) { 
                 console.error('Errore salvataggio atleta:', error);
                 document.getElementById('status-auto').innerText = "❌ Errore salvataggio";
-                mostraToast('Errore durante il salvataggio', 'error');
             }
         }
 
@@ -2240,11 +2270,9 @@
                 
                 document.getElementById('status-auto').innerText = 
                     stato ? "✅ Atleta archiviato" : "✅ Atleta ripristinato";
-                mostraToast(stato ? 'Atleta archiviato' : 'Atleta ripristinato', 'success');
                     
             } catch(error) {
                 console.error('Errore archiviazione:', error);
-                mostraToast('Errore durante l\'operazione', 'error');
             }
         }
 
@@ -2266,25 +2294,23 @@
                     }
                     
                     document.getElementById('status-auto').innerText = "✅ Atleta eliminato";
-                    mostraToast('Atleta eliminato', 'success');
                 } catch(error) {
                     console.error('Errore eliminazione:', error);
-                    mostraToast('Errore durante l\'eliminazione', 'error');
                 }
             } 
         }
 
-        // =================== REGISTRAZIONE VELOCE ===================
+        // =================== REGISTRAZIONE VELOCE CON CATEGORIE COLORATE DIVERSE ===================
         function avviaRegistrazioneVeloce() {
             const sezione = getSezioneCorrente();
             if (!sezione) {
-                mostraToast('Seleziona prima una categoria', 'warning');
+                alert('Seleziona prima una categoria');
                 return;
             }
             
             const atleti = getAtletiFiltrati(sezione);
             if (atleti.length === 0) {
-                mostraToast('Nessun atleta in questa categoria', 'warning');
+                alert('Nessun atleta in questa categoria');
                 return;
             }
             
@@ -2306,6 +2332,12 @@
             if (!quickRegisterActive || quickAthletes.length === 0) return;
             
             const atleta = quickAthletes[quickCurrentIndex];
+            const quickCard = document.getElementById('quick-athlete-card');
+            const quickCategoriaClass = getQuickCategoriaClass(atleta.categoria);
+            
+            // Rimuovi tutte le classi di categoria e aggiungi quella corretta
+            quickCard.className = 'quick-athlete-card ' + quickCategoriaClass;
+            
             document.getElementById('quick-athlete-name').innerText = atleta.nome;
             document.getElementById('quick-athlete-category').innerText = atleta.categoria;
             document.getElementById('quick-progress').innerText = `Atleta ${quickCurrentIndex + 1} / ${quickAthletes.length}`;
@@ -2378,13 +2410,12 @@
                         nextQuickAthlete();
                     }, 300); // Piccolo ritardo per mostrare il feedback visivo
                 } else {
-                    // Se è l'ultimo, mostra un messaggio e chiudi dopo un attimo
-                    mostraToast('Ultimo atleta! Premi PROSSIMO o CHIUDI', 'info');
+                    // Se è l'ultimo, mostra un messaggio
+                    alert('Ultimo atleta! Premi PROSSIMO o CHIUDI');
                 }
                 
             } catch (error) {
                 console.error('Errore registrazione veloce:', error);
-                mostraToast('Errore durante la registrazione', 'error');
             }
         }
 
@@ -2395,7 +2426,6 @@
             } else {
                 // Ultimo atleta, chiudi il popup
                 chiudiRegistrazioneVeloce();
-                mostraToast('Registrazione completata!', 'success');
             }
         }
 
