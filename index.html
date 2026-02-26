@@ -435,6 +435,12 @@
             font-weight: 900;
         }
         
+        .p-assente { 
+            background: linear-gradient(135deg, #e74c3c, #c0392b) !important; 
+            color: white !important; 
+            font-weight: 900;
+        }
+        
         .today-cell { 
             background: #d1ecf1; 
             border: 3px solid #0c5460 !important; 
@@ -1398,7 +1404,16 @@
                 const anno = dataAttuale.getFullYear();
                 const mese = dataAttuale.getMonth();
                 const giorniMese = new Date(anno, mese + 1, 0).getDate();
-                const oggiStr = new Date().toLocaleDateString('en-CA');
+                const oggi = new Date();
+                const oggiStr = oggi.toLocaleDateString('en-CA');
+                const oggiNum = oggi.getDate();
+                const meseCorrente = oggi.getMonth();
+                const annoCorrente = oggi.getFullYear();
+                
+                // Crea oggetto data per oggi a mezzanotte per confronti corretti
+                const oggiMezzanotte = new Date(oggi);
+                oggiMezzanotte.setHours(0, 0, 0, 0);
+                
                 const presenzeMese = getPresenzeMese(anno, mese);
                 
                 // Righe visibili
@@ -1432,13 +1447,43 @@
                              ontouchend="endLongPress()" 
                              ontouchcancel="cancelLongPress()"` : '';
                         
-                        html += `<td class="day-cell ${isGreen?'p-partecipa':''} ${dStr===oggiStr?'today-cell':''}" 
+                        // Determina classe e contenuto della cella
+                        let cellClass = '';
+                        let cellContent = '';
+                        
+                        // Crea data cella per confronto
+                        const dataCella = new Date(anno, mese, d);
+                        dataCella.setHours(0, 0, 0, 0);
+                        
+                        if (isGreen) {
+                            // Presente - verde
+                            cellClass = 'p-partecipa';
+                            cellContent = hasNumber ? numberValue : '✔';
+                        } else {
+                            // Non presente
+                            if (dataCella < oggiMezzanotte) {
+                                // Giorno passato e senza presenza - rosso con X
+                                cellClass = 'p-assente';
+                                cellContent = '✗';
+                            } else {
+                                // Giorno futuro o oggi - bianco
+                                cellClass = '';
+                                cellContent = '';
+                            }
+                        }
+                        
+                        // Aggiungi classe today-cell se è oggi (anche se bianca)
+                        if (dStr === oggiStr) {
+                            cellClass += ' today-cell';
+                        }
+                        
+                        html += `<td class="day-cell ${cellClass}" 
                             ${longPressAttrs}
                             onclick="handleCellClick(event, this, ${a.id}, '${dStr}', '${sezione}')"
                             title="${dStr}"
                             role="gridcell"
-                            aria-label="${dStr} ${isGreen ? 'Presente' : 'Assente'}">
-                            ${hasNumber ? numberValue : (isGreen ? '✔' : '')}
+                            aria-label="${dStr} ${isGreen ? 'Presente' : (dataCella < oggiMezzanotte ? 'Assente' : 'Futuro')}">
+                            ${cellContent}
                         </td>`;
                     }
                     html += `<td class="tot-cell" role="gridcell" aria-label="Totale mese: ${totMese}">${totMese}</td></tr>`;
@@ -1713,15 +1758,42 @@
             const presenzeMese = getPresenzeMese(anno, mese);
             const p = presenzeMese.find(x => x.atleta_id === aId && x.data === data);
             
+            // Crea data cella e oggi per confronti
+            const oggi = new Date();
+            oggi.setHours(0, 0, 0, 0);
+            
+            // Estrai giorno, mese, anno dalla data string
+            const [y, m, d] = data.split('-').map(Number);
+            const dataCella = new Date(y, m-1, d);
+            dataCella.setHours(0, 0, 0, 0);
+            
             try {
                 if (p && p.stato && p.stato.includes('numero:')) {
                     await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
-                    el.classList.remove('p-partecipa');
-                    el.innerText = '';
+                    
+                    // Dopo eliminazione, verifica se è un giorno passato per mostrare X rossa
+                    if (dataCella < oggi) {
+                        el.classList.remove('p-partecipa');
+                        el.classList.add('p-assente');
+                        el.innerText = '✗';
+                    } else {
+                        el.classList.remove('p-partecipa', 'p-assente');
+                        el.innerText = '';
+                    }
+                    
                 } else if (p && p.stato === 'partecipa') {
                     await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
-                    el.classList.remove('p-partecipa');
-                    el.innerText = '';
+                    
+                    // Dopo eliminazione, verifica se è un giorno passato per mostrare X rossa
+                    if (dataCella < oggi) {
+                        el.classList.remove('p-partecipa');
+                        el.classList.add('p-assente');
+                        el.innerText = '✗';
+                    } else {
+                        el.classList.remove('p-partecipa', 'p-assente');
+                        el.innerText = '';
+                    }
+                    
                 } else {
                     await supabaseClient.from('presenze').upsert({ 
                         atleta_id: aId, 
@@ -1729,11 +1801,14 @@
                         stato: 'partecipa' 
                     }, { onConflict: 'atleta_id, data' });
                     el.classList.add('p-partecipa');
+                    el.classList.remove('p-assente');
                     el.innerText = '✔';
                 }
                 
                 const key = `${anno}-${mese}`;
                 const idx = presenzePerMese[key]?.findIndex(x => x.atleta_id === aId && x.data === data);
+                
+                // Aggiorna cache locale
                 if (el.classList.contains('p-partecipa')) {
                     if (idx > -1 && presenzePerMese[key]) {
                         presenzePerMese[key][idx].stato = 'partecipa';
@@ -1801,6 +1876,7 @@
                     }, { onConflict: 'atleta_id, data' });
                     
                     el.classList.add('p-partecipa');
+                    el.classList.remove('p-assente');
                     el.innerText = numberValue;
                     
                     const key = `${anno}-${mese}`;
@@ -2014,6 +2090,7 @@
                 const { jsPDF } = window.jspdf; 
                 const doc = new jsPDF('l', 'mm', 'a4'); 
                 const annoC = dataAttuale.getFullYear();
+                const oggi = new Date();
                 
                 for (let m = 0; m < 12; m++) {
                     if (m > 0) doc.addPage();
@@ -2063,15 +2140,18 @@
                                 } else if (data.cell.text[0] === '✔') {
                                     data.cell.styles.fillColor = [46, 204, 113];
                                     data.cell.styles.textColor = [255, 255, 255];
+                                } else if (data.cell.text[0] === '✗') {
+                                    data.cell.styles.fillColor = [231, 76, 60];
+                                    data.cell.styles.textColor = [255, 255, 255];
                                 }
                             } 
                         } 
                     };
                     
-                    doc.autoTable({...config, body: preparaDatiPDF(CAT_CUCCIOLI, annoC, m, g)});
-                    doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g), 
+                    doc.autoTable({...config, body: preparaDatiPDF(CAT_CUCCIOLI, annoC, m, g, oggi)});
+                    doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g, oggi), 
                                   startY: doc.lastAutoTable.finalY + 10});
-                    doc.autoTable({...config, body: preparaDatiPDF(CAT_GRANDI, annoC, m, g), 
+                    doc.autoTable({...config, body: preparaDatiPDF(CAT_GRANDI, annoC, m, g, oggi), 
                                   startY: doc.lastAutoTable.finalY + 10});
                 }
                 
@@ -2100,8 +2180,10 @@
             }
         }
 
-        function preparaDatiPDF(cats, anno, mese, giorni) {
+        function preparaDatiPDF(cats, anno, mese, giorni, oggi) {
             const presenzeMese = getPresenzeMese(anno, mese);
+            const oggiMezzanotte = new Date(oggi);
+            oggiMezzanotte.setHours(0, 0, 0, 0);
             
             return atletiCache.filter(a => {
                 const inCat = cats.includes((a.categoria || "").trim().toUpperCase());
@@ -2124,6 +2206,8 @@
                 for(let d = 1; d <= giorni; d++) {
                     const dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
                     const p = presenzeMese.find(x => x.atleta_id === a.id && x.data === dStr);
+                    const dataCella = new Date(anno, mese, d);
+                    dataCella.setHours(0, 0, 0, 0);
                     
                     if(p) {
                         if (p.stato === 'partecipa') {
@@ -2134,10 +2218,19 @@
                             riga.push(num);
                             tot++;
                         } else {
-                            riga.push("");
+                            // Questo caso non dovrebbe verificarsi, ma per sicurezza
+                            if (dataCella < oggiMezzanotte) {
+                                riga.push("✗");
+                            } else {
+                                riga.push("");
+                            }
                         }
                     } else {
-                        riga.push("");
+                        if (dataCella < oggiMezzanotte) {
+                            riga.push("✗");
+                        } else {
+                            riga.push("");
+                        }
                     }
                 }
                 riga.push(tot); 
