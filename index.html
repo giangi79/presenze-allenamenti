@@ -31,7 +31,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
-    <!-- === STILI CSS === -->
+    <!-- === STILI CSS CORRETTI === -->
     <style>
         /* RESET */
         * { 
@@ -198,8 +198,6 @@
         .btn-numeric-input { background: linear-gradient(135deg, #8e44ad, #6c3483); }
         .btn-numeric-input.attivo { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
         .btn-quick-register { background: linear-gradient(135deg, #e67e22, #d35400); }
-        .btn-notifica { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-        .btn-stato-notifiche { background: linear-gradient(135deg, #3498db, #2980b9); }
         
         /* STATUS BAR */
         .status-container {
@@ -256,7 +254,6 @@
             box-shadow: 0 15px 30px rgba(0,0,0,0.2); 
             transition: transform 0.3s;
             line-height: 1.4;
-            position: relative;
         }
         
         .btn-menu:hover {
@@ -281,47 +278,11 @@
             margin-top: 8px;
             letter-spacing: 0.5px;
         }
-        
         .btn-cuccioli { background: linear-gradient(135deg, #e91e63, #c2185b); } 
         .btn-piccoli { background: linear-gradient(135deg, #007bff, #0056b3); } 
         .btn-grandi { background: linear-gradient(135deg, #28a745, #1e7e34); }
         
-        /* Animazione per pulsanti in attenzione */
-        .btn-piccoli.attenzione, .btn-grandi.attenzione {
-            animation: pulse 2s infinite;
-            box-shadow: 0 0 0 3px #ff4444;
-        }
-        
-        @keyframes pulse {
-            0% {
-                box-shadow: 0 0 0 0 #ff4444;
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
-            }
-        }
-        
-        /* Badge notifiche */
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ff4444;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-        
-        /* === TABELLA === */
+        /* === TABELLA CORRETTA - NOME SU DUE RIGHE, CATEGORIE NASCOSTE === */
         .section-container { display: none; width: 100%; margin-top: 20px; } 
         .section-active { display: block; }
         
@@ -388,14 +349,14 @@
             z-index: 30 !important;
         }
         
-        /* Contenitore nome atleta */
+        /* Contenitore nome atleta - NOME SU DUE RIGHE, SENZA CATEGORIA */
         .nome-container {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             width: 100%;
-            white-space: normal;
+            white-space: normal; /* Permette il wrap */
             word-break: break-word;
             padding: 4px 0;
         }
@@ -406,22 +367,45 @@
             width: 100%;
             font-size: 12px;
             line-height: 1.3;
-            white-space: normal;
+            white-space: normal; /* Permette il wrap */
             word-break: break-word;
             padding: 0 2px;
-            color: white;
+            color: white; /* Il colore sarà impostato dinamicamente */
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         
-        /* Colori per le diverse categorie */
-        .categoria-cuccioli .nome-cognome { color: #e91e63; }
-        .categoria-giovanissimi .nome-cognome { color: #ff9800; }
-        .categoria-esordienti .nome-cognome { color: #9c27b0; }
-        .categoria-r12 .nome-cognome { color: #00bcd4; }
-        .categoria-ragazzi .nome-cognome { color: #ff5722; }
-        .categoria-allievi .nome-cognome { color: #3f51b5; }
-        .categoria-junior .nome-cognome { color: #009688; }
-        .categoria-senior .nome-cognome { color: #f44336; }
+        /* Colori per le diverse categorie - OGNI CATEGORIA COLORE DIVERSO */
+        .categoria-cuccioli .nome-cognome {
+            color: #e91e63; /* Rosa per cuccioli */
+        }
+        
+        .categoria-giovanissimi .nome-cognome {
+            color: #ff9800; /* Arancione per giovanissimi */
+        }
+        
+        .categoria-esordienti .nome-cognome {
+            color: #9c27b0; /* Viola per esordienti */
+        }
+        
+        .categoria-r12 .nome-cognome {
+            color: #00bcd4; /* Ciano per R12 */
+        }
+        
+        .categoria-ragazzi .nome-cognome {
+            color: #ff5722; /* Arancione scuro per ragazzi */
+        }
+        
+        .categoria-allievi .nome-cognome {
+            color: #3f51b5; /* Indaco per allievi */
+        }
+        
+        .categoria-junior .nome-cognome {
+            color: #009688; /* Verde acqua per junior */
+        }
+        
+        .categoria-senior .nome-cognome {
+            color: #f44336; /* Rosso per senior */
+        }
         
         /* Il badge della categoria è nascosto */
         .categoria-badge {
@@ -519,15 +503,6 @@
             color: #adb5bd;
             font-size: 13px;
             line-height: 1.6;
-        }
-        
-        /* Stato notifiche nel footer */
-        .notification-status {
-            margin-top: 15px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            font-size: 13px;
         }
         
         /* PANNELLO ADMIN */
@@ -642,7 +617,7 @@
         .atleta-name { font-weight: 800; font-size: 16px; display: block; color: #2c3e50; }
         .atleta-cat { font-size: 13px; color: #667eea; font-weight: 600; }
         
-        /* POPUP REGISTRAZIONE VELOCE */
+        /* POPUP REGISTRAZIONE VELOCE - CON CATEGORIE COLORATE DIVERSE */
         #quick-register-overlay {
             display: none;
             position: fixed;
@@ -703,14 +678,38 @@
             transition: background-color 0.3s ease;
         }
         
-        .quick-categoria-cuccioli { background: linear-gradient(135deg, #e91e63, #c2185b); }
-        .quick-categoria-giovanissimi { background: linear-gradient(135deg, #ff9800, #f57c00); }
-        .quick-categoria-esordienti { background: linear-gradient(135deg, #9c27b0, #7b1fa2); }
-        .quick-categoria-r12 { background: linear-gradient(135deg, #00bcd4, #0097a7); }
-        .quick-categoria-ragazzi { background: linear-gradient(135deg, #ff5722, #e64a19); }
-        .quick-categoria-allievi { background: linear-gradient(135deg, #3f51b5, #303f9f); }
-        .quick-categoria-junior { background: linear-gradient(135deg, #009688, #00796b); }
-        .quick-categoria-senior { background: linear-gradient(135deg, #f44336, #d32f2f); }
+        /* Colori per le categorie nel box registrazione veloce - TUTTI DIVERSI */
+        .quick-categoria-cuccioli {
+            background: linear-gradient(135deg, #e91e63, #c2185b);
+        }
+        
+        .quick-categoria-giovanissimi {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+        
+        .quick-categoria-esordienti {
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+        }
+        
+        .quick-categoria-r12 {
+            background: linear-gradient(135deg, #00bcd4, #0097a7);
+        }
+        
+        .quick-categoria-ragazzi {
+            background: linear-gradient(135deg, #ff5722, #e64a19);
+        }
+        
+        .quick-categoria-allievi {
+            background: linear-gradient(135deg, #3f51b5, #303f9f);
+        }
+        
+        .quick-categoria-junior {
+            background: linear-gradient(135deg, #009688, #00796b);
+        }
+        
+        .quick-categoria-senior {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+        }
         
         .quick-athlete-name {
             font-size: 36px;
@@ -941,9 +940,6 @@
                 <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input" title="Input numerico" aria-label="Attiva o disattiva input numerico">🔢 NUM OFF</button>
                 <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto" title="Backup automatico" aria-label="Attiva o disattiva backup automatico">▶️ AUTO ON</button>
                 <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti" aria-label="Apri pannello gestione atleti">⚙️ GESTISCI ATLETI</button>
-                <!-- PULSANTI NOTIFICHE -->
-                <button class="btn-action btn-notifica" onclick="testNotifiche()" title="Test notifiche" aria-label="Test sistema notifiche">🔔 TEST NOTIFICA</button>
-                <button class="btn-action btn-stato-notifiche" onclick="mostraStatoNotifiche()" title="Stato notifiche" aria-label="Mostra stato notifiche">📊 STATO NOTIFICHE</button>
             </div>
         </div>
 
@@ -955,11 +951,11 @@
             </button>
             <button class="btn-menu btn-piccoli" onclick="mostraSezione('piccoli')" role="tab" aria-selected="false" aria-controls="sez-piccoli">
                 👦 PICCOLI
-                <span>GIOVANISSIMI • ESORDIENTI (LUN - MER - VEN)</span>
+                <span>GIOVANISSIMI • ESORDIENTI</span>
             </button>
             <button class="btn-menu btn-grandi" onclick="mostraSezione('grandi')" role="tab" aria-selected="false" aria-controls="sez-grandi">
                 🏃 GRANDI
-                <span>R12 • RAGAZZI • ALLIEVI • JUNIOR • SENIOR (LUN - VEN)</span>
+                <span>R12 • RAGAZZI • ALLIEVI • JUNIOR • SENIOR</span>
             </button>
         </div>
 
@@ -1011,10 +1007,6 @@
             <div class="copyright">
                 © 2024-2025 Gruppo Sportivo 2050 - Registro Presenze Digitale<br>
                 <small>Ultimo aggiornamento: <span id="last-update">Caricamento...</span></small>
-            </div>
-            <!-- STATO NOTIFICHE NEL FOOTER -->
-            <div class="notification-status" id="notification-status">
-                🔔 Inizializzazione notifiche...
             </div>
         </div>
     </div>
@@ -1079,7 +1071,7 @@
         </div>
     </div>
 
-    <!-- === OVERLAY REGISTRAZIONE VELOCE === -->
+    <!-- === OVERLAY REGISTRAZIONE VELOCE - CON CATEGORIE COLORATE DIVERSE === -->
     <div id="quick-register-overlay" role="dialog" aria-labelledby="quick-title" aria-modal="true">
         <div class="quick-register-container">
             <div class="quick-register-header">
@@ -1129,11 +1121,38 @@
         let quickDate = '';
         let quickSezione = '';
         
-        // Virtual scroll
+        // Virtual scroll - con buffer per evitare sfarfallio
         const virtualScrollStates = {
-            cuccioli: { startIndex: 0, endIndex: 0, rowHeight: 60, visibleRows: 15, totalRows: 0, container: null, bufferSize: 10, renderTimeout: null },
-            piccoli: { startIndex: 0, endIndex: 0, rowHeight: 60, visibleRows: 15, totalRows: 0, container: null, bufferSize: 10, renderTimeout: null },
-            grandi: { startIndex: 0, endIndex: 0, rowHeight: 60, visibleRows: 15, totalRows: 0, container: null, bufferSize: 10, renderTimeout: null }
+            cuccioli: { 
+                startIndex: 0, 
+                endIndex: 0, 
+                rowHeight: 60, 
+                visibleRows: 15, 
+                totalRows: 0, 
+                container: null,
+                bufferSize: 10,
+                renderTimeout: null
+            },
+            piccoli: { 
+                startIndex: 0, 
+                endIndex: 0, 
+                rowHeight: 60, 
+                visibleRows: 15, 
+                totalRows: 0, 
+                container: null,
+                bufferSize: 10,
+                renderTimeout: null
+            },
+            grandi: { 
+                startIndex: 0, 
+                endIndex: 0, 
+                rowHeight: 60, 
+                visibleRows: 15, 
+                totalRows: 0, 
+                container: null,
+                bufferSize: 10,
+                renderTimeout: null
+            }
         };
         
         let longPressTimer = null;
@@ -1144,14 +1163,6 @@
         let backupAutomaticoAttivo = true;
         let numericInputAttivo = false;
         
-        // =================== CONFIGURAZIONE NOTIFICHE ===================
-        const CONFIG_NOTIFICHE = {
-            ORARIO_NOTIFICA: 21, // 21:00 (9 PM)
-            GIORNI_PICCOLI: [1, 3, 5], // Lunedì(1), Mercoledì(3), Venerdì(5)
-            GIORNI_GRANDI: [1, 2, 3, 4, 5], // Lunedì(1) a Venerdì(5)
-            NOTIFICHE_INVIATE: {} // Per tracciare notifiche già inviate oggi
-        };
-        
         const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", 
                           "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
         const nomiGiorni = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
@@ -1161,6 +1172,7 @@
 
         // =================== TOAST NOTIFICATIONS DISATTIVATE ===================
         function mostraToast(messaggio, tipo = 'successo', durata = 3000) {
+            // Funzione completamente vuota - nessun toast viene mostrato
             console.log(`Toast disattivato: ${messaggio} (${tipo})`);
         }
 
@@ -1275,7 +1287,7 @@
             return presenzePerMese[key] || [];
         }
 
-        // =================== FUNZIONI DI RENDERING ===================
+        // =================== FUNZIONI DI RENDERING CORRETTE ===================
         function renderHeader(sezione) {
             const anno = dataAttuale.getFullYear();
             const mese = dataAttuale.getMonth();
@@ -1303,6 +1315,7 @@
             );
         }
 
+        // Funzione per ottenere la classe CSS in base alla categoria (per la tabella)
         function getCategoriaClass(categoria) {
             const catMap = {
                 'CUCCIOLI': 'categoria-cuccioli',
@@ -1318,6 +1331,7 @@
             return catMap[categoria] || '';
         }
 
+        // Funzione per ottenere la classe CSS per il box registrazione veloce - TUTTE DIVERSE
         function getQuickCategoriaClass(categoria) {
             const catMap = {
                 'CUCCIOLI': 'quick-categoria-cuccioli',
@@ -1330,6 +1344,7 @@
                 'JUNIORES': 'quick-categoria-junior',
                 'SENIOR': 'quick-categoria-senior'
             };
+            
             return catMap[categoria] || 'quick-categoria-senior';
         }
 
@@ -1338,6 +1353,7 @@
             const infoSpan = document.getElementById(`virtual-info-${sezione}`);
             if (!tbody) return;
             
+            // Cancella timeout precedente
             if (virtualScrollStates[sezione].renderTimeout) {
                 cancelAnimationFrame(virtualScrollStates[sezione].renderTimeout);
             }
@@ -1366,17 +1382,21 @@
                 const rowHeight = virtualScrollStates[sezione].rowHeight;
                 const bufferSize = virtualScrollStates[sezione].bufferSize;
                 
+                // Calcola indici con buffer
                 const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - bufferSize);
                 const endIndex = Math.min(totalRows, Math.ceil((scrollTop + wrapperHeight) / rowHeight) + bufferSize);
                 
                 virtualScrollStates[sezione].startIndex = startIndex;
                 virtualScrollStates[sezione].endIndex = endIndex;
                 
+                // Calcola padding top e bottom
                 const paddingTop = startIndex * rowHeight;
                 const paddingBottom = (totalRows - endIndex) * rowHeight;
                 
+                // Costruisci HTML
                 let html = '';
                 
+                // Padding top
                 if (paddingTop > 0) {
                     html += `<tr class="virtual-padding-row" style="height: ${paddingTop}px;"><td colspan="100"></td></tr>`;
                 }
@@ -1386,17 +1406,24 @@
                 const giorniMese = new Date(anno, mese + 1, 0).getDate();
                 const oggi = new Date();
                 const oggiStr = oggi.toLocaleDateString('en-CA');
+                const oggiNum = oggi.getDate();
+                const meseCorrente = oggi.getMonth();
+                const annoCorrente = oggi.getFullYear();
+                
+                // Crea oggetto data per oggi a mezzanotte per confronti corretti
                 const oggiMezzanotte = new Date(oggi);
                 oggiMezzanotte.setHours(0, 0, 0, 0);
                 
                 const presenzeMese = getPresenzeMese(anno, mese);
                 
+                // Righe visibili
                 for (let i = startIndex; i < endIndex && i < totalRows; i++) {
                     const a = atletiFiltrati[i];
                     const categoriaClass = getCategoriaClass(a.categoria);
                     
                     html += `<tr>`;
                     
+                    // Colonna ATLETA sticky - SENZA CATEGORIA, NOME SU DUE RIGHE CON COLORE
                     html += `<td class="sticky-col ${categoriaClass}" scope="row"><div class="nome-container">
                         <span class="nome-cognome">${a.nome.toUpperCase()}</span>
                     </div></td>`;
@@ -1420,25 +1447,32 @@
                              ontouchend="endLongPress()" 
                              ontouchcancel="cancelLongPress()"` : '';
                         
+                        // Determina classe e contenuto della cella
                         let cellClass = '';
                         let cellContent = '';
                         
+                        // Crea data cella per confronto
                         const dataCella = new Date(anno, mese, d);
                         dataCella.setHours(0, 0, 0, 0);
                         
                         if (isGreen) {
+                            // Presente - verde
                             cellClass = 'p-partecipa';
                             cellContent = hasNumber ? numberValue : '✔';
                         } else {
+                            // Non presente
                             if (dataCella < oggiMezzanotte) {
+                                // Giorno passato e senza presenza - rosso con X
                                 cellClass = 'p-assente';
                                 cellContent = '✗';
                             } else {
+                                // Giorno futuro o oggi - bianco
                                 cellClass = '';
                                 cellContent = '';
                             }
                         }
                         
+                        // Aggiungi classe today-cell se è oggi (anche se bianca)
                         if (dStr === oggiStr) {
                             cellClass += ' today-cell';
                         }
@@ -1455,6 +1489,7 @@
                     html += `<td class="tot-cell" role="gridcell" aria-label="Totale mese: ${totMese}">${totMese}</td></tr>`;
                 }
                 
+                // Padding bottom
                 if (paddingBottom > 0) {
                     html += `<tr class="virtual-padding-row" style="height: ${paddingBottom}px;"><td colspan="100"></td></tr>`;
                 }
@@ -1478,6 +1513,7 @@
             const wrapperHeight = wrapper.clientHeight;
             virtualScrollStates[sezione].visibleRows = Math.ceil(wrapperHeight / virtualScrollStates[sezione].rowHeight) + virtualScrollStates[sezione].bufferSize;
             
+            // Debounce scroll
             let scrollTimeout;
             wrapper.addEventListener('scroll', () => {
                 if (scrollTimeout) {
@@ -1506,6 +1542,7 @@
             const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - bufferSize);
             const endIndex = Math.min(totalRows, Math.ceil((scrollTop + wrapperHeight) / rowHeight) + bufferSize);
             
+            // Render solo se necessario
             if (Math.abs(startIndex - virtualScrollStates[sezione].startIndex) > 3 || 
                 Math.abs(endIndex - virtualScrollStates[sezione].endIndex) > 3) {
                 
@@ -1548,11 +1585,6 @@
             
             caricaStatoNumericInput();
             caricaStatoBackupAuto();
-            
-            // Inizializza notifiche dopo 3 secondi
-            setTimeout(() => {
-                initSistemaNotifiche();
-            }, 3000);
         }
 
         async function caricaDatiIniziali() {
@@ -1597,13 +1629,11 @@
                                 const sezione = getSezioneCorrente();
                                 renderVirtualScroll(sezione);
                                 
+                                // Aggiorna anche la registrazione veloce se attiva
                                 if (quickRegisterActive) {
                                     aggiornaStatoVeloce();
                                 }
                             }
-                            
-                            // Controlla presenze dopo aggiornamento
-                            controllaPresenzeGiornaliere();
                         }
                     })
                 .on('postgres_changes', 
@@ -1615,12 +1645,10 @@
                         const sezione = getSezioneCorrente();
                         renderVirtualScroll(sezione);
                         
+                        // Aggiorna anche la registrazione veloce se attiva
                         if (quickRegisterActive) {
                             aggiornaListaVeloce();
                         }
-                        
-                        // Aggiorna badge notifiche
-                        aggiornaBadgeNotifiche(await getRisultatiControllo());
                     })
                 .subscribe();
         }
@@ -1730,9 +1758,11 @@
             const presenzeMese = getPresenzeMese(anno, mese);
             const p = presenzeMese.find(x => x.atleta_id === aId && x.data === data);
             
+            // Crea data cella e oggi per confronti
             const oggi = new Date();
             oggi.setHours(0, 0, 0, 0);
             
+            // Estrai giorno, mese, anno dalla data string
             const [y, m, d] = data.split('-').map(Number);
             const dataCella = new Date(y, m-1, d);
             dataCella.setHours(0, 0, 0, 0);
@@ -1741,6 +1771,7 @@
                 if (p && p.stato && p.stato.includes('numero:')) {
                     await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
                     
+                    // Dopo eliminazione, verifica se è un giorno passato per mostrare X rossa
                     if (dataCella < oggi) {
                         el.classList.remove('p-partecipa');
                         el.classList.add('p-assente');
@@ -1753,6 +1784,7 @@
                 } else if (p && p.stato === 'partecipa') {
                     await supabaseClient.from('presenze').delete().eq('atleta_id', aId).eq('data', data);
                     
+                    // Dopo eliminazione, verifica se è un giorno passato per mostrare X rossa
                     if (dataCella < oggi) {
                         el.classList.remove('p-partecipa');
                         el.classList.add('p-assente');
@@ -1776,6 +1808,7 @@
                 const key = `${anno}-${mese}`;
                 const idx = presenzePerMese[key]?.findIndex(x => x.atleta_id === aId && x.data === data);
                 
+                // Aggiorna cache locale
                 if (el.classList.contains('p-partecipa')) {
                     if (idx > -1 && presenzePerMese[key]) {
                         presenzePerMese[key][idx].stato = 'partecipa';
@@ -1791,9 +1824,6 @@
                 if (backupAutomaticoAttivo) {
                     avviaTimerBackup();
                 }
-                
-                // Controlla presenze dopo modifica
-                controllaPresenzeGiornaliere();
                 
             } catch (error) {
                 console.error('Errore aggiornamento presenza:', error);
@@ -1862,9 +1892,6 @@
                     if (backupAutomaticoAttivo) {
                         avviaTimerBackup();
                     }
-                    
-                    // Controlla presenze dopo modifica
-                    controllaPresenzeGiornaliere();
                     
                 } catch (error) {
                     console.error('Errore salvataggio numero:', error);
@@ -2191,6 +2218,7 @@
                             riga.push(num);
                             tot++;
                         } else {
+                            // Questo caso non dovrebbe verificarsi, ma per sicurezza
                             if (dataCella < oggiMezzanotte) {
                                 riga.push("✗");
                             } else {
@@ -2365,7 +2393,7 @@
             } 
         }
 
-        // =================== REGISTRAZIONE VELOCE ===================
+        // =================== REGISTRAZIONE VELOCE CON CATEGORIE COLORATE DIVERSE ===================
         function avviaRegistrazioneVeloce() {
             const sezione = getSezioneCorrente();
             if (!sezione) {
@@ -2400,6 +2428,7 @@
             const quickCard = document.getElementById('quick-athlete-card');
             const quickCategoriaClass = getQuickCategoriaClass(atleta.categoria);
             
+            // Rimuovi tutte le classi di categoria e aggiungi quella corretta
             quickCard.className = 'quick-athlete-card ' + quickCategoriaClass;
             
             document.getElementById('quick-athlete-name').innerText = atleta.nome;
@@ -2468,14 +2497,13 @@
                 const sezione = getSezioneCorrente();
                 if (sezione) renderVirtualScroll(sezione);
                 
-                // Controlla presenze dopo modifica
-                controllaPresenzeGiornaliere();
-                
+                // Passa automaticamente al prossimo atleta dopo aver segnato presente
                 if (quickCurrentIndex < quickAthletes.length - 1) {
                     setTimeout(() => {
                         nextQuickAthlete();
-                    }, 300);
+                    }, 300); // Piccolo ritardo per mostrare il feedback visivo
                 } else {
+                    // Se è l'ultimo, mostra un messaggio
                     alert('Ultimo atleta! Premi PROSSIMO o CHIUDI');
                 }
                 
@@ -2489,6 +2517,7 @@
                 quickCurrentIndex++;
                 aggiornaVeloceDisplay();
             } else {
+                // Ultimo atleta, chiudi il popup
                 chiudiRegistrazioneVeloce();
             }
         }
@@ -2524,433 +2553,6 @@
                 }
             }
         }
-
-        // =================== SISTEMA NOTIFICHE PUSH ===================
-        async function initSistemaNotifiche() {
-            console.log('🔔 Inizializzazione sistema notifiche...');
-            
-            const swRegistrato = await registraServiceWorker();
-            if (!swRegistrato) {
-                aggiornaStatoNotificheUI('❌ Service Worker non registrato');
-                return false;
-            }
-            
-            const permessi = await richiediPermessiNotifiche();
-            if (!permessi) {
-                aggiornaStatoNotificheUI('❌ Permessi negati');
-                return false;
-            }
-            
-            setupMessageListener();
-            avviaMonitoraggioPersonalizzato();
-            aggiornaStatoNotificheUI('✅ Notifiche attive');
-            
-            return true;
-        }
-
-        async function registraServiceWorker() {
-            if (!('serviceWorker' in navigator)) {
-                console.log('Service Worker non supportato');
-                return false;
-            }
-
-            try {
-                const registration = await navigator.serviceWorker.register('sw.js', {
-                    scope: '/'
-                });
-                console.log('Service Worker registrato:', registration);
-                
-                await navigator.serviceWorker.ready;
-                return true;
-                
-            } catch (error) {
-                console.error('Errore registrazione Service Worker:', error);
-                return false;
-            }
-        }
-
-        async function richiediPermessiNotifiche() {
-            if (!('Notification' in window)) {
-                console.log('Notifiche non supportate');
-                return false;
-            }
-
-            if (Notification.permission === 'granted') {
-                return true;
-            }
-
-            if (Notification.permission === 'denied') {
-                console.log('Permessi notifiche negati');
-                return false;
-            }
-
-            try {
-                const permission = await Notification.requestPermission();
-                return permission === 'granted';
-            } catch (error) {
-                console.error('Errore richiesta permessi:', error);
-                return false;
-            }
-        }
-
-        function setupMessageListener() {
-            navigator.serviceWorker.addEventListener('message', (event) => {
-                if (event.data.action === 'apriCategoria') {
-                    const categoria = event.data.categoria;
-                    
-                    if (categoria === 'piccoli') {
-                        mostraSezione('piccoli');
-                    } else if (categoria === 'grandi') {
-                        mostraSezione('grandi');
-                    }
-                    
-                    if (document.hidden) {
-                        window.focus();
-                    }
-                    
-                    setTimeout(scrollOggi, 500);
-                }
-            });
-        }
-
-        function avviaMonitoraggioPersonalizzato() {
-            console.log('📊 Avvio monitoraggio presenze personalizzato...');
-            
-            controllaPresenzeGiornaliere();
-            
-            setInterval(controllaPresenzeGiornaliere, 60 * 60 * 1000);
-            
-            programmaControlloSerale();
-            programmaPuliziaTracciamento();
-        }
-
-        function programmaControlloSerale() {
-            const ora = new Date().getHours();
-            const minuti = new Date().getMinutes();
-            
-            let msFinoAlle21 = (CONFIG_NOTIFICHE.ORARIO_NOTIFICA - ora) * 60 * 60 * 1000 - (minuti * 60 * 1000);
-            
-            if (msFinoAlle21 < 0) {
-                msFinoAlle21 += 24 * 60 * 60 * 1000;
-            }
-            
-            console.log(`⏰ Prossimo controllo tra ${Math.round(msFinoAlle21 / 1000 / 60)} minuti`);
-            
-            setTimeout(() => {
-                controllaPresenzeGiornaliere(true);
-                setInterval(() => controllaPresenzeGiornaliere(true), 24 * 60 * 60 * 1000);
-            }, msFinoAlle21);
-        }
-
-        function programmaPuliziaTracciamento() {
-            const ora = new Date().getHours();
-            const minuti = new Date().getMinutes();
-            
-            let msFinoMezzanotte = (24 - ora) * 60 * 60 * 1000 - (minuti * 60 * 1000);
-            
-            setTimeout(() => {
-                CONFIG_NOTIFICHE.NOTIFICHE_INVIATE = {};
-                console.log('🧹 Tracciamento notifiche azzerato');
-                programmaPuliziaTracciamento();
-            }, msFinoMezzanotte);
-        }
-
-        async function getRisultatiControllo() {
-            const oggi = new Date();
-            const giornoSettimana = oggi.getDay();
-            const dataStr = oggi.toLocaleDateString('en-CA');
-            
-            const risultati = {
-                piccoli: {
-                    deveAllenarsi: CONFIG_NOTIFICHE.GIORNI_PICCOLI.includes(giornoSettimana),
-                    presenze: 0,
-                    totaleAtleti: 0,
-                    notificaInviata: false
-                },
-                grandi: {
-                    deveAllenarsi: CONFIG_NOTIFICHE.GIORNI_GRANDI.includes(giornoSettimana),
-                    presenze: 0,
-                    totaleAtleti: 0,
-                    notificaInviata: false
-                }
-            };
-            
-            const presenzeOggi = Object.values(presenzePerMese)
-                .flat()
-                .filter(p => p.data === dataStr);
-            
-            const atletiPiccoli = getAtletiFiltrati('piccoli');
-            const atletiGrandi = getAtletiFiltrati('grandi');
-            
-            risultati.piccoli.totaleAtleti = atletiPiccoli.length;
-            risultati.grandi.totaleAtleti = atletiGrandi.length;
-            
-            presenzeOggi.forEach(p => {
-                const atleta = atletiCache.find(a => a.id === p.atleta_id);
-                if (atleta) {
-                    const cat = (atleta.categoria || "").trim().toUpperCase();
-                    if (CAT_PICCOLI.includes(cat)) {
-                        risultati.piccoli.presenze++;
-                    } else if (CAT_GRANDI.includes(cat)) {
-                        risultati.grandi.presenze++;
-                    }
-                }
-            });
-            
-            return risultati;
-        }
-
-        async function controllaPresenzeGiornaliere(forzaNotifica = false) {
-            try {
-                const oggi = new Date();
-                const giornoSettimana = oggi.getDay();
-                const dataStr = oggi.toLocaleDateString('en-CA');
-                const oraCorrente = oggi.getHours();
-                
-                if (giornoSettimana === 0) {
-                    console.log('Domenica - nessun controllo necessario');
-                    return;
-                }
-                
-                const risultati = await getRisultatiControllo();
-                
-                console.log('📊 Risultati controllo:', risultati);
-                
-                const inviaNotifica = forzaNotifica || oraCorrente >= CONFIG_NOTIFICHE.ORARIO_NOTIFICA;
-                
-                if (inviaNotifica) {
-                    const oggiStr = oggi.toDateString();
-                    
-                    if (risultati.piccoli.deveAllenarsi && 
-                        risultati.piccoli.totaleAtleti > 0 && 
-                        risultati.piccoli.presenze === 0 &&
-                        !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`piccoli-${oggiStr}`]) {
-                        
-                        await inviaNotificaCategoria('piccoli', risultati.piccoli.totaleAtleti);
-                        CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`piccoli-${oggiStr}`] = true;
-                    }
-                    
-                    if (risultati.grandi.deveAllenarsi && 
-                        risultati.grandi.totaleAtleti > 0 && 
-                        risultati.grandi.presenze === 0 &&
-                        !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`grandi-${oggiStr}`]) {
-                        
-                        await inviaNotificaCategoria('grandi', risultati.grandi.totaleAtleti);
-                        CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`grandi-${oggiStr}`] = true;
-                    }
-                    
-                    if (risultati.piccoli.deveAllenarsi && 
-                        risultati.grandi.deveAllenarsi && 
-                        risultati.piccoli.presenze === 0 && 
-                        risultati.grandi.presenze === 0 &&
-                        !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`entrambi-${oggiStr}`]) {
-                        
-                        await inviaNotificaCompleta(risultati);
-                        CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`entrambi-${oggiStr}`] = true;
-                    }
-                }
-                
-                aggiornaBadgeNotifiche(risultati);
-                
-            } catch (error) {
-                console.error('Errore controllo presenze:', error);
-            }
-        }
-
-        async function inviaNotificaCategoria(categoria, totaleAtleti) {
-            const oggi = new Date();
-            const giorniItaliani = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
-            const giornoNome = giorniItaliani[oggi.getDay()];
-            const dataFormattata = oggi.toLocaleDateString('it-IT');
-            
-            let titolo = '';
-            let corpo = '';
-            let categoriaNotifica = categoria.toUpperCase();
-            
-            if (categoria === 'piccoli') {
-                titolo = '👦 PICCOLI - Nessuna presenza registrata';
-                corpo = `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i PICCOLI. ${totaleAtleti} atleti in lista.`;
-            } else {
-                titolo = '🏃 GRANDI - Nessuna presenza registrata';
-                corpo = `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i GRANDI. ${totaleAtleti} atleti in lista.`;
-            }
-            
-            await inviaNotificaPush(titolo, corpo, categoria);
-        }
-
-        async function inviaNotificaCompleta(risultati) {
-            const oggi = new Date();
-            const giorniItaliani = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
-            const giornoNome = giorniItaliani[oggi.getDay()];
-            const dataFormattata = oggi.toLocaleDateString('it-IT');
-            
-            const titolo = '⚠️ NESSUNA PRESENZA OGGI';
-            const corpo = `${giornoNome} ${dataFormattata} - Nessun atleta presente!\n` +
-                        `PICCOLI: ${risultati.piccoli.totaleAtleti} atleti\n` +
-                        `GRANDI: ${risultati.grandi.totaleAtleti} atleti`;
-            
-            await inviaNotificaPush(titolo, corpo, 'TUTTI');
-        }
-
-        async function inviaNotificaPush(titolo, corpo, categoria) {
-            if (!('serviceWorker' in navigator) || Notification.permission !== 'granted') {
-                console.log('Impossibile inviare notifica:', titolo);
-                return;
-            }
-
-            try {
-                const registration = await navigator.serviceWorker.ready;
-                
-                await registration.showNotification(titolo, {
-                    body: corpo,
-                    icon: 'icon-192.png',
-                    badge: 'icon-192.png',
-                    vibrate: [200, 100, 200, 100, 200, 100, 400],
-                    tag: `presenze-${categoria}-${new Date().toDateString()}`,
-                    renotify: true,
-                    requireInteraction: true,
-                    actions: [
-                        {
-                            action: 'open-piccoli',
-                            title: '👦 APRI PICCOLI'
-                        },
-                        {
-                            action: 'open-grandi',
-                            title: '🏃 APRI GRANDI'
-                        },
-                        {
-                            action: 'close',
-                            title: '⏰ RICORDA DOMANI'
-                        }
-                    ],
-                    data: {
-                        categoria: categoria,
-                        timestamp: Date.now()
-                    }
-                });
-                
-                console.log('✅ Notifica inviata:', titolo);
-                
-            } catch (error) {
-                console.error('Errore invio notifica:', error);
-            }
-        }
-
-        function aggiornaBadgeNotifiche(risultati) {
-            const oggi = new Date();
-            const giorno = oggi.getDay();
-            
-            const piccoliBtn = document.querySelector('.btn-piccoli');
-            const grandiBtn = document.querySelector('.btn-grandi');
-            
-            if (piccoliBtn) {
-                if (CONFIG_NOTIFICHE.GIORNI_PICCOLI.includes(giorno) && 
-                    risultati.piccoli.totaleAtleti > 0 && 
-                    risultati.piccoli.presenze === 0) {
-                    piccoliBtn.classList.add('attenzione');
-                } else {
-                    piccoliBtn.classList.remove('attenzione');
-                }
-            }
-            
-            if (grandiBtn) {
-                if (CONFIG_NOTIFICHE.GIORNI_GRANDI.includes(giorno) && 
-                    risultati.grandi.totaleAtleti > 0 && 
-                    risultati.grandi.presenze === 0) {
-                    grandiBtn.classList.add('attenzione');
-                } else {
-                    grandiBtn.classList.remove('attenzione');
-                }
-            }
-        }
-
-        function aggiornaStatoNotificheUI(stato) {
-            const statoEl = document.getElementById('notification-status');
-            if (!statoEl) return;
-            
-            if (stato) {
-                statoEl.innerHTML = `🔔 ${stato}`;
-                return;
-            }
-            
-            if (!('Notification' in window)) {
-                statoEl.innerHTML = '🔔 ❌ Non supportato';
-                return;
-            }
-            
-            switch(Notification.permission) {
-                case 'granted':
-                    statoEl.innerHTML = '🔔 ✅ Notifiche attive - Controllo ogni ora, notifica alle 21:00';
-                    break;
-                case 'denied':
-                    statoEl.innerHTML = '🔔 ❌ Notifiche bloccate - Abilita dalle impostazioni';
-                    break;
-                default:
-                    statoEl.innerHTML = '🔔 ⏸️ Notifiche non attivate - Clicca su TEST NOTIFICA per abilitare';
-            }
-        }
-
-        async function testNotifiche() {
-            console.log('🔔 Test sistema notifiche...');
-            
-            const permesso = await initSistemaNotifiche();
-            
-            if (permesso) {
-                const risultati = {
-                    piccoli: {
-                        deveAllenarsi: true,
-                        presenze: 0,
-                        totaleAtleti: getAtletiFiltrati('piccoli').length
-                    },
-                    grandi: {
-                        deveAllenarsi: true,
-                        presenze: 0,
-                        totaleAtleti: getAtletiFiltrati('grandi').length
-                    }
-                };
-                
-                await inviaNotificaCompleta(risultati);
-            } else {
-                alert('Permessi notifiche non concessi. Controlla le impostazioni del browser.');
-            }
-        }
-
-        function mostraStatoNotifiche() {
-            const oggi = new Date();
-            const giorno = oggi.getDay();
-            const giornoNome = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'][giorno];
-            
-            const piccoliAllenamento = CONFIG_NOTIFICHE.GIORNI_PICCOLI.includes(giorno) ? 'SÌ' : 'NO';
-            const grandiAllenamento = CONFIG_NOTIFICHE.GIORNI_GRANDI.includes(giorno) ? 'SÌ' : 'NO';
-            
-            const atletiPiccoli = getAtletiFiltrati('piccoli').length;
-            const atletiGrandi = getAtletiFiltrati('grandi').length;
-            
-            const oggiStr = oggi.toLocaleDateString('en-CA');
-            let presenzeOggi = 0;
-            Object.values(presenzePerMese).forEach(mesePresenze => {
-                presenzeOggi += mesePresenze.filter(p => p.data === oggiStr).length;
-            });
-            
-            const messaggio = `
-📊 STATO NOTIFICHE
-📅 Oggi: ${giornoNome}
-👦 Piccoli allenamento: ${piccoliAllenamento} (${atletiPiccoli} atleti)
-🏃 Grandi allenamento: ${grandiAllenamento} (${atletiGrandi} atleti)
-📝 Presenze oggi: ${presenzeOggi}
-⏰ Orario notifica: 21:00
-🔔 Notifiche: ${Notification.permission === 'granted' ? 'ATTIVE ✅' : 'NON ATTIVE ❌'}
-            `;
-            
-            alert(messaggio);
-        }
-
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                console.log('App tornata in primo piano, controllo presenze...');
-                controllaPresenzeGiornaliere();
-            }
-        });
 
         // =================== INIZIALIZZAZIONE ===================
         window.onload = inizializza;
