@@ -1,9 +1,9 @@
 // =================== SERVICE WORKER REGISTRO PRESENZE ===================
-// Versione: 4.0.0
+// Versione: 5.0.0 (con notifiche intelligenti)
 // Compatibile con Android e iOS
 
-const CACHE_NAME = 'registro-presenze-v4';
-const APP_VERSION = '4.0.0';
+const CACHE_NAME = 'registro-presenze-v5';
+const APP_VERSION = '5.0.0';
 
 // Risorse da memorizzare nella cache
 const urlsToCache = [
@@ -12,7 +12,7 @@ const urlsToCache = [
   '/presenze-allenamenti/manifest.json',
   '/presenze-allenamenti/favicon.ico',
   
-  // Icone principali (assicurati che esistano)
+  // Icone principali
   '/presenze-allenamenti/icon-72.png',
   '/presenze-allenamenti/icon-96.png', 
   '/presenze-allenamenti/icon-128.png',
@@ -33,12 +33,10 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('[SW] 📦 Cache delle risorse essenziali');
-        // Usa Promise.all con catch individuale per ogni risorsa
         return Promise.all(
           urlsToCache.map(url => {
             return cache.add(url).catch(error => {
               console.warn(`[SW] ⚠️ Impossibile caricare in cache: ${url}`, error);
-              // Non blocchiamo l'installazione se una risorsa fallisce
               return Promise.resolve();
             });
           })
@@ -60,7 +58,6 @@ self.addEventListener('activate', (event) => {
   
   event.waitUntil(
     Promise.all([
-      // Pulisci cache vecchie
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
@@ -71,14 +68,10 @@ self.addEventListener('activate', (event) => {
           })
         );
       }),
-      
-      // Prendi controllo di tutti i client
       self.clients.claim()
     ])
     .then(() => {
       console.log('[SW] ✅ Service Worker attivo e pronto');
-      
-      // Invia messaggio a tutti i client
       sendMessageToClients({
         type: 'SW_ACTIVATED',
         version: APP_VERSION
@@ -91,33 +84,23 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
   
-  // Ignora richieste non-GET
-  if (event.request.method !== 'GET') {
-    return;
-  }
+  if (event.request.method !== 'GET') return;
   
   // Ignora richieste a domini esterni
   if (!requestUrl.origin.startsWith(self.location.origin)) {
+    // Ma permetti le richieste a Supabase
+    if (requestUrl.href.includes('supabase.co') || 
+        requestUrl.href.includes('supabase.com')) {
+      return fetch(event.request);
+    }
     return;
-  }
-  
-  // Ignora richieste API a Supabase
-  if (requestUrl.href.includes('supabase.co') || 
-      requestUrl.href.includes('supabase.com') ||
-      requestUrl.pathname.includes('/rest/') ||
-      requestUrl.pathname.includes('/auth/')) {
-    return fetch(event.request);
   }
   
   // Strategia: Cache First per risorse statiche
   event.respondWith(
     caches.match(event.request)
       .then((cachedResponse) => {
-        // Se la risorsa è in cache, restituiscila
         if (cachedResponse) {
-          console.log('[SW] 📂 Servo dalla cache:', requestUrl.pathname);
-          
-          // In background, aggiorna la cache dalla rete
           fetch(event.request)
             .then((networkResponse) => {
               if (networkResponse && networkResponse.status === 200) {
@@ -128,46 +111,27 @@ self.addEventListener('fetch', (event) => {
                   });
               }
             })
-            .catch(() => {
-              // Ignora errori di rete per l'aggiornamento in background
-            });
+            .catch(() => {});
           
           return cachedResponse;
         }
         
-        // Altrimenti vai in rete
         return fetch(event.request)
           .then((networkResponse) => {
-            // Se la risposta è valida, metti in cache
             if (networkResponse && networkResponse.status === 200) {
               const responseToCache = networkResponse.clone();
               caches.open(CACHE_NAME)
                 .then((cache) => {
                   cache.put(event.request, responseToCache);
-                  console.log('[SW] 💾 Nuova risorsa in cache:', requestUrl.pathname);
                 });
             }
             return networkResponse;
           })
           .catch((error) => {
-            console.log('[SW] 🌐 Errore di rete per:', requestUrl.pathname);
-            
-            // Fallback per richieste di navigazione
             if (event.request.mode === 'navigate') {
               return caches.match('/presenze-allenamenti/');
             }
             
-            // Fallback per icon-144.png se manca
-            if (requestUrl.pathname.includes('icon-144')) {
-              return caches.match('/presenze-allenamenti/icon-192.png');
-            }
-            
-            // Fallback per altre icone
-            if (requestUrl.pathname.includes('icon-')) {
-              return caches.match('/presenze-allenamenti/icon-192.png');
-            }
-            
-            // Fallback generico
             return new Response(
               '<h1>Connessione assente</h1><p>L\'app richiede una connessione internet per questa risorsa.</p>',
               {
@@ -212,36 +176,59 @@ self.addEventListener('message', (event) => {
         });
       });
       break;
+      
+    case 'TEST_NOTIFICATION':
+      // Invia una notifica di test
+      self.registration.showNotification('🔔 Test Notifica', {
+        body: 'Le notifiche funzionano correttamente!',
+        icon: '/presenze-allenamenti/icon-192.png',
+        badge: '/presenze-allenamenti/icon-72.png',
+        tag: 'test-notification',
+        vibrate: [200, 100, 200],
+        data: {
+          url: '/presenze-allenamenti/'
+        }
+      });
+      break;
   }
 });
 
-// =================== FUNZIONI UTILITY ===================
-function sendMessageToClients(message) {
-  self.clients.matchAll().then((clients) => {
-    clients.forEach((client) => {
-      client.postMessage(message);
-    });
-  });
-}
-
-function sendMessageToClient(client, message) {
-  client.postMessage(message);
-}
-
-// =================== PUSH NOTIFICATIONS (OPZIONALE) ===================
+// =================== NOTIFICHE PUSH ===================
 self.addEventListener('push', (event) => {
-  if (!event.data) return;
+  if (!event.data) {
+    console.log('[SW] 📭 Notifica push senza dati');
+    return;
+  }
   
   try {
     const data = event.data.json();
+    console.log('[SW] 📨 Notifica push ricevuta:', data);
+    
     const options = {
-      body: data.body || 'Nuova notifica dal Registro Presenze',
+      body: data.body || 'Promemoria registrazione presenze',
       icon: '/presenze-allenamenti/icon-192.png',
       badge: '/presenze-allenamenti/icon-72.png',
-      tag: 'presenze-notification',
-      vibrate: [200, 100, 200],
+      vibrate: [200, 100, 200, 100, 200, 100, 400],
+      tag: data.tag || `presenze-${new Date().toDateString()}`,
+      renotify: true,
+      requireInteraction: true,
+      actions: data.actions || [
+        {
+          action: 'open-piccoli',
+          title: '👦 APRI PICCOLI'
+        },
+        {
+          action: 'open-grandi',
+          title: '🏃 APRI GRANDI'
+        },
+        {
+          action: 'close',
+          title: '⏰ RICORDA DOMANI'
+        }
+      ],
       data: {
         url: data.url || '/presenze-allenamenti/',
+        categoria: data.categoria || 'TUTTI',
         timestamp: Date.now()
       }
     };
@@ -257,8 +244,13 @@ self.addEventListener('push', (event) => {
   }
 });
 
+// =================== CLICK SULLE NOTIFICHE ===================
 self.addEventListener('notificationclick', (event) => {
+  console.log('[SW] 👆 Click su notifica:', event.notification.tag);
   event.notification.close();
+  
+  const categoriaDaAprire = event.action === 'open-piccoli' ? 'piccoli' : 
+                           (event.action === 'open-grandi' ? 'grandi' : null);
   
   event.waitUntil(
     clients.matchAll({ 
@@ -268,16 +260,37 @@ self.addEventListener('notificationclick', (event) => {
       // Cerca una finestra già aperta
       for (const client of clientList) {
         if (client.url.includes('/presenze-allenamenti/') && 'focus' in client) {
+          // Invia messaggio per aprire la categoria specifica
+          if (categoriaDaAprire) {
+            client.postMessage({ 
+              type: 'APRI_CATEGORIA',
+              categoria: categoriaDaAprire
+            });
+          }
           return client.focus();
         }
       }
       
       // Altrimenti apri nuova finestra
       if (clients.openWindow) {
-        return clients.openWindow(event.notification.data.url || '/presenze-allenamenti/');
+        const url = event.notification.data?.url || '/presenze-allenamenti/';
+        return clients.openWindow(url + (categoriaDaAprire ? `?categoria=${categoriaDaAprire}` : ''));
       }
     })
   );
 });
+
+// =================== FUNZIONI UTILITY ===================
+function sendMessageToClients(message) {
+  self.clients.matchAll().then((clients) => {
+    clients.forEach((client) => {
+      client.postMessage(message);
+    });
+  });
+}
+
+function sendMessageToClient(client, message) {
+  client.postMessage(message);
+}
 
 console.log('[SW] 🚀 Service Worker caricato e pronto (v' + APP_VERSION + ')');
