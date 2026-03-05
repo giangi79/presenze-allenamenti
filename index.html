@@ -2607,25 +2607,25 @@
         }
 
         async function registraServiceWorker() {
-            if (!('serviceWorker' in navigator)) {
-                console.log('Service Worker non supportato');
-                return false;
-            }
+    if (!('serviceWorker' in navigator)) {
+        console.log('Service Worker non supportato');
+        return false;
+    }
 
-            try {
-                const registration = await navigator.serviceWorker.register('sw.js', {
-                    scope: '/'
-                });
-                console.log('Service Worker registrato:', registration);
-                
-                await navigator.serviceWorker.ready;
-                return true;
-                
-            } catch (error) {
-                console.error('Errore registrazione Service Worker:', error);
-                return false;
-            }
-        }
+    try {
+        const registration = await navigator.serviceWorker.register('sw.js', {
+            scope: '/presenze-allenamenti/'    // <--- CORRETTO!
+        });
+        console.log('Service Worker registrato:', registration);
+        
+        await navigator.serviceWorker.ready;
+        return true;
+        
+    } catch (error) {
+        console.error('Errore registrazione Service Worker:', error);
+        return false;
+    }
+}
 
         async function richiediPermessiNotifiche() {
             if (!('Notification' in window)) {
@@ -3037,3 +3037,4 @@
     </script>
 </body>
 </html>
+
