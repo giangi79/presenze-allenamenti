@@ -200,6 +200,22 @@
         .btn-quick-register { background: linear-gradient(135deg, #e67e22, #d35400); }
         .btn-notifica { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
         .btn-stato-notifiche { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .btn-install { 
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            animation: pulse-install 2s infinite;
+        }
+        
+        @keyframes pulse-install {
+            0% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+            }
+        }
         
         /* STATUS BAR */
         .status-container {
@@ -944,6 +960,8 @@
                 <!-- PULSANTI NOTIFICHE -->
                 <button class="btn-action btn-notifica" onclick="testNotifiche()" title="Test notifiche" aria-label="Test sistema notifiche">🔔 TEST NOTIFICA</button>
                 <button class="btn-action btn-stato-notifiche" onclick="mostraStatoNotifiche()" title="Stato notifiche" aria-label="Mostra stato notifiche">📊 STATO NOTIFICHE</button>
+                <!-- PULSANTE INSTALLAZIONE (inizialmente nascosto) -->
+                <button class="btn-action btn-install" id="install-pwa-btn" style="display: none;" onclick="installPWA()">📲 INSTALLA APP</button>
             </div>
         </div>
 
@@ -1151,6 +1169,43 @@
             GIORNI_GRANDI: [1, 2, 3, 4, 5], // Lunedì(1) a Venerdì(5)
             NOTIFICHE_INVIATE: {} // Per tracciare notifiche già inviate oggi
         };
+        
+        // =================== GESTIONE INSTALLAZIONE PWA ===================
+        let deferredPrompt;
+
+        // Funzione per installare l'app
+        window.installPWA = async function() {
+            if (!deferredPrompt) {
+                console.log('❌ Nessun prompt di installazione disponibile');
+                return;
+            }
+            
+            // Mostra il prompt di installazione
+            deferredPrompt.prompt();
+            
+            // Aspetta la scelta dell'utente
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`📲 Utente ha ${outcome === 'accepted' ? 'accettato' : 'rifiutato'} l'installazione`);
+            
+            // Resetta deferredPrompt
+            deferredPrompt = null;
+            
+            // Nascondi il pulsante
+            const btn = document.getElementById('install-pwa-btn');
+            if (btn) btn.style.display = 'none';
+        }
+
+        // Controlla se l'app è già installata
+        function checkIfInstalled() {
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                window.navigator.standalone === true) {
+                console.log('📲 App già installata (modalità standalone)');
+                const btn = document.getElementById('install-pwa-btn');
+                if (btn) btn.style.display = 'none';
+                return true;
+            }
+            return false;
+        }
         
         const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", 
                           "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
@@ -1524,6 +1579,9 @@
         // =================== FUNZIONI PRINCIPALI ===================
         async function inizializza() {
             console.log('🚀 Inizializzazione applicazione...');
+            
+            // Controlla se l'app è già installata
+            checkIfInstalled();
             
             const m = localStorage.getItem('p_mese') || dataAttuale.getMonth();
             const a = localStorage.getItem('p_anno') || dataAttuale.getFullYear();
@@ -2595,7 +2653,7 @@
 
         function setupMessageListener() {
             navigator.serviceWorker.addEventListener('message', (event) => {
-                if (event.data.action === 'apriCategoria') {
+                if (event.data.type === 'APRI_CATEGORIA') {
                     const categoria = event.data.categoria;
                     
                     if (categoria === 'piccoli') {
@@ -2609,6 +2667,11 @@
                     }
                     
                     setTimeout(scrollOggi, 500);
+                }
+                
+                if (event.data.type === 'SW_ACTIVATED') {
+                    console.log('✅ Service Worker attivato versione:', event.data.version);
+                    aggiornaStatoNotificheUI();
                 }
             });
         }
@@ -2804,7 +2867,7 @@
                 await registration.showNotification(titolo, {
                     body: corpo,
                     icon: 'icon-192.png',
-                    badge: 'icon-192.png',
+                    badge: 'icon-72.png',
                     vibrate: [200, 100, 200, 100, 200, 100, 400],
                     tag: `presenze-${categoria}-${new Date().toDateString()}`,
                     renotify: true,
@@ -2950,6 +3013,23 @@
                 console.log('App tornata in primo piano, controllo presenze...');
                 controllaPresenzeGiornaliere();
             }
+        });
+
+        // Eventi per l'installazione PWA
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('📲 Evento beforeinstallprompt catturato');
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('install-pwa-btn');
+            if (btn) btn.style.display = 'inline-flex';
+        });
+
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('📲 App installata con successo');
+            const btn = document.getElementById('install-pwa-btn');
+            if (btn) btn.style.display = 'none';
+            deferredPrompt = null;
+            alert('✅ Grazie per aver installato Registro Presenze 2050!');
         });
 
         // =================== INIZIALIZZAZIONE ===================
