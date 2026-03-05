@@ -17,7 +17,6 @@ const urlsToCache = [
   '/presenze-allenamenti/icon-96.png', 
   '/presenze-allenamenti/icon-128.png',
   '/presenze-allenamenti/icon-144.png',
-  '/presenze-allenamenti/icon-152.png',
   '/presenze-allenamenti/icon-192.png',
   '/presenze-allenamenti/icon-512.png',
   
@@ -294,3 +293,4 @@ function sendMessageToClient(client, message) {
 }
 
 console.log('[SW] 🚀 Service Worker caricato e pronto (v' + APP_VERSION + ')');
+
