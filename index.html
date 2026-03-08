@@ -81,10 +81,11 @@
         .app-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px 15px 40px;
+            padding: 20px 15px 120px; /* Aumentato padding-bottom per i pulsanti fissi */
             min-height: 100vh;
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            position: relative;
         }
         
         /* HEADER */
@@ -141,80 +142,6 @@
         select:focus, input:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
-        }
-        
-        /* PULSANTI AZIONE */
-        .actions-container { 
-            display: flex; 
-            justify-content: center; 
-            gap: 12px; 
-            margin: 20px 0 25px; 
-            flex-wrap: wrap; 
-        }
-        
-        .btn-action { 
-            padding: 14px 22px; 
-            border-radius: 14px; 
-            border: none; 
-            font-weight: 900; 
-            cursor: pointer; 
-            color: white; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px; 
-            font-size: 15px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
-            text-transform: uppercase; 
-            transition: transform 0.3s;
-        }
-        
-        .btn-action:hover {
-            transform: translateY(-2px);
-        }
-        
-        .btn-action:active { 
-            transform: translateY(2px); 
-        }
-        
-        .btn-action:focus-visible {
-            outline: 3px solid #ffbf47;
-            outline-offset: 2px;
-        }
-        
-        .btn-drive { background: linear-gradient(135deg, #4285F4, #0d47a1); } 
-        .btn-open-drive { background: linear-gradient(135deg, #34a853, #1e7e34); } 
-        .btn-admin { background: linear-gradient(135deg, #6c757d, #343a40); } 
-        .btn-home { background: linear-gradient(135deg, #ff9800, #f57c00); }
-        .btn-oggi { 
-            background: linear-gradient(135deg, #17a2b8, #0f6674); 
-            width: 52px; 
-            height: 52px; 
-            justify-content: center; 
-            font-size: 24px; 
-            border-radius: 14px; 
-        }
-        .btn-backup-auto { background: linear-gradient(135deg, #f39c12, #e67e22); }
-        .btn-backup-auto.attivo { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-        .btn-numeric-input { background: linear-gradient(135deg, #8e44ad, #6c3483); }
-        .btn-numeric-input.attivo { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-        .btn-quick-register { background: linear-gradient(135deg, #e67e22, #d35400); }
-        .btn-notifica { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-        .btn-stato-notifiche { background: linear-gradient(135deg, #3498db, #2980b9); }
-        .btn-install { 
-            background: linear-gradient(135deg, #667eea, #764ba2) !important;
-            animation: pulse-install 2s infinite;
-        }
-        
-        @keyframes pulse-install {
-            0% {
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
-            }
         }
         
         /* STATUS BAR */
@@ -318,23 +245,6 @@
             100% {
                 box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
             }
-        }
-        
-        /* Badge notifiche */
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ff4444;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
         }
         
         /* === TABELLA === */
@@ -522,6 +432,111 @@
             pointer-events: none;
         }
         
+        /* BOTTOM ACTIONS FISSE */
+        .bottom-actions {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .bottom-actions .btn-action {
+            padding: 12px 18px;
+            border-radius: 14px;
+            border: none;
+            font-weight: 900;
+            cursor: pointer;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            text-transform: uppercase;
+            transition: transform 0.2s;
+            white-space: nowrap;
+        }
+        
+        .bottom-actions .btn-action:hover {
+            transform: translateY(-2px);
+        }
+        
+        .bottom-actions .btn-action:active { 
+            transform: translateY(1px); 
+        }
+        
+        .bottom-actions .btn-action:focus-visible {
+            outline: 3px solid #ffbf47;
+            outline-offset: 2px;
+        }
+        
+        .btn-drive { background: linear-gradient(135deg, #4285F4, #0d47a1); } 
+        .btn-open-drive { background: linear-gradient(135deg, #34a853, #1e7e34); } 
+        .btn-admin { background: linear-gradient(135deg, #6c757d, #343a40); } 
+        .btn-backup-auto { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .btn-backup-auto.attivo { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .btn-numeric-input { background: linear-gradient(135deg, #8e44ad, #6c3483); }
+        .btn-numeric-input.attivo { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .btn-quick-register { background: linear-gradient(135deg, #e67e22, #d35400); }
+        .btn-install { 
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            animation: pulse-install 2s infinite;
+        }
+        
+        /* PULSANTE HOME FLOTTANTE (SOLO QUESTO È FLOTTANTE) */
+        .home-floating {
+            position: fixed;
+            bottom: 85px; /* Posizionato sopra i pulsanti fissi */
+            right: 20px;
+            z-index: 1001;
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+            border: none;
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            padding: 0;
+            line-height: 1;
+        }
+        
+        .home-floating:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 152, 0, 0.6);
+        }
+        
+        .home-floating:active {
+            transform: translateY(2px);
+        }
+        
+        @keyframes pulse-install {
+            0% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+            }
+        }
+        
         /* FOOTER */
         .app-footer {
             margin-top: 40px;
@@ -537,15 +552,6 @@
             line-height: 1.6;
         }
         
-        /* Stato notifiche nel footer */
-        .notification-status {
-            margin-top: 15px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            font-size: 13px;
-        }
-        
         /* PANNELLO ADMIN */
         #admin-overlay { 
             display: none; 
@@ -555,7 +561,7 @@
             width: 100%; 
             height: 100%; 
             background: rgba(0,0,0,0.8); 
-            z-index: 1000; 
+            z-index: 2000; 
             justify-content: center; 
             align-items: center; 
             padding: 20px;
@@ -809,7 +815,7 @@
         
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            .app-container { padding: 15px 10px 30px; }
+            .app-container { padding: 15px 10px 100px; }
             .top-bar { flex-direction: column; align-items: stretch; }
             
             th.sticky-col, td.sticky-col { 
@@ -858,6 +864,24 @@
                 padding: 15px;
                 font-size: 18px;
             }
+            
+            .home-floating {
+                bottom: 75px;
+                right: 15px;
+                width: 55px;
+                height: 55px;
+                font-size: 24px;
+            }
+            
+            .bottom-actions {
+                padding: 12px 15px;
+                gap: 8px;
+            }
+            
+            .bottom-actions .btn-action {
+                padding: 10px 14px;
+                font-size: 12px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -900,6 +924,11 @@
                 padding: 12px;
                 font-size: 16px;
             }
+            
+            .bottom-actions .btn-action {
+                padding: 8px 12px;
+                font-size: 11px;
+            }
         }
         
         /* ANIMAZIONI CARICAMENTO */
@@ -934,9 +963,7 @@
                 <div class="date-controls">
                     <select id="select-mese" onchange="cambiaData()" aria-label="Seleziona mese"></select>
                     <select id="select-anno" onchange="cambiaData()" aria-label="Seleziona anno"></select>
-                    <button class="btn-action btn-oggi" onclick="scrollOggi()" title="Vai a oggi" aria-label="Vai al giorno corrente">🎯</button>
                 </div>
-                <button class="btn-action btn-home" onclick="vaiAllaHome()" title="Home" aria-label="Torna alla home">🏠 HOME</button>
             </div>
             
             <!-- STATUS BAR CON STATISTICHE BASE -->
@@ -947,21 +974,6 @@
                     <div><span id="stat-presenze-oggi" aria-label="Presenze oggi">0</span> Oggi</div>
                     <div><span id="stat-presenze-mese" aria-label="Presenze questo mese">0</span> Questo Mese</div>
                 </div>
-            </div>
-            
-            <!-- PULSANTI AZIONE -->
-            <div class="actions-container">
-                <button class="btn-action btn-quick-register" onclick="avviaRegistrazioneVeloce()" title="Registrazione veloce" aria-label="Avvia registrazione veloce atleti">⚡ REGISTRA VELOCE</button>
-                <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()" title="Crea backup PDF" aria-label="Crea backup PDF su Drive">☁️ BACKUP PDF</button>
-                <button class="btn-action btn-open-drive" onclick="apriFileDrive()" title="Apri ultimo backup" aria-label="Apri ultimo backup su Drive">📂 APRI DRIVE</button>
-                <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input" title="Input numerico" aria-label="Attiva o disattiva input numerico">🔢 NUM OFF</button>
-                <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto" title="Backup automatico" aria-label="Attiva o disattiva backup automatico">▶️ AUTO ON</button>
-                <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti" aria-label="Apri pannello gestione atleti">⚙️ GESTISCI ATLETI</button>
-                <!-- PULSANTI NOTIFICHE -->
-                <button class="btn-action btn-notifica" onclick="testNotifiche()" title="Test notifiche" aria-label="Test sistema notifiche">🔔 TEST NOTIFICA</button>
-                <button class="btn-action btn-stato-notifiche" onclick="mostraStatoNotifiche()" title="Stato notifiche" aria-label="Mostra stato notifiche">📊 STATO NOTIFICHE</button>
-                <!-- PULSANTE INSTALLAZIONE (inizialmente nascosto) -->
-                <button class="btn-action btn-install" id="install-pwa-btn" style="display: none;" onclick="installPWA()">📲 INSTALLA APP</button>
             </div>
         </div>
 
@@ -1030,12 +1042,22 @@
                 © 2024-2025 Gruppo Sportivo 2050 - Registro Presenze Digitale<br>
                 <small>Ultimo aggiornamento: <span id="last-update">Caricamento...</span></small>
             </div>
-            <!-- STATO NOTIFICHE NEL FOOTER -->
-            <div class="notification-status" id="notification-status">
-                🔔 Inizializzazione notifiche...
-            </div>
         </div>
     </div>
+    
+    <!-- === BOTTOM ACTIONS FISSE (TUTTI I PULSANTI TRANNE HOME) === -->
+    <div class="bottom-actions">
+        <button class="btn-action btn-quick-register" onclick="avviaRegistrazioneVeloce()" title="Registrazione veloce" aria-label="Avvia registrazione veloce atleti">⚡ REGISTRA VELOCE</button>
+        <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()" title="Crea backup PDF" aria-label="Crea backup PDF su Drive">☁️ BACKUP PDF</button>
+        <button class="btn-action btn-open-drive" onclick="apriFileDrive()" title="Apri ultimo backup" aria-label="Apri ultimo backup su Drive">📂 APRI DRIVE</button>
+        <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input" title="Input numerico" aria-label="Attiva o disattiva input numerico">🔢 NUM OFF</button>
+        <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto" title="Backup automatico" aria-label="Attiva o disattiva backup automatico">▶️ AUTO ON</button>
+        <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti" aria-label="Apri pannello gestione atleti">⚙️ GESTISCI ATLETI</button>
+        <button class="btn-action btn-install" id="install-pwa-btn" style="display: none;" onclick="installPWA()">📲 INSTALLA APP</button>
+    </div>
+    
+    <!-- === HOME BUTTON FLOTTANTE (SOLO QUESTO È FLOTTANTE) === -->
+    <button class="home-floating" onclick="vaiAllaHome()" title="Torna alla Home" aria-label="Torna alla pagina principale">🏠</button>
 
     <!-- === PANNELLO ADMIN === -->
     <div id="admin-overlay" role="dialog" aria-labelledby="admin-title" aria-modal="true">
@@ -1161,14 +1183,6 @@
         
         let backupAutomaticoAttivo = true;
         let numericInputAttivo = false;
-        
-        // =================== CONFIGURAZIONE NOTIFICHE ===================
-        const CONFIG_NOTIFICHE = {
-            ORARIO_NOTIFICA: 21, // 21:00 (9 PM)
-            GIORNI_PICCOLI: [1, 3, 5], // Lunedì(1), Mercoledì(3), Venerdì(5)
-            GIORNI_GRANDI: [1, 2, 3, 4, 5], // Lunedì(1) a Venerdì(5)
-            NOTIFICHE_INVIATE: {} // Per tracciare notifiche già inviate oggi
-        };
         
         // =================== GESTIONE INSTALLAZIONE PWA ===================
         let deferredPrompt;
@@ -1606,11 +1620,6 @@
             
             caricaStatoNumericInput();
             caricaStatoBackupAuto();
-            
-            // Inizializza notifiche dopo 3 secondi
-            setTimeout(() => {
-                initSistemaNotifiche();
-            }, 3000);
         }
 
         async function caricaDatiIniziali() {
@@ -1659,9 +1668,6 @@
                                     aggiornaStatoVeloce();
                                 }
                             }
-                            
-                            // Controlla presenze dopo aggiornamento
-                            controllaPresenzeGiornaliere();
                         }
                     })
                 .on('postgres_changes', 
@@ -1676,9 +1682,6 @@
                         if (quickRegisterActive) {
                             aggiornaListaVeloce();
                         }
-                        
-                        // Aggiorna badge notifiche
-                        aggiornaBadgeNotifiche(await getRisultatiControllo());
                     })
                 .subscribe();
         }
@@ -1850,9 +1853,6 @@
                     avviaTimerBackup();
                 }
                 
-                // Controlla presenze dopo modifica
-                controllaPresenzeGiornaliere();
-                
             } catch (error) {
                 console.error('Errore aggiornamento presenza:', error);
             }
@@ -1920,9 +1920,6 @@
                     if (backupAutomaticoAttivo) {
                         avviaTimerBackup();
                     }
-                    
-                    // Controlla presenze dopo modifica
-                    controllaPresenzeGiornaliere();
                     
                 } catch (error) {
                     console.error('Errore salvataggio numero:', error);
@@ -2526,9 +2523,6 @@
                 const sezione = getSezioneCorrente();
                 if (sezione) renderVirtualScroll(sezione);
                 
-                // Controlla presenze dopo modifica
-                controllaPresenzeGiornaliere();
-                
                 if (quickCurrentIndex < quickAthletes.length - 1) {
                     setTimeout(() => {
                         nextQuickAthlete();
@@ -2583,438 +2577,6 @@
             }
         }
 
-        // =================== SISTEMA NOTIFICHE PUSH ===================
-        async function initSistemaNotifiche() {
-            console.log('🔔 Inizializzazione sistema notifiche...');
-            
-            const swRegistrato = await registraServiceWorker();
-            if (!swRegistrato) {
-                aggiornaStatoNotificheUI('❌ Service Worker non registrato');
-                return false;
-            }
-            
-            const permessi = await richiediPermessiNotifiche();
-            if (!permessi) {
-                aggiornaStatoNotificheUI('❌ Permessi negati');
-                return false;
-            }
-            
-            setupMessageListener();
-            avviaMonitoraggioPersonalizzato();
-            aggiornaStatoNotificheUI('✅ Notifiche attive');
-            
-            return true;
-        }
-
-        async function registraServiceWorker() {
-    if (!('serviceWorker' in navigator)) {
-        console.log('Service Worker non supportato');
-        return false;
-    }
-
-    try {
-        const registration = await navigator.serviceWorker.register('sw.js', {
-            scope: '/presenze-allenamenti/'    // <--- CORRETTO!
-        });
-        console.log('Service Worker registrato:', registration);
-        
-        await navigator.serviceWorker.ready;
-        return true;
-        
-    } catch (error) {
-        console.error('Errore registrazione Service Worker:', error);
-        return false;
-    }
-}
-
-        async function richiediPermessiNotifiche() {
-            if (!('Notification' in window)) {
-                console.log('Notifiche non supportate');
-                return false;
-            }
-
-            if (Notification.permission === 'granted') {
-                return true;
-            }
-
-            if (Notification.permission === 'denied') {
-                console.log('Permessi notifiche negati');
-                return false;
-            }
-
-            try {
-                const permission = await Notification.requestPermission();
-                return permission === 'granted';
-            } catch (error) {
-                console.error('Errore richiesta permessi:', error);
-                return false;
-            }
-        }
-
-        function setupMessageListener() {
-            navigator.serviceWorker.addEventListener('message', (event) => {
-                if (event.data.type === 'APRI_CATEGORIA') {
-                    const categoria = event.data.categoria;
-                    
-                    if (categoria === 'piccoli') {
-                        mostraSezione('piccoli');
-                    } else if (categoria === 'grandi') {
-                        mostraSezione('grandi');
-                    }
-                    
-                    if (document.hidden) {
-                        window.focus();
-                    }
-                    
-                    setTimeout(scrollOggi, 500);
-                }
-                
-                if (event.data.type === 'SW_ACTIVATED') {
-                    console.log('✅ Service Worker attivato versione:', event.data.version);
-                    aggiornaStatoNotificheUI();
-                }
-            });
-        }
-
-        function avviaMonitoraggioPersonalizzato() {
-            console.log('📊 Avvio monitoraggio presenze personalizzato...');
-            
-            controllaPresenzeGiornaliere();
-            
-            setInterval(controllaPresenzeGiornaliere, 60 * 60 * 1000);
-            
-            programmaControlloSerale();
-            programmaPuliziaTracciamento();
-        }
-
-        function programmaControlloSerale() {
-            const ora = new Date().getHours();
-            const minuti = new Date().getMinutes();
-            
-            let msFinoAlle21 = (CONFIG_NOTIFICHE.ORARIO_NOTIFICA - ora) * 60 * 60 * 1000 - (minuti * 60 * 1000);
-            
-            if (msFinoAlle21 < 0) {
-                msFinoAlle21 += 24 * 60 * 60 * 1000;
-            }
-            
-            console.log(`⏰ Prossimo controllo tra ${Math.round(msFinoAlle21 / 1000 / 60)} minuti`);
-            
-            setTimeout(() => {
-                controllaPresenzeGiornaliere(true);
-                setInterval(() => controllaPresenzeGiornaliere(true), 24 * 60 * 60 * 1000);
-            }, msFinoAlle21);
-        }
-
-        function programmaPuliziaTracciamento() {
-            const ora = new Date().getHours();
-            const minuti = new Date().getMinutes();
-            
-            let msFinoMezzanotte = (24 - ora) * 60 * 60 * 1000 - (minuti * 60 * 1000);
-            
-            setTimeout(() => {
-                CONFIG_NOTIFICHE.NOTIFICHE_INVIATE = {};
-                console.log('🧹 Tracciamento notifiche azzerato');
-                programmaPuliziaTracciamento();
-            }, msFinoMezzanotte);
-        }
-
-        async function getRisultatiControllo() {
-            const oggi = new Date();
-            const giornoSettimana = oggi.getDay();
-            const dataStr = oggi.toLocaleDateString('en-CA');
-            
-            const risultati = {
-                piccoli: {
-                    deveAllenarsi: CONFIG_NOTIFICHE.GIORNI_PICCOLI.includes(giornoSettimana),
-                    presenze: 0,
-                    totaleAtleti: 0,
-                    notificaInviata: false
-                },
-                grandi: {
-                    deveAllenarsi: CONFIG_NOTIFICHE.GIORNI_GRANDI.includes(giornoSettimana),
-                    presenze: 0,
-                    totaleAtleti: 0,
-                    notificaInviata: false
-                }
-            };
-            
-            const presenzeOggi = Object.values(presenzePerMese)
-                .flat()
-                .filter(p => p.data === dataStr);
-            
-            const atletiPiccoli = getAtletiFiltrati('piccoli');
-            const atletiGrandi = getAtletiFiltrati('grandi');
-            
-            risultati.piccoli.totaleAtleti = atletiPiccoli.length;
-            risultati.grandi.totaleAtleti = atletiGrandi.length;
-            
-            presenzeOggi.forEach(p => {
-                const atleta = atletiCache.find(a => a.id === p.atleta_id);
-                if (atleta) {
-                    const cat = (atleta.categoria || "").trim().toUpperCase();
-                    if (CAT_PICCOLI.includes(cat)) {
-                        risultati.piccoli.presenze++;
-                    } else if (CAT_GRANDI.includes(cat)) {
-                        risultati.grandi.presenze++;
-                    }
-                }
-            });
-            
-            return risultati;
-        }
-
-        async function controllaPresenzeGiornaliere(forzaNotifica = false) {
-            try {
-                const oggi = new Date();
-                const giornoSettimana = oggi.getDay();
-                const dataStr = oggi.toLocaleDateString('en-CA');
-                const oraCorrente = oggi.getHours();
-                
-                if (giornoSettimana === 0) {
-                    console.log('Domenica - nessun controllo necessario');
-                    return;
-                }
-                
-                const risultati = await getRisultatiControllo();
-                
-                console.log('📊 Risultati controllo:', risultati);
-                
-                const inviaNotifica = forzaNotifica || oraCorrente >= CONFIG_NOTIFICHE.ORARIO_NOTIFICA;
-                
-                if (inviaNotifica) {
-                    const oggiStr = oggi.toDateString();
-                    
-                    if (risultati.piccoli.deveAllenarsi && 
-                        risultati.piccoli.totaleAtleti > 0 && 
-                        risultati.piccoli.presenze === 0 &&
-                        !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`piccoli-${oggiStr}`]) {
-                        
-                        await inviaNotificaCategoria('piccoli', risultati.piccoli.totaleAtleti);
-                        CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`piccoli-${oggiStr}`] = true;
-                    }
-                    
-                    if (risultati.grandi.deveAllenarsi && 
-                        risultati.grandi.totaleAtleti > 0 && 
-                        risultati.grandi.presenze === 0 &&
-                        !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`grandi-${oggiStr}`]) {
-                        
-                        await inviaNotificaCategoria('grandi', risultati.grandi.totaleAtleti);
-                        CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`grandi-${oggiStr}`] = true;
-                    }
-                    
-                    if (risultati.piccoli.deveAllenarsi && 
-                        risultati.grandi.deveAllenarsi && 
-                        risultati.piccoli.presenze === 0 && 
-                        risultati.grandi.presenze === 0 &&
-                        !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`entrambi-${oggiStr}`]) {
-                        
-                        await inviaNotificaCompleta(risultati);
-                        CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`entrambi-${oggiStr}`] = true;
-                    }
-                }
-                
-                aggiornaBadgeNotifiche(risultati);
-                
-            } catch (error) {
-                console.error('Errore controllo presenze:', error);
-            }
-        }
-
-        async function inviaNotificaCategoria(categoria, totaleAtleti) {
-            const oggi = new Date();
-            const giorniItaliani = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
-            const giornoNome = giorniItaliani[oggi.getDay()];
-            const dataFormattata = oggi.toLocaleDateString('it-IT');
-            
-            let titolo = '';
-            let corpo = '';
-            let categoriaNotifica = categoria.toUpperCase();
-            
-            if (categoria === 'piccoli') {
-                titolo = '👦 PICCOLI - Nessuna presenza registrata';
-                corpo = `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i PICCOLI. ${totaleAtleti} atleti in lista.`;
-            } else {
-                titolo = '🏃 GRANDI - Nessuna presenza registrata';
-                corpo = `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i GRANDI. ${totaleAtleti} atleti in lista.`;
-            }
-            
-            await inviaNotificaPush(titolo, corpo, categoria);
-        }
-
-        async function inviaNotificaCompleta(risultati) {
-            const oggi = new Date();
-            const giorniItaliani = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
-            const giornoNome = giorniItaliani[oggi.getDay()];
-            const dataFormattata = oggi.toLocaleDateString('it-IT');
-            
-            const titolo = '⚠️ NESSUNA PRESENZA OGGI';
-            const corpo = `${giornoNome} ${dataFormattata} - Nessun atleta presente!\n` +
-                        `PICCOLI: ${risultati.piccoli.totaleAtleti} atleti\n` +
-                        `GRANDI: ${risultati.grandi.totaleAtleti} atleti`;
-            
-            await inviaNotificaPush(titolo, corpo, 'TUTTI');
-        }
-
-        async function inviaNotificaPush(titolo, corpo, categoria) {
-            if (!('serviceWorker' in navigator) || Notification.permission !== 'granted') {
-                console.log('Impossibile inviare notifica:', titolo);
-                return;
-            }
-
-            try {
-                const registration = await navigator.serviceWorker.ready;
-                
-                await registration.showNotification(titolo, {
-                    body: corpo,
-                    icon: 'icon-192.png',
-                    badge: 'icon-72.png',
-                    vibrate: [200, 100, 200, 100, 200, 100, 400],
-                    tag: `presenze-${categoria}-${new Date().toDateString()}`,
-                    renotify: true,
-                    requireInteraction: true,
-                    actions: [
-                        {
-                            action: 'open-piccoli',
-                            title: '👦 APRI PICCOLI'
-                        },
-                        {
-                            action: 'open-grandi',
-                            title: '🏃 APRI GRANDI'
-                        },
-                        {
-                            action: 'close',
-                            title: '⏰ RICORDA DOMANI'
-                        }
-                    ],
-                    data: {
-                        categoria: categoria,
-                        timestamp: Date.now()
-                    }
-                });
-                
-                console.log('✅ Notifica inviata:', titolo);
-                
-            } catch (error) {
-                console.error('Errore invio notifica:', error);
-            }
-        }
-
-        function aggiornaBadgeNotifiche(risultati) {
-            const oggi = new Date();
-            const giorno = oggi.getDay();
-            
-            const piccoliBtn = document.querySelector('.btn-piccoli');
-            const grandiBtn = document.querySelector('.btn-grandi');
-            
-            if (piccoliBtn) {
-                if (CONFIG_NOTIFICHE.GIORNI_PICCOLI.includes(giorno) && 
-                    risultati.piccoli.totaleAtleti > 0 && 
-                    risultati.piccoli.presenze === 0) {
-                    piccoliBtn.classList.add('attenzione');
-                } else {
-                    piccoliBtn.classList.remove('attenzione');
-                }
-            }
-            
-            if (grandiBtn) {
-                if (CONFIG_NOTIFICHE.GIORNI_GRANDI.includes(giorno) && 
-                    risultati.grandi.totaleAtleti > 0 && 
-                    risultati.grandi.presenze === 0) {
-                    grandiBtn.classList.add('attenzione');
-                } else {
-                    grandiBtn.classList.remove('attenzione');
-                }
-            }
-        }
-
-        function aggiornaStatoNotificheUI(stato) {
-            const statoEl = document.getElementById('notification-status');
-            if (!statoEl) return;
-            
-            if (stato) {
-                statoEl.innerHTML = `🔔 ${stato}`;
-                return;
-            }
-            
-            if (!('Notification' in window)) {
-                statoEl.innerHTML = '🔔 ❌ Non supportato';
-                return;
-            }
-            
-            switch(Notification.permission) {
-                case 'granted':
-                    statoEl.innerHTML = '🔔 ✅ Notifiche attive - Controllo ogni ora, notifica alle 21:00';
-                    break;
-                case 'denied':
-                    statoEl.innerHTML = '🔔 ❌ Notifiche bloccate - Abilita dalle impostazioni';
-                    break;
-                default:
-                    statoEl.innerHTML = '🔔 ⏸️ Notifiche non attivate - Clicca su TEST NOTIFICA per abilitare';
-            }
-        }
-
-        async function testNotifiche() {
-            console.log('🔔 Test sistema notifiche...');
-            
-            const permesso = await initSistemaNotifiche();
-            
-            if (permesso) {
-                const risultati = {
-                    piccoli: {
-                        deveAllenarsi: true,
-                        presenze: 0,
-                        totaleAtleti: getAtletiFiltrati('piccoli').length
-                    },
-                    grandi: {
-                        deveAllenarsi: true,
-                        presenze: 0,
-                        totaleAtleti: getAtletiFiltrati('grandi').length
-                    }
-                };
-                
-                await inviaNotificaCompleta(risultati);
-            } else {
-                alert('Permessi notifiche non concessi. Controlla le impostazioni del browser.');
-            }
-        }
-
-        function mostraStatoNotifiche() {
-            const oggi = new Date();
-            const giorno = oggi.getDay();
-            const giornoNome = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'][giorno];
-            
-            const piccoliAllenamento = CONFIG_NOTIFICHE.GIORNI_PICCOLI.includes(giorno) ? 'SÌ' : 'NO';
-            const grandiAllenamento = CONFIG_NOTIFICHE.GIORNI_GRANDI.includes(giorno) ? 'SÌ' : 'NO';
-            
-            const atletiPiccoli = getAtletiFiltrati('piccoli').length;
-            const atletiGrandi = getAtletiFiltrati('grandi').length;
-            
-            const oggiStr = oggi.toLocaleDateString('en-CA');
-            let presenzeOggi = 0;
-            Object.values(presenzePerMese).forEach(mesePresenze => {
-                presenzeOggi += mesePresenze.filter(p => p.data === oggiStr).length;
-            });
-            
-            const messaggio = `
-📊 STATO NOTIFICHE
-📅 Oggi: ${giornoNome}
-👦 Piccoli allenamento: ${piccoliAllenamento} (${atletiPiccoli} atleti)
-🏃 Grandi allenamento: ${grandiAllenamento} (${atletiGrandi} atleti)
-📝 Presenze oggi: ${presenzeOggi}
-⏰ Orario notifica: 21:00
-🔔 Notifiche: ${Notification.permission === 'granted' ? 'ATTIVE ✅' : 'NON ATTIVE ❌'}
-            `;
-            
-            alert(messaggio);
-        }
-
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                console.log('App tornata in primo piano, controllo presenze...');
-                controllaPresenzeGiornaliere();
-            }
-        });
-
         // Eventi per l'installazione PWA
         window.addEventListener('beforeinstallprompt', (e) => {
             console.log('📲 Evento beforeinstallprompt catturato');
@@ -3037,4 +2599,3 @@
     </script>
 </body>
 </html>
-
