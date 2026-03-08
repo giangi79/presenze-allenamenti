@@ -2812,6 +2812,11 @@
                     scope: '/presenze-allenamenti/'
                 });
                 console.log('Service Worker registrato:', registration);
+                
+                // Attendiamo che il Service Worker sia attivo
+                await navigator.serviceWorker.ready;
+                console.log('Service Worker pronto');
+                
                 return true;
             } catch (error) {
                 console.error('Errore registrazione SW:', error);
@@ -2829,11 +2834,10 @@
                     aggiornaStatoNotificheUI('✅ Notifiche attive');
                     mostraToast('Permessi notifiche concessi!', 'success');
                     
-                    if (navigator.serviceWorker.controller) {
-                        navigator.serviceWorker.controller.postMessage({ 
-                            type: 'TEST_NOTIFICATION' 
-                        });
-                    }
+                    // Inviamo una notifica di test dopo 1 secondo
+                    setTimeout(async () => {
+                        await testNotifiche();
+                    }, 1000);
                 } else {
                     aggiornaStatoNotificheUI('❌ Permessi negati');
                     mostraToast('Permessi notifiche negati', 'error');
@@ -2861,6 +2865,7 @@
                 
                 if (event.data.type === 'SW_ACTIVATED') {
                     console.log('✅ Service Worker attivato');
+                    mostraToast('Service Worker pronto', 'success');
                 }
                 
                 if (event.data.type === 'BACKUP_COMPLETATO') {
@@ -2990,36 +2995,51 @@
         }
 
         async function inviaNotificaCategoria(categoria, totaleAtleti) {
-            if (!navigator.serviceWorker.controller || Notification.permission !== 'granted') return;
+            if (!navigator.serviceWorker.controller || Notification.permission !== 'granted') {
+                console.log('Service Worker non disponibile o permessi non concessi');
+                return;
+            }
             
-            const oggi = new Date();
-            const giorniItaliani = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
-            const giornoNome = giorniItaliani[oggi.getDay()];
-            const dataFormattata = oggi.toLocaleDateString('it-IT');
-            
-            let titolo = categoria === 'piccoli' 
-                ? '👦 PICCOLI - Nessuna presenza registrata'
-                : '🏃 GRANDI - Nessuna presenza registrata';
+            try {
+                const oggi = new Date();
+                const giorniItaliani = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
+                const giornoNome = giorniItaliani[oggi.getDay()];
+                const dataFormattata = oggi.toLocaleDateString('it-IT');
                 
-            let corpo = categoria === 'piccoli'
-                ? `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i PICCOLI. ${totaleAtleti} atleti in lista.`
-                : `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i GRANDI. ${totaleAtleti} atleti in lista.`;
-            
-            const registration = await navigator.serviceWorker.ready;
-            await registration.showNotification(titolo, {
-                body: corpo,
-                icon: 'icon-192.png',
-                badge: 'icon-72.png',
-                vibrate: [200, 100, 200],
-                tag: `presenze-${categoria}-${oggi.toDateString()}`,
-                renotify: true,
-                requireInteraction: true,
-                actions: [
-                    { action: `open-${categoria}`, title: `👤 APRI ${categoria.toUpperCase()}` },
-                    { action: 'close', title: '⏰ RICORDA DOMANI' }
-                ],
-                data: { categoria: categoria, timestamp: Date.now() }
-            });
+                let titolo = categoria === 'piccoli' 
+                    ? '👦 PICCOLI - Nessuna presenza registrata'
+                    : '🏃 GRANDI - Nessuna presenza registrata';
+                    
+                let corpo = categoria === 'piccoli'
+                    ? `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i PICCOLI. ${totaleAtleti} atleti in lista.`
+                    : `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i GRANDI. ${totaleAtleti} atleti in lista.`;
+                
+                const registration = await navigator.serviceWorker.ready;
+                
+                await registration.showNotification(titolo, {
+                    body: corpo,
+                    icon: 'icon-192.png',
+                    badge: 'icon-72.png',
+                    vibrate: [200, 100, 200, 100, 200, 100, 400],
+                    tag: `presenze-${categoria}-${oggi.toDateString()}`,
+                    renotify: true,
+                    requireInteraction: true,
+                    actions: [
+                        { action: `open-${categoria}`, title: `👤 APRI ${categoria.toUpperCase()}` },
+                        { action: 'close', title: '⏰ RICORDA DOMANI' }
+                    ],
+                    data: { 
+                        categoria: categoria, 
+                        timestamp: Date.now(),
+                        url: '/presenze-allenamenti/'
+                    }
+                });
+                
+                console.log('✅ Notifica inviata per', categoria);
+                
+            } catch (error) {
+                console.error('Errore invio notifica:', error);
+            }
         }
 
         function aggiornaBadgeNotifiche(risultati) {
@@ -3152,21 +3172,62 @@
         }
 
         async function testNotifiche() {
-            if (Notification.permission !== 'granted') {
-                const permesso = await richiediPermessiNotifiche();
-                if (!permesso) return;
+            console.log('Test notifiche avviato...');
+            
+            // Controlla se il Service Worker è registrato
+            if (!('serviceWorker' in navigator)) {
+                mostraToast('Service Worker non supportato', 'error');
+                return;
             }
             
-            mostraToast('Invio notifica di test...', 'info');
+            // Controlla i permessi
+            if (Notification.permission !== 'granted') {
+                mostraToast('Richiedi prima i permessi', 'warning');
+                return;
+            }
             
-            const registration = await navigator.serviceWorker.ready;
-            await registration.showNotification('🔔 TEST NOTIFICA', {
-                body: 'Le notifiche funzionano correttamente!',
-                icon: 'icon-192.png',
-                badge: 'icon-72.png',
-                tag: 'test-notification',
-                vibrate: [200, 100, 200]
-            });
+            try {
+                // Attendiamo che il Service Worker sia pronto
+                const registration = await navigator.serviceWorker.ready;
+                console.log('Service Worker pronto, invio notifica...');
+                
+                // Metodo 1: Direttamente con showNotification
+                await registration.showNotification('🔔 TEST NOTIFICA', {
+                    body: 'Le notifiche funzionano correttamente!',
+                    icon: 'icon-192.png',
+                    badge: 'icon-72.png',
+                    tag: 'test-notification-' + Date.now(),
+                    vibrate: [200, 100, 200],
+                    requireInteraction: true,
+                    actions: [
+                        { action: 'ok', title: '✅ OK' },
+                        { action: 'close', title: '❌ CHIUDI' }
+                    ],
+                    data: {
+                        timestamp: Date.now(),
+                        test: true
+                    }
+                });
+                
+                mostraToast('✅ Notifica inviata!', 'success');
+                console.log('Notifica di test inviata con successo');
+                
+            } catch (error) {
+                console.error('Errore invio notifica di test:', error);
+                mostraToast('Errore invio notifica: ' + error.message, 'error');
+                
+                // Fallback: prova con postMessage
+                try {
+                    if (navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.controller.postMessage({ 
+                            type: 'TEST_NOTIFICATION' 
+                        });
+                        mostraToast('Notifica inviata via postMessage', 'info');
+                    }
+                } catch (e) {
+                    console.error('Fallback fallito:', e);
+                }
+            }
         }
 
         // Eventi per l'installazione PWA
