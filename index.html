@@ -145,7 +145,7 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
         }
         
-        /* PULSANTE OGGI (ripristinato) */
+        /* PULSANTE OGGI */
         .btn-oggi { 
             background: linear-gradient(135deg, #17a2b8, #0f6674); 
             width: 52px; 
@@ -458,7 +458,7 @@
             pointer-events: none;
         }
         
-        /* BOTTOM ACTIONS FISSE */
+        /* BOTTOM ACTIONS FISSE - CON HOME INCLUSO */
         .bottom-actions {
             position: fixed;
             bottom: 0;
@@ -514,41 +514,10 @@
         .btn-numeric-input { background: linear-gradient(135deg, #8e44ad, #6c3483); }
         .btn-numeric-input.attivo { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
         .btn-quick-register { background: linear-gradient(135deg, #e67e22, #d35400); }
+        .btn-home { background: linear-gradient(135deg, #ff9800, #f57c00); }
         .btn-install { 
             background: linear-gradient(135deg, #667eea, #764ba2) !important;
             animation: pulse-install 2s infinite;
-        }
-        
-        /* PULSANTE HOME FLOTTANTE - POSIZIONATO A SINISTRA PER EVITARE SOVRAPPOSIZIONI */
-        .home-floating {
-            position: fixed;
-            bottom: 80px;
-            left: 15px;
-            z-index: 1001;
-            width: 56px;
-            height: 56px;
-            border-radius: 28px;
-            background: linear-gradient(135deg, #ff9800, #f57c00);
-            color: white;
-            border: none;
-            box-shadow: 0 8px 20px rgba(255, 152, 0, 0.5);
-            font-size: 26px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            padding: 0;
-            line-height: 1;
-        }
-        
-        .home-floating:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(255, 152, 0, 0.6);
-        }
-        
-        .home-floating:active {
-            transform: translateY(2px);
         }
         
         @keyframes pulse-install {
@@ -891,14 +860,6 @@
                 font-size: 18px;
             }
             
-            .home-floating {
-                bottom: 70px;
-                left: 10px;
-                width: 50px;
-                height: 50px;
-                font-size: 24px;
-            }
-            
             .bottom-actions {
                 padding: 10px 10px;
                 gap: 6px;
@@ -990,7 +951,7 @@
             <img src="./logo.png" alt="Logo Registro Presenze Gruppo Sportivo 2050" class="logo" 
                  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQzYTQwIiByeD0iMTUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjMyIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+R1JVUFBPIDIwNTA8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyMCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9IjFlbSI+UkVHSVNUUk8gUFJFU0VOWkU8L3RleHQ+PC9zdmc+'">
             
-            <!-- TOP BAR CON CONTROLLI - PULSANTE OGGI RIPRISTINATO -->
+            <!-- TOP BAR CON CONTROLLI - PULSANTE OGGI -->
             <div class="top-bar">
                 <div class="date-controls">
                     <select id="select-mese" onchange="cambiaData()" aria-label="Seleziona mese"></select>
@@ -1078,7 +1039,7 @@
         </div>
     </div>
     
-    <!-- === BOTTOM ACTIONS FISSE (TUTTI I PULSANTI TRANNE HOME) === -->
+    <!-- === BOTTOM ACTIONS FISSE - CON HOME INCLUSO === -->
     <div class="bottom-actions">
         <button class="btn-action btn-quick-register" onclick="avviaRegistrazioneVeloce()" title="Registrazione veloce" aria-label="Avvia registrazione veloce atleti">⚡ REGISTRA VELOCE</button>
         <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()" title="Crea backup PDF" aria-label="Crea backup PDF su Drive">☁️ BACKUP PDF</button>
@@ -1086,11 +1047,9 @@
         <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input" title="Input numerico" aria-label="Attiva o disattiva input numerico">🔢 NUM OFF</button>
         <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto" title="Backup automatico" aria-label="Attiva o disattiva backup automatico">▶️ AUTO ON</button>
         <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti" aria-label="Apri pannello gestione atleti">⚙️ GESTISCI ATLETI</button>
+        <button class="btn-action btn-home" onclick="vaiAllaHome()" title="Torna alla Home" aria-label="Torna alla pagina principale">🏠 HOME</button>
         <button class="btn-action btn-install" id="install-pwa-btn" style="display: none;" onclick="installPWA()">📲 INSTALLA APP</button>
     </div>
-    
-    <!-- === HOME BUTTON FLOTTANTE - POSIZIONATO A SINISTRA PER NON SOVRAPPORSI === -->
-    <button class="home-floating" onclick="vaiAllaHome()" title="Torna alla Home" aria-label="Torna alla pagina principale">🏠</button>
 
     <!-- === PANNELLO ADMIN === -->
     <div id="admin-overlay" role="dialog" aria-labelledby="admin-title" aria-modal="true">
