@@ -81,7 +81,7 @@
         .app-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px 15px 120px; /* Aumentato padding-bottom per i pulsanti fissi */
+            padding: 20px 15px 140px; /* Padding-bottom aumentato per i pulsanti fissi */
             min-height: 100vh;
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 0 50px rgba(0,0,0,0.1);
@@ -124,6 +124,7 @@
             background: #f8f9fa;
             padding: 10px 15px;
             border-radius: 15px;
+            align-items: center;
         }
         
         select, input { 
@@ -142,6 +143,31 @@
         select:focus, input:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+        }
+        
+        /* PULSANTE OGGI (ripristinato) */
+        .btn-oggi { 
+            background: linear-gradient(135deg, #17a2b8, #0f6674); 
+            width: 52px; 
+            height: 52px; 
+            display: flex;
+            align-items: center;
+            justify-content: center; 
+            font-size: 24px; 
+            border-radius: 14px; 
+            border: none;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+        
+        .btn-oggi:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-oggi:active { 
+            transform: translateY(2px); 
         }
         
         /* STATUS BAR */
@@ -440,10 +466,10 @@
             right: 0;
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
-            padding: 15px 20px;
-            background: rgba(255, 255, 255, 0.95);
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
             box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
             z-index: 1000;
@@ -451,17 +477,17 @@
         }
         
         .bottom-actions .btn-action {
-            padding: 12px 18px;
-            border-radius: 14px;
+            padding: 10px 14px;
+            border-radius: 12px;
             border: none;
-            font-weight: 900;
+            font-weight: 800;
             cursor: pointer;
             color: white;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            font-size: 14px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            gap: 5px;
+            font-size: 13px;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.15);
             text-transform: uppercase;
             transition: transform 0.2s;
             white-space: nowrap;
@@ -493,20 +519,20 @@
             animation: pulse-install 2s infinite;
         }
         
-        /* PULSANTE HOME FLOTTANTE (SOLO QUESTO È FLOTTANTE) */
+        /* PULSANTE HOME FLOTTANTE - POSIZIONATO A SINISTRA PER EVITARE SOVRAPPOSIZIONI */
         .home-floating {
             position: fixed;
-            bottom: 85px; /* Posizionato sopra i pulsanti fissi */
-            right: 20px;
+            bottom: 80px;
+            left: 15px;
             z-index: 1001;
-            width: 60px;
-            height: 60px;
-            border-radius: 30px;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
             background: linear-gradient(135deg, #ff9800, #f57c00);
             color: white;
             border: none;
-            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.5);
-            font-size: 28px;
+            box-shadow: 0 8px 20px rgba(255, 152, 0, 0.5);
+            font-size: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -518,7 +544,7 @@
         
         .home-floating:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(255, 152, 0, 0.6);
+            box-shadow: 0 12px 25px rgba(255, 152, 0, 0.6);
         }
         
         .home-floating:active {
@@ -815,7 +841,7 @@
         
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            .app-container { padding: 15px 10px 100px; }
+            .app-container { padding: 15px 10px 120px; }
             .top-bar { flex-direction: column; align-items: stretch; }
             
             th.sticky-col, td.sticky-col { 
@@ -866,21 +892,27 @@
             }
             
             .home-floating {
-                bottom: 75px;
-                right: 15px;
-                width: 55px;
-                height: 55px;
+                bottom: 70px;
+                left: 10px;
+                width: 50px;
+                height: 50px;
                 font-size: 24px;
             }
             
             .bottom-actions {
-                padding: 12px 15px;
-                gap: 8px;
+                padding: 10px 10px;
+                gap: 6px;
             }
             
             .bottom-actions .btn-action {
-                padding: 10px 14px;
-                font-size: 12px;
+                padding: 8px 10px;
+                font-size: 11px;
+            }
+            
+            .btn-oggi {
+                width: 46px;
+                height: 46px;
+                font-size: 20px;
             }
         }
         
@@ -926,8 +958,8 @@
             }
             
             .bottom-actions .btn-action {
-                padding: 8px 12px;
-                font-size: 11px;
+                padding: 6px 8px;
+                font-size: 10px;
             }
         }
         
@@ -958,11 +990,12 @@
             <img src="./logo.png" alt="Logo Registro Presenze Gruppo Sportivo 2050" class="logo" 
                  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQzYTQwIiByeD0iMTUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjMyIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+R1JVUFBPIDIwNTA8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyMCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9IjFlbSI+UkVHSVNUUk8gUFJFU0VOWkU8L3RleHQ+PC9zdmc+'">
             
-            <!-- TOP BAR CON CONTROLLI -->
+            <!-- TOP BAR CON CONTROLLI - PULSANTE OGGI RIPRISTINATO -->
             <div class="top-bar">
                 <div class="date-controls">
                     <select id="select-mese" onchange="cambiaData()" aria-label="Seleziona mese"></select>
                     <select id="select-anno" onchange="cambiaData()" aria-label="Seleziona anno"></select>
+                    <button class="btn-oggi" onclick="scrollOggi()" title="Vai a oggi" aria-label="Vai al giorno corrente">🎯</button>
                 </div>
             </div>
             
@@ -1056,7 +1089,7 @@
         <button class="btn-action btn-install" id="install-pwa-btn" style="display: none;" onclick="installPWA()">📲 INSTALLA APP</button>
     </div>
     
-    <!-- === HOME BUTTON FLOTTANTE (SOLO QUESTO È FLOTTANTE) === -->
+    <!-- === HOME BUTTON FLOTTANTE - POSIZIONATO A SINISTRA PER NON SOVRAPPORSI === -->
     <button class="home-floating" onclick="vaiAllaHome()" title="Torna alla Home" aria-label="Torna alla pagina principale">🏠</button>
 
     <!-- === PANNELLO ADMIN === -->
