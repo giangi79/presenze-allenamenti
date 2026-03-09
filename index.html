@@ -60,6 +60,9 @@
             -webkit-tap-highlight-color: transparent;
             min-height: 100vh;
             line-height: 1.5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
         }
         
         /* SKIP LINK */
@@ -87,13 +90,17 @@
         
         /* CONTENITORE PRINCIPALE */
         .app-container {
-            max-width: 1400px;
+            max-width: 800px;
+            width: 100%;
             margin: 0 auto;
             padding: 20px 15px 100px;
             min-height: 100vh;
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 20px 60px rgba(0,0,0,0.15);
             backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         /* HEADER */
@@ -106,6 +113,7 @@
             border-radius: 32px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             border: 1px solid rgba(255,255,255,0.5);
+            width: 100%;
         }
         
         .logo { 
@@ -115,6 +123,9 @@
             border-radius: 20px; 
             margin-bottom: 15px;
             box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         /* TOP BAR CON MENU A TENDINA */
@@ -129,6 +140,7 @@
             padding: 10px 15px;
             border-radius: 60px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            width: 100%;
         }
         
         .date-controls {
@@ -139,6 +151,7 @@
             padding: 5px 10px;
             border-radius: 40px;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            justify-content: center;
         }
         
         select { 
@@ -191,7 +204,7 @@
             transform: scale(0.95);
         }
         
-        /* MENU A TENDINA PER FUNZIONI AUSILIARIE */
+        /* MENU A TENDINA PER FUNZIONI AUSILIARIE - FIX PER MOBILE */
         .dropdown-menu {
             position: relative;
             display: inline-block;
@@ -219,31 +232,52 @@
         
         .dropdown-content {
             display: none;
-            position: absolute;
-            right: 0;
-            top: 55px;
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 120px;
             background: white;
-            min-width: 220px;
+            min-width: 280px;
+            max-width: 90%;
             border-radius: 25px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
             z-index: 2000;
             overflow: hidden;
             border: 1px solid #e2e8f0;
+            max-height: 70vh;
+            overflow-y: auto;
         }
         
         .dropdown-content.show {
             display: block;
         }
         
+        /* Overlay per chiudere il menu */
+        .dropdown-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1999;
+        }
+        
+        .dropdown-overlay.show {
+            display: block;
+        }
+        
         .dropdown-item {
-            padding: 15px 20px;
+            padding: 18px 20px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
             cursor: pointer;
             border-bottom: 1px solid #f1f5f9;
             font-weight: 600;
             transition: all 0.2s;
+            font-size: 15px;
         }
         
         .dropdown-item:last-child {
@@ -256,15 +290,15 @@
         
         .dropdown-item i {
             width: 24px;
-            font-size: 16px;
+            font-size: 18px;
             color: #667eea;
         }
         
         .dropdown-badge {
             margin-left: auto;
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 30px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             background: #f1f5f9;
             color: #334155;
@@ -293,6 +327,7 @@
             gap: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             border: 1px solid #f1f5f9;
+            width: 100%;
         }
         
         #status-auto { 
@@ -344,6 +379,8 @@
             gap: 15px; 
             padding: 10px 0 20px; 
             width: 100%; 
+            max-width: 600px;
+            margin: 0 auto;
         }
         
         .btn-menu { 
@@ -421,6 +458,7 @@
             border-radius: 24px;
             padding: 15px;
             box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            width: 100%;
         }
         
         .table-wrapper { 
@@ -595,6 +633,7 @@
             border-radius: 20px;
             text-align: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            width: 100%;
         }
         
         .copyright {
@@ -623,7 +662,7 @@
         
         .bottom-fixed-bar .btn-action {
             flex: 1;
-            max-width: 160px;
+            max-width: 200px;
             padding: 14px 10px;
             font-size: 14px;
             font-weight: 700;
@@ -1178,7 +1217,8 @@
             }
             
             .dropdown-content {
-                min-width: 200px;
+                min-width: 260px;
+                top: 100px;
             }
         }
         
@@ -1223,6 +1263,11 @@
             .stats-info div {
                 padding: 3px 6px;
             }
+            
+            .dropdown-content {
+                min-width: 240px;
+                top: 90px;
+            }
         }
         
         /* ANIMAZIONI CARICAMENTO */
@@ -1241,6 +1286,9 @@
 <body>
     <!-- SKIP LINK -->
     <a href="#main-content" class="skip-link"><i class="fas fa-arrow-down"></i> Salta al contenuto</a>
+    
+    <!-- OVERLAY PER CHIUDERE MENU -->
+    <div class="dropdown-overlay" id="dropdown-overlay" onclick="closeDropdown()"></div>
     
     <!-- CONTAINER TOAST - NASCOSTO -->
     <div id="toast-container" class="toast-container"></div>
@@ -1268,33 +1316,33 @@
                         <i class="fas fa-bars"></i> MENU
                     </button>
                     <div class="dropdown-content" id="dropdown-content">
-                        <div class="dropdown-item" onclick="toggleNumericInput(); toggleDropdown()">
+                        <div class="dropdown-item" onclick="toggleNumericInput(); closeDropdown()">
                             <i class="fas fa-hashtag"></i>
                             <span>INPUT NUMERICO</span>
                             <span class="dropdown-badge off" id="numeric-badge">OFF</span>
                         </div>
-                        <div class="dropdown-item" onclick="toggleBackupAutomatico(); toggleDropdown()">
+                        <div class="dropdown-item" onclick="toggleBackupAutomatico(); closeDropdown()">
                             <i class="fas fa-clock"></i>
                             <span>BACKUP AUTO</span>
                             <span class="dropdown-badge on" id="backup-badge">ON</span>
                         </div>
-                        <div class="dropdown-item" onclick="aggiornaBackupDrive(); toggleDropdown()">
+                        <div class="dropdown-item" onclick="aggiornaBackupDrive(); closeDropdown()">
                             <i class="fas fa-file-pdf"></i>
                             <span>BACKUP PDF</span>
                         </div>
-                        <div class="dropdown-item" onclick="apriFileDrive(); toggleDropdown()">
+                        <div class="dropdown-item" onclick="apriFileDrive(); closeDropdown()">
                             <i class="fas fa-folder-open"></i>
                             <span>APRI PDF</span>
                         </div>
-                        <div class="dropdown-item" onclick="toggleAdmin(); toggleDropdown()">
+                        <div class="dropdown-item" onclick="toggleAdmin(); closeDropdown()">
                             <i class="fas fa-users-cog"></i>
                             <span>GESTIONE ATLETI</span>
                         </div>
-                        <div class="dropdown-item" onclick="apriImpostazioniNotifiche(); toggleDropdown()">
+                        <div class="dropdown-item" onclick="apriImpostazioniNotifiche(); closeDropdown()">
                             <i class="fas fa-bell"></i>
                             <span>NOTIFICHE</span>
                         </div>
-                        <div class="dropdown-item" id="install-pwa-item" style="display: none;" onclick="installPWA(); toggleDropdown()">
+                        <div class="dropdown-item" id="install-pwa-item" style="display: none;" onclick="installPWA(); closeDropdown()">
                             <i class="fas fa-download"></i>
                             <span>INSTALLA APP</span>
                         </div>
@@ -1392,7 +1440,7 @@
             <i class="fas fa-home"></i> HOME
         </button>
         <button class="btn-action btn-quick-bottom" onclick="avviaRegistrazioneVeloce()" title="Registrazione rapida presenze">
-            <i class="fas fa-bolt"></i> SALVATAGGIO RAPIDO
+            <i class="fas fa-bolt"></i> RAPIDO
         </button>
     </div>
 
@@ -1581,18 +1629,17 @@
         // =================== FUNZIONI MENU A TENDINA ===================
         window.toggleDropdown = function() {
             const dropdown = document.getElementById('dropdown-content');
+            const overlay = document.getElementById('dropdown-overlay');
             dropdown.classList.toggle('show');
+            overlay.classList.toggle('show');
         }
 
-        // Chiudi dropdown cliccando fuori
-        document.addEventListener('click', function(event) {
+        window.closeDropdown = function() {
             const dropdown = document.getElementById('dropdown-content');
-            const button = document.getElementById('dropdown-btn');
-            
-            if (!button.contains(event.target) && !dropdown.contains(event.target)) {
-                dropdown.classList.remove('show');
-            }
-        });
+            const overlay = document.getElementById('dropdown-overlay');
+            dropdown.classList.remove('show');
+            overlay.classList.remove('show');
+        }
         
         const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", 
                           "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
