@@ -31,6 +31,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
+    <!-- === GOOGLE FONTS === -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- === FONTAWESOME === -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
     <!-- === STILI CSS === -->
     <style>
         /* RESET */
@@ -47,32 +53,34 @@
         }
         
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: linear-gradient(145deg, #667eea 0%, #764ba2 100%);
+            color: #1e293b;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
             min-height: 100vh;
+            line-height: 1.5;
         }
         
-        /* SKIP LINK PER ACCESSIBILITÀ */
+        /* SKIP LINK */
         .skip-link {
             position: absolute;
             top: -40px;
             left: 0;
-            background: #343a40;
+            background: #1e293b;
             color: white;
             padding: 8px;
             z-index: 10001;
             text-decoration: none;
-            border-radius: 0 0 5px 0;
+            border-radius: 0 0 8px 0;
+            font-weight: 500;
         }
         
         .skip-link:focus {
             top: 0;
         }
         
-        /* TOAST NOTIFICATIONS - COMPLETAMENTE NASCOSTI */
+        /* TOAST NOTIFICATIONS - NASCOSTI */
         .toast-container {
             display: none !important;
         }
@@ -81,29 +89,32 @@
         .app-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px 15px 40px;
+            padding: 20px 15px 220px;
             min-height: 100vh;
             background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
         }
         
         /* HEADER */
         .header { 
             text-align: center; 
             margin-bottom: 25px; 
-            background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 25px 20px;
+            border-radius: 32px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.5);
         }
         
         .logo { 
             max-height: 150px; 
             max-width: 95%; 
             height: auto; 
-            border-radius: 15px; 
-            margin-bottom: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-radius: 20px; 
+            margin-bottom: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
         }
         
         /* TOP BAR */
@@ -118,103 +129,67 @@
         
         .date-controls {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
-            background: #f8f9fa;
-            padding: 10px 15px;
-            border-radius: 15px;
+            background: #f1f5f9;
+            padding: 8px 16px;
+            border-radius: 60px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
         
-        select, input { 
-            padding: 12px 18px; 
-            border-radius: 12px; 
-            border: 2px solid #e0e0e0; 
+        select { 
+            padding: 12px 24px 12px 18px; 
+            border-radius: 40px; 
+            border: 2px solid #e2e8f0; 
             font-weight: 600; 
             font-size: 15px; 
-            color: #333; 
+            color: #1e293b; 
             outline: none; 
             background: white;
-            min-width: 130px;
+            min-width: 150px;
             cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            transition: all 0.2s;
         }
         
-        select:focus, input:focus {
+        select:hover {
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+            background-color: #fafafa;
         }
         
-        /* PULSANTI AZIONE */
-        .actions-container { 
-            display: flex; 
-            justify-content: center; 
-            gap: 12px; 
-            margin: 20px 0 25px; 
-            flex-wrap: wrap; 
+        select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
         }
         
-        .btn-action { 
-            padding: 14px 22px; 
-            border-radius: 14px; 
-            border: none; 
-            font-weight: 900; 
-            cursor: pointer; 
-            color: white; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px; 
-            font-size: 15px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
-            text-transform: uppercase; 
-            transition: transform 0.3s;
+        /* PULSANTE OGGI */
+        .btn-oggi {
+            background: linear-gradient(145deg, #06b6d4, #0891b2);
+            width: 56px;
+            height: 56px;
+            border-radius: 50% !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(6, 182, 212, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .btn-action:hover {
-            transform: translateY(-2px);
+        .btn-oggi:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 15px 25px rgba(6, 182, 212, 0.4);
         }
         
-        .btn-action:active { 
-            transform: translateY(2px); 
-        }
-        
-        .btn-action:focus-visible {
-            outline: 3px solid #ffbf47;
-            outline-offset: 2px;
-        }
-        
-        .btn-drive { background: linear-gradient(135deg, #4285F4, #0d47a1); } 
-        .btn-open-drive { background: linear-gradient(135deg, #34a853, #1e7e34); } 
-        .btn-admin { background: linear-gradient(135deg, #6c757d, #343a40); } 
-        .btn-home { background: linear-gradient(135deg, #ff9800, #f57c00); }
-        .btn-oggi { 
-            background: linear-gradient(135deg, #17a2b8, #0f6674); 
-            width: 52px; 
-            height: 52px; 
-            justify-content: center; 
-            font-size: 24px; 
-            border-radius: 14px; 
-        }
-        .btn-backup-auto { background: linear-gradient(135deg, #f39c12, #e67e22); }
-        .btn-backup-auto.attivo { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-        .btn-numeric-input { background: linear-gradient(135deg, #8e44ad, #6c3483); }
-        .btn-numeric-input.attivo { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-        .btn-quick-register { background: linear-gradient(135deg, #e67e22, #d35400); }
-        .btn-notifica { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-        .btn-stato-notifiche { background: linear-gradient(135deg, #3498db, #2980b9); }
-        .btn-install { 
-            background: linear-gradient(135deg, #667eea, #764ba2) !important;
-            animation: pulse-install 2s infinite;
-        }
-        
-        @keyframes pulse-install {
-            0% {
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
-            }
+        .btn-oggi:active {
+            transform: scale(0.95);
         }
         
         /* STATUS BAR */
@@ -223,32 +198,57 @@
             justify-content: space-between;
             align-items: center;
             background: white;
-            padding: 15px 20px;
-            border-radius: 50px;
+            padding: 18px 25px;
+            border-radius: 60px;
             margin: 20px 0 25px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border: 1px solid #f1f5f9;
         }
         
         #status-auto { 
             font-size: 15px; 
-            color: #2c3e50; 
-            font-weight: 700; 
-            background: #f8f9fa; 
+            color: #334155; 
+            font-weight: 600; 
+            background: #f8fafc; 
             padding: 8px 20px; 
-            border-radius: 30px; 
-            display: inline-block;
-            transition: background-color 0.3s, color 0.3s;
+            border-radius: 40px; 
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
         }
         
         .stats-info {
             display: flex;
-            gap: 20px;
-            font-size: 16px;
-            font-weight: 700;
-            color: #333;
+            gap: 25px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #475569;
         }
-        .stats-info span { color: #667eea; font-size: 20px; margin-right: 5px; font-weight: 900; }
+        
+        .stats-info div {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f8fafc;
+            padding: 6px 16px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stats-info span { 
+            color: #667eea; 
+            font-size: 20px; 
+            font-weight: 800; 
+            background: white;
+            padding: 4px 10px;
+            border-radius: 30px;
+            margin-right: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
         
         /* MENU CATEGORIE */
         .menu-container { 
@@ -262,79 +262,74 @@
         .btn-menu { 
             width: 100%; 
             padding: 30px 20px; 
-            font-weight: 900; 
-            font-size: 24px; 
-            border-radius: 30px; 
+            font-weight: 800; 
+            font-size: 28px; 
+            border-radius: 32px; 
             color: white; 
             border: none; 
             cursor: pointer; 
             text-transform: uppercase; 
             box-shadow: 0 15px 30px rgba(0,0,0,0.2); 
-            transition: transform 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             line-height: 1.4;
             position: relative;
+            letter-spacing: 1px;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .btn-menu i {
+            font-size: 36px;
+            margin-bottom: 10px;
         }
         
         .btn-menu:hover {
-            transform: translateY(-2px);
+            transform: translateY(-5px);
+            box-shadow: 0 25px 40px rgba(0,0,0,0.25);
         }
         
         .btn-menu:active { 
-            transform: scale(0.98); 
-        }
-        
-        .btn-menu:focus-visible {
-            outline: 3px solid #ffbf47;
-            outline-offset: 2px;
+            transform: translateY(2px); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
         
         .btn-menu span {
             display: block;
-            font-size: 14px;
-            font-weight: 400;
+            font-size: 16px;
+            font-weight: 500;
             text-transform: none;
-            opacity: 0.9;
-            margin-top: 8px;
-            letter-spacing: 0.5px;
+            margin-top: 12px;
+            letter-spacing: 0.3px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 20px;
+            border-radius: 60px;
+            width: fit-content;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
         }
         
-        .btn-cuccioli { background: linear-gradient(135deg, #e91e63, #c2185b); } 
-        .btn-piccoli { background: linear-gradient(135deg, #007bff, #0056b3); } 
-        .btn-grandi { background: linear-gradient(135deg, #28a745, #1e7e34); }
+        .btn-cuccioli { background: linear-gradient(145deg, #ec4899, #db2777); } 
+        .btn-piccoli { background: linear-gradient(145deg, #3b82f6, #2563eb); } 
+        .btn-grandi { background: linear-gradient(145deg, #22c55e, #16a34a); }
         
         /* Animazione per pulsanti in attenzione */
         .btn-piccoli.attenzione, .btn-grandi.attenzione {
             animation: pulse 2s infinite;
-            box-shadow: 0 0 0 3px #ff4444;
+            box-shadow: 0 0 0 4px #ef4444;
         }
         
         @keyframes pulse {
             0% {
-                box-shadow: 0 0 0 0 #ff4444;
+                box-shadow: 0 0 0 0 #ef4444;
             }
             70% {
-                box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
+                box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
             }
             100% {
-                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
             }
-        }
-        
-        /* Badge notifiche */
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ff4444;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
         }
         
         /* === TABELLA === */
@@ -343,16 +338,16 @@
         
         .table-container {
             background: white;
-            border-radius: 20px;
-            padding: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
         
         .table-wrapper { 
             overflow: auto; 
             max-height: 70vh; 
-            border: 1px solid #e0e0e0; 
-            border-radius: 15px; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 20px; 
             background: white; 
             position: relative; 
             -webkit-overflow-scrolling: touch; 
@@ -368,15 +363,18 @@
         thead th { 
             position: sticky; 
             top: 0; 
-            background: linear-gradient(135deg, #343a40, #1d2124) !important; 
+            background: linear-gradient(145deg, #1e293b, #0f172a) !important; 
             color: white !important; 
             z-index: 20; 
-            padding: 12px 5px;
-            font-size: 12px;
-            border: 1px solid #454d55; 
+            padding: 14px 5px;
+            font-size: 13px;
+            border: 1px solid #334155; 
             text-align: center; 
             white-space: nowrap;
             font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Poppins', sans-serif;
         }
         
         /* Colonna ATLETA sticky */
@@ -386,19 +384,19 @@
             background: white; 
             z-index: 15; 
             border-right: 3px solid #667eea; 
-            min-width: 120px;
-            max-width: 120px;
-            width: 120px;
-            padding: 8px 4px;
-            font-weight: 800; 
-            font-size: 12px;
+            min-width: 140px;
+            max-width: 140px;
+            width: 140px;
+            padding: 10px 4px;
+            font-weight: 700; 
+            font-size: 13px;
             text-align: center;
             vertical-align: middle;
         }
         
         /* Intestazione colonna ATLETA */
         thead th.sticky-col { 
-            background: linear-gradient(135deg, #343a40, #1d2124) !important;
+            background: linear-gradient(145deg, #1e293b, #0f172a) !important;
             color: white !important;
             border-right: 3px solid #667eea;
             z-index: 30 !important;
@@ -413,69 +411,75 @@
             width: 100%;
             white-space: normal;
             word-break: break-word;
-            padding: 4px 0;
+            padding: 8px 0;
         }
         
         .nome-cognome {
-            font-weight: 800;
+            font-weight: 700;
             text-align: center;
             width: 100%;
-            font-size: 12px;
-            line-height: 1.3;
+            font-size: 13px;
+            line-height: 1.4;
             white-space: normal;
             word-break: break-word;
-            padding: 0 2px;
+            padding: 0 4px;
             color: white;
             text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
         
         /* Colori per le diverse categorie */
-        .categoria-cuccioli .nome-cognome { color: #e91e63; }
-        .categoria-giovanissimi .nome-cognome { color: #ff9800; }
-        .categoria-esordienti .nome-cognome { color: #9c27b0; }
-        .categoria-r12 .nome-cognome { color: #00bcd4; }
-        .categoria-ragazzi .nome-cognome { color: #ff5722; }
-        .categoria-allievi .nome-cognome { color: #3f51b5; }
-        .categoria-junior .nome-cognome { color: #009688; }
-        .categoria-senior .nome-cognome { color: #f44336; }
-        
-        /* Il badge della categoria è nascosto */
-        .categoria-badge {
-            display: none !important;
-        }
+        .categoria-cuccioli .nome-cognome { color: #ec4899; }
+        .categoria-giovanissimi .nome-cognome { color: #f97316; }
+        .categoria-esordienti .nome-cognome { color: #a855f7; }
+        .categoria-r12 .nome-cognome { color: #06b6d4; }
+        .categoria-ragazzi .nome-cognome { color: #f97316; }
+        .categoria-allievi .nome-cognome { color: #3b82f6; }
+        .categoria-junior .nome-cognome { color: #14b8a6; }
+        .categoria-senior .nome-cognome { color: #ef4444; }
         
         /* Celle giorni */
         .day-cell { 
-            width: 45px;
-            min-width: 45px;
-            max-width: 45px;
-            height: 60px;
-            border: 1px solid #eaeef2; 
+            width: 50px;
+            min-width: 50px;
+            max-width: 50px;
+            height: 65px;
+            border: 1px solid #e2e8f0; 
             text-align: center; 
             cursor: pointer; 
-            font-weight: bold; 
-            font-size: 14px;
+            font-weight: 700; 
+            font-size: 15px;
             padding: 4px 0; 
             user-select: none;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
             vertical-align: middle;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .day-cell:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 10;
+            position: relative;
         }
         
         .p-partecipa { 
-            background: linear-gradient(135deg, #2ecc71, #27ae60) !important; 
+            background: linear-gradient(145deg, #22c55e, #16a34a) !important; 
             color: white !important; 
-            font-weight: 900;
+            font-weight: 800;
+            font-size: 16px;
         }
         
         .p-assente { 
-            background: linear-gradient(135deg, #e74c3c, #c0392b) !important; 
+            background: linear-gradient(145deg, #ef4444, #dc2626) !important; 
             color: white !important; 
-            font-weight: 900;
+            font-weight: 800;
+            font-size: 16px;
         }
         
         .today-cell { 
-            background: #d1ecf1; 
-            border: 3px solid #0c5460 !important; 
+            background: #e0f2fe; 
+            border: 3px solid #0284c7 !important; 
+            box-shadow: 0 0 0 1px #0284c7;
         }
         
         /* Colonna totale */
@@ -484,14 +488,14 @@
             right: 0; 
             text-align: center; 
             font-weight: 900; 
-            background: #f1f3f5; 
-            width: 48px;
-            min-width: 48px;
-            max-width: 48px;
-            font-size: 14px;
+            background: #f8fafc; 
+            width: 55px;
+            min-width: 55px;
+            max-width: 55px;
+            font-size: 16px;
             border-left: 3px solid #667eea; 
             z-index: 15; 
-            color: #2c3e50;
+            color: #0f172a;
             padding: 12px 0;
             vertical-align: middle;
         }
@@ -500,26 +504,9 @@
             position: sticky; 
             right: 0; 
             z-index: 30 !important; 
-            background: linear-gradient(135deg, #343a40, #1d2124) !important; 
+            background: linear-gradient(145deg, #1e293b, #0f172a) !important; 
             border-left: 3px solid #667eea;
-            min-width: 48px;
-        }
-        
-        /* Righe della tabella */
-        tbody tr {
-            border-bottom: 1px solid #eaeef2;
-            transition: background-color 0.2s;
-        }
-        
-        tbody tr:hover {
-            background-color: #f8f9fa;
-        }
-        
-        /* Padding rows per virtual scroll */
-        .virtual-padding-row {
-            height: 0;
-            visibility: hidden;
-            pointer-events: none;
+            min-width: 55px;
         }
         
         /* FOOTER */
@@ -527,23 +514,190 @@
             margin-top: 40px;
             padding: 30px 20px 20px;
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
         
         .copyright {
-            color: #adb5bd;
-            font-size: 13px;
+            color: #94a3b8;
+            font-size: 14px;
             line-height: 1.6;
+            font-weight: 500;
         }
         
-        /* Stato notifiche nel footer */
-        .notification-status {
-            margin-top: 15px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            font-size: 13px;
+        /* === BARRA INFERIORE FISSA CON 2 RIGHE === */
+        .bottom-fixed-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 16px 16px 12px;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1000;
+            border-top: 1px solid rgba(102, 126, 234, 0.3);
+        }
+        
+        .bottom-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .bottom-fixed-bar .btn-action {
+            margin: 0;
+            flex: 1 1 0px;
+            min-width: 90px;
+            padding: 16px 8px;
+            font-size: 14px;
+            font-weight: 700;
+            text-align: center;
+            justify-content: center;
+            white-space: nowrap;
+            border-radius: 60px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow: visible; /* IMPORTANTE: per far vedere i badge */
+        }
+        
+        .bottom-fixed-bar .btn-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .bottom-fixed-bar .btn-action:hover::before {
+            left: 100%;
+        }
+        
+        .bottom-fixed-bar .btn-action:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+        }
+        
+        .bottom-fixed-bar .btn-action:active {
+            transform: translateY(2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .bottom-fixed-bar .btn-action i {
+            font-size: 18px;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+        }
+        
+        /* STILE BADGE - COMPLETAMENTE VISIBILI */
+        .badge-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 4px 10px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            border: 2px solid white;
+            line-height: 1.2;
+            background: white;
+            flex-shrink: 0;
+        }
+        
+        .status-badge.on {
+            background: #22c55e;
+            color: white;
+            border-color: #166534;
+        }
+        
+        .status-badge.off {
+            background: #ef4444;
+            color: white;
+            border-color: #991b1b;
+        }
+        
+        /* Stili base pulsanti */
+        .btn-home-bottom {
+            background: linear-gradient(145deg, #f97316, #ea580c);
+        }
+        
+        .btn-quick-bottom {
+            background: linear-gradient(145deg, #eab308, #ca8a04);
+        }
+        
+        .btn-drive-bottom {
+            background: linear-gradient(145deg, #3b82f6, #2563eb);
+        }
+        
+        .btn-open-bottom {
+            background: linear-gradient(145deg, #10b981, #059669);
+        }
+        
+        .btn-numeric-bottom {
+            background: linear-gradient(145deg, #8b5cf6, #7c3aed);
+        }
+        
+        .btn-numeric-bottom.attivo {
+            background: linear-gradient(145deg, #22c55e, #16a34a);
+        }
+        
+        .btn-backup-bottom {
+            background: linear-gradient(145deg, #f59e0b, #d97706);
+        }
+        
+        .btn-backup-bottom.attivo {
+            background: linear-gradient(145deg, #22c55e, #16a34a);
+        }
+        
+        .btn-admin-bottom {
+            background: linear-gradient(145deg, #64748b, #475569);
+        }
+        
+        .btn-notifica-bottom {
+            background: linear-gradient(145deg, #ef4444, #dc2626);
+        }
+        
+        .btn-install-bottom {
+            background: linear-gradient(145deg, #667eea, #764ba2) !important;
+            animation: pulse-install 2s infinite;
+        }
+        
+        @keyframes pulse-install {
+            0% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(102, 126, 234, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+            }
         }
         
         /* PANNELLO ADMIN */
@@ -555,7 +709,7 @@
             width: 100%; 
             height: 100%; 
             background: rgba(0,0,0,0.8); 
-            z-index: 1000; 
+            z-index: 2000; 
             justify-content: center; 
             align-items: center; 
             padding: 20px;
@@ -566,7 +720,7 @@
             width: 100%; 
             max-width: 700px; 
             padding: 35px; 
-            border-radius: 30px; 
+            border-radius: 40px; 
             box-shadow: 0 30px 70px rgba(0,0,0,0.4); 
             position: relative; 
             max-height: 90vh; 
@@ -580,24 +734,91 @@
             right: 20px; 
             font-size: 30px; 
             cursor: pointer; 
-            color: #999; 
-            background: #f0f0f0;
-            width: 45px;
-            height: 45px;
+            color: #94a3b8; 
+            background: #f1f5f9;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s;
+            transition: all 0.3s;
         }
         
         .close-admin:hover {
             transform: rotate(90deg);
+            background: #e2e8f0;
         }
         
-        .close-admin:focus-visible {
-            outline: 3px solid #ffbf47;
+        #admin-form input, #admin-form select {
+            width:100%; 
+            margin-bottom:15px; 
+            padding: 15px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 40px; 
+            font-size: 16px; 
+            outline: none;
+            font-family: 'Inter', sans-serif;
         }
+        
+        #admin-form input:focus, #admin-form select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        }
+        
+        #btn-save-atleta {
+            width:100%; 
+            justify-content:center; 
+            padding: 16px; 
+            font-size: 18px; 
+            background: linear-gradient(145deg, #22c55e, #16a34a);
+            border: none;
+            border-radius: 60px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        #btn-save-atleta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(34, 197, 94, 0.3);
+        }
+        
+        #btn-cancel-edit {
+            display:none; 
+            width:100%; 
+            margin-top:12px; 
+            background:transparent; 
+            border:none; 
+            color:#64748b; 
+            font-size:15px; 
+            cursor:pointer; 
+            padding: 12px;
+            font-weight: 600;
+        }
+        
+        /* LISTA ATLETI ADMIN */
+        .atleta-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 18px; 
+            border-bottom: 1px solid #e2e8f0; 
+            background: #f8fafc;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .atleta-item.archiviato { opacity: 0.7; background: #f1f5f9; }
+        .atleta-info { flex: 1; min-width: 200px; }
+        .atleta-name { font-weight: 700; font-size: 16px; display: block; color: #0f172a; }
+        .atleta-cat { font-size: 13px; color: #667eea; font-weight: 600; }
         
         /* INPUT NUMERICO */
         .number-input-overlay {
@@ -616,47 +837,64 @@
         .number-input-container {
             background: white;
             padding: 35px;
-            border-radius: 30px;
+            border-radius: 40px;
             text-align: center;
             min-width: 320px;
             max-width: 95%;
             box-shadow: 0 30px 60px rgba(0,0,0,0.3);
         }
         
+        .number-input-container h3 {
+            font-family: 'Poppins', sans-serif;
+            color: #0f172a;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
         .number-input {
             width: 100%;
             font-size: 48px;
             text-align: center;
-            border: 4px solid #2ecc71;
-            border-radius: 20px;
+            border: 4px solid #22c55e;
+            border-radius: 30px;
             padding: 20px;
             margin: 25px 0;
-            font-weight: bold;
-            background: #f8f9fa;
+            font-weight: 800;
+            background: #f8fafc;
+            font-family: 'Poppins', sans-serif;
         }
         
-        .number-input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
-        }
-        
-        /* LISTA ATLETI ADMIN */
-        .atleta-item { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 18px; 
-            border-bottom: 1px solid #e9ecef; 
-            background: #f8f9fa;
-            border-radius: 12px;
-            margin-bottom: 10px;
+        .input-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
             flex-wrap: wrap;
-            gap: 15px;
         }
-        .atleta-item.archiviato { opacity: 0.7; background: #e9ecef; }
-        .atleta-info { flex: 1; min-width: 200px; }
-        .atleta-name { font-weight: 800; font-size: 16px; display: block; color: #2c3e50; }
-        .atleta-cat { font-size: 13px; color: #667eea; font-weight: 600; }
+        
+        .input-buttons button {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 40px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            flex: 1;
+            min-width: 100px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+        
+        .input-buttons button:hover {
+            transform: translateY(-3px);
+        }
+        
+        .input-btn.clear { background: #f97316; }
+        .input-btn.cancel { background: #ef4444; }
+        .input-btn.confirm { background: #22c55e; }
         
         /* POPUP REGISTRAZIONE VELOCE */
         #quick-register-overlay {
@@ -678,8 +916,8 @@
             background: white;
             width: 100%;
             max-width: 500px;
-            padding: 30px 20px;
-            border-radius: 40px;
+            padding: 35px 25px;
+            border-radius: 50px;
             text-align: center;
             box-shadow: 0 30px 60px rgba(0,0,0,0.5);
             animation: popIn 0.3s ease;
@@ -690,62 +928,57 @@
             to { transform: scale(1); opacity: 1; }
         }
         
-        .quick-register-header {
-            margin-bottom: 25px;
-        }
-        
         .quick-register-header h2 {
-            font-size: 28px;
-            color: #343a40;
+            font-family: 'Poppins', sans-serif;
+            color: #0f172a;
             margin-bottom: 10px;
+            font-size: 28px;
         }
         
         .quick-register-header .progress {
             font-size: 18px;
             color: #667eea;
             font-weight: 600;
-            background: #f8f9fa;
+            background: #f1f5f9;
             padding: 8px 20px;
-            border-radius: 50px;
+            border-radius: 60px;
             display: inline-block;
         }
         
         .quick-athlete-card {
             padding: 40px 20px;
-            border-radius: 30px;
+            border-radius: 40px;
             margin: 20px 0 30px;
             color: white;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            transition: background-color 0.3s ease;
         }
         
-        .quick-categoria-cuccioli { background: linear-gradient(135deg, #e91e63, #c2185b); }
-        .quick-categoria-giovanissimi { background: linear-gradient(135deg, #ff9800, #f57c00); }
-        .quick-categoria-esordienti { background: linear-gradient(135deg, #9c27b0, #7b1fa2); }
-        .quick-categoria-r12 { background: linear-gradient(135deg, #00bcd4, #0097a7); }
-        .quick-categoria-ragazzi { background: linear-gradient(135deg, #ff5722, #e64a19); }
-        .quick-categoria-allievi { background: linear-gradient(135deg, #3f51b5, #303f9f); }
-        .quick-categoria-junior { background: linear-gradient(135deg, #009688, #00796b); }
-        .quick-categoria-senior { background: linear-gradient(135deg, #f44336, #d32f2f); }
+        .quick-categoria-cuccioli { background: linear-gradient(145deg, #ec4899, #db2777); }
+        .quick-categoria-giovanissimi { background: linear-gradient(145deg, #f97316, #ea580c); }
+        .quick-categoria-esordienti { background: linear-gradient(145deg, #a855f7, #9333ea); }
+        .quick-categoria-r12 { background: linear-gradient(145deg, #06b6d4, #0891b2); }
+        .quick-categoria-ragazzi { background: linear-gradient(145deg, #f97316, #ea580c); }
+        .quick-categoria-allievi { background: linear-gradient(145deg, #3b82f6, #2563eb); }
+        .quick-categoria-junior { background: linear-gradient(145deg, #14b8a6, #0d9488); }
+        .quick-categoria-senior { background: linear-gradient(145deg, #ef4444, #dc2626); }
         
         .quick-athlete-name {
             font-size: 36px;
-            font-weight: 900;
+            font-weight: 800;
             margin-bottom: 15px;
             line-height: 1.3;
             word-break: break-word;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-family: 'Poppins', sans-serif;
         }
         
         .quick-athlete-category {
             font-size: 24px;
             font-weight: 700;
-            opacity: 0.95;
             background: rgba(255,255,255,0.2);
             padding: 12px 24px;
-            border-radius: 50px;
+            border-radius: 60px;
             display: inline-block;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
             border: 2px solid rgba(255,255,255,0.3);
         }
         
@@ -759,19 +992,24 @@
         .quick-btn {
             flex: 1;
             min-width: 100px;
-            padding: 20px;
+            padding: 18px;
             border: none;
-            border-radius: 25px;
-            font-weight: 900;
-            font-size: 20px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 16px;
             cursor: pointer;
             color: white;
-            transition: transform 0.2s, opacity 0.2s;
+            transition: all 0.3s;
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Poppins', sans-serif;
         }
         
-        .quick-btn:active {
-            transform: scale(0.95);
+        .quick-btn:hover {
+            transform: translateY(-3px);
         }
         
         .quick-btn:disabled {
@@ -779,126 +1017,251 @@
             pointer-events: none;
         }
         
+        .quick-btn-prev {
+            background: linear-gradient(145deg, #f97316, #ea580c);
+        }
+        
         .quick-btn-present {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            background: linear-gradient(145deg, #22c55e, #16a34a);
         }
         
         .quick-btn-present.partecipa {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            background: linear-gradient(145deg, #ef4444, #dc2626);
         }
         
         .quick-btn-next {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-        }
-        
-        .quick-btn-prev {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
+            background: linear-gradient(145deg, #3b82f6, #2563eb);
         }
         
         .quick-btn-close {
-            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            background: linear-gradient(145deg, #94a3b8, #64748b);
             min-width: 100%;
         }
         
         .quick-status {
             font-size: 18px;
             margin: 15px 0 10px;
-            color: #2c3e50;
+            color: #334155;
             font-weight: 600;
+        }
+        
+        /* POPUP IMPOSTAZIONI NOTIFICHE */
+        #notifica-settings-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .notifica-settings-container {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            border-radius: 40px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.4);
+            position: relative;
+        }
+        
+        .notifica-settings-container h2 {
+            color: #0f172a;
+            margin-bottom: 25px;
+            font-size: 28px;
+            text-align: center;
+            font-weight: 800;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .time-input-group {
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .time-input-group label {
+            display: block;
+            font-size: 18px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 15px;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        #notifica-ora {
+            font-size: 48px;
+            padding: 15px;
+            border: 4px solid #667eea;
+            border-radius: 30px;
+            width: 150px;
+            text-align: center;
+            margin: 0 auto;
+            font-weight: 800;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .notifica-status {
+            margin: 20px 0;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 30px;
+            font-size: 16px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            font-weight: 600;
+        }
+        
+        .btn-autorizza {
+            background: linear-gradient(145deg, #22c55e, #16a34a);
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 17px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3);
+            transition: all 0.3s;
+        }
+        
+        .btn-autorizza:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(34, 197, 94, 0.4);
+        }
+        
+        .notifica-settings-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .notifica-settings-buttons button {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 60px;
+            font-weight: 700;
+            cursor: pointer;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .notifica-settings-buttons button:hover {
+            transform: translateY(-3px);
+        }
+        
+        .btn-save-settings {
+            background: linear-gradient(145deg, #3b82f6, #2563eb);
+        }
+        
+        .btn-close-settings {
+            background: linear-gradient(145deg, #94a3b8, #64748b);
         }
         
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            .app-container { padding: 15px 10px 30px; }
-            .top-bar { flex-direction: column; align-items: stretch; }
+            .app-container { padding: 15px 10px 240px; }
             
-            th.sticky-col, td.sticky-col { 
-                min-width: 100px;
-                max-width: 100px;
-                width: 100px;
-                font-size: 10px; 
-            }
-            
-            .nome-cognome {
-                font-size: 10px;
-            }
-            
-            .day-cell { 
-                width: 38px;
-                min-width: 38px;
-                max-width: 38px;
-                height: 55px; 
+            .bottom-fixed-bar .btn-action {
                 font-size: 12px;
+                padding: 14px 6px;
+                min-width: 75px;
+                gap: 5px;
             }
             
-            .tot-cell { 
-                width: 40px;
-                min-width: 40px;
-                max-width: 40px;
-                font-size: 12px;
+            .bottom-fixed-bar .btn-action i {
+                font-size: 16px;
             }
             
-            thead th { 
-                font-size: 10px; 
-                padding: 8px 2px; 
-            }
-            .btn-menu { padding: 20px 15px; font-size: 20px; }
-            .btn-menu span { font-size: 11px; }
-            
-            .quick-athlete-name {
-                font-size: 28px;
+            .status-badge {
+                font-size: 9px;
+                padding: 3px 6px;
+                margin-left: 4px;
             }
             
-            .quick-athlete-category {
-                font-size: 20px;
-                padding: 10px 20px;
+            .stats-info {
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
             }
             
-            .quick-btn {
-                padding: 15px;
-                font-size: 18px;
+            .btn-menu { 
+                font-size: 24px; 
+                padding: 25px 15px;
+            }
+            
+            .btn-menu i {
+                font-size: 32px;
+            }
+            
+            .btn-menu span {
+                font-size: 14px;
+            }
+            
+            select {
+                min-width: 120px;
+                padding: 10px 18px 10px 14px;
+                font-size: 14px;
             }
         }
         
         @media (max-width: 480px) {
-            .day-cell { 
-                width: 35px;
-                min-width: 35px;
-                max-width: 35px;
-                height: 50px; 
+            .bottom-fixed-bar .btn-action {
                 font-size: 11px;
+                padding: 12px 4px;
+                min-width: 65px;
             }
             
-            th.sticky-col, td.sticky-col { 
-                min-width: 90px;
-                max-width: 90px;
-                width: 90px;
-                font-size: 10px; 
+            .bottom-fixed-bar .btn-action i {
+                font-size: 14px;
             }
             
-            .nome-cognome {
-                font-size: 9px;
+            .status-badge {
+                font-size: 8px;
+                padding: 2px 4px;
+                margin-left: 3px;
             }
             
-            .tot-cell { 
-                width: 35px;
-                min-width: 35px;
-                max-width: 35px;
-                font-size: 11px; 
+            .date-controls select {
+                min-width: 100px;
+                font-size: 13px;
             }
             
-            .quick-athlete-name {
-                font-size: 24px;
+            .btn-oggi {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
             }
             
-            .quick-athlete-category {
-                font-size: 18px;
-                padding: 8px 16px;
+            .stats-info div {
+                font-size: 13px;
+                padding: 4px 10px;
             }
             
-            .quick-btn {
-                padding: 12px;
+            .stats-info span {
                 font-size: 16px;
+                padding: 3px 6px;
             }
         }
         
@@ -907,7 +1270,7 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid #f3f3f3;
+            border: 3px solid #e2e8f0;
             border-top: 3px solid #667eea;
             border-radius: 50%;
             animation: spin 1s linear infinite;
@@ -916,72 +1279,63 @@
     </style>
 </head>
 <body>
-    <!-- SKIP LINK PER ACCESSIBILITÀ -->
-    <a href="#main-content" class="skip-link">Salta al contenuto principale</a>
+    <!-- SKIP LINK -->
+    <a href="#main-content" class="skip-link"><i class="fas fa-arrow-down"></i> Salta al contenuto</a>
     
-    <!-- CONTAINER PER TOAST NOTIFICATIONS - COMPLETAMENTE NASCOSTO -->
+    <!-- CONTAINER TOAST - NASCOSTO -->
     <div id="toast-container" class="toast-container"></div>
     
     <div class="app-container" id="main-content">
-        <!-- === HEADER === -->
+        <!-- HEADER -->
         <div class="header">
             <!-- LOGO -->
             <img src="./logo.png" alt="Logo Registro Presenze Gruppo Sportivo 2050" class="logo" 
                  onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQzYTQwIiByeD0iMTUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjMyIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+R1JVUFBPIDIwNTA8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyMCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9IjFlbSI+UkVHSVNUUk8gUFJFU0VOWkU8L3RleHQ+PC9zdmc+'">
             
-            <!-- TOP BAR CON CONTROLLI -->
+            <!-- TOP BAR - SOLO CONTROLLI DATA -->
             <div class="top-bar">
                 <div class="date-controls">
                     <select id="select-mese" onchange="cambiaData()" aria-label="Seleziona mese"></select>
                     <select id="select-anno" onchange="cambiaData()" aria-label="Seleziona anno"></select>
-                    <button class="btn-action btn-oggi" onclick="scrollOggi()" title="Vai a oggi" aria-label="Vai al giorno corrente">🎯</button>
+                    <button class="btn-oggi" onclick="scrollOggi()" title="Vai al giorno corrente" aria-label="Vai al giorno corrente">
+                        <i class="fas fa-calendar-check"></i>
+                    </button>
                 </div>
-                <button class="btn-action btn-home" onclick="vaiAllaHome()" title="Home" aria-label="Torna alla home">🏠 HOME</button>
             </div>
             
-            <!-- STATUS BAR CON STATISTICHE BASE -->
+            <!-- STATUS BAR -->
             <div class="status-container">
-                <div id="status-auto" role="status" aria-live="polite">✅ Sistema Pronto</div>
-                <div class="stats-info">
-                    <div><span id="stat-atleti" aria-label="Numero atleti">0</span> Atleti</div>
-                    <div><span id="stat-presenze-oggi" aria-label="Presenze oggi">0</span> Oggi</div>
-                    <div><span id="stat-presenze-mese" aria-label="Presenze questo mese">0</span> Questo Mese</div>
+                <div id="status-auto" role="status" aria-live="polite">
+                    <i class="fas fa-check-circle" style="color: #22c55e;"></i> Sistema attivo
                 </div>
-            </div>
-            
-            <!-- PULSANTI AZIONE -->
-            <div class="actions-container">
-                <button class="btn-action btn-quick-register" onclick="avviaRegistrazioneVeloce()" title="Registrazione veloce" aria-label="Avvia registrazione veloce atleti">⚡ REGISTRA VELOCE</button>
-                <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()" title="Crea backup PDF" aria-label="Crea backup PDF su Drive">☁️ BACKUP PDF</button>
-                <button class="btn-action btn-open-drive" onclick="apriFileDrive()" title="Apri ultimo backup" aria-label="Apri ultimo backup su Drive">📂 APRI DRIVE</button>
-                <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input" title="Input numerico" aria-label="Attiva o disattiva input numerico">🔢 NUM OFF</button>
-                <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto" title="Backup automatico" aria-label="Attiva o disattiva backup automatico">▶️ AUTO ON</button>
-                <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti" aria-label="Apri pannello gestione atleti">⚙️ GESTISCI ATLETI</button>
-                <!-- PULSANTI NOTIFICHE -->
-                <button class="btn-action btn-notifica" onclick="testNotifiche()" title="Test notifiche" aria-label="Test sistema notifiche">🔔 TEST NOTIFICA</button>
-                <button class="btn-action btn-stato-notifiche" onclick="mostraStatoNotifiche()" title="Stato notifiche" aria-label="Mostra stato notifiche">📊 STATO NOTIFICHE</button>
-                <!-- PULSANTE INSTALLAZIONE (inizialmente nascosto) -->
-                <button class="btn-action btn-install" id="install-pwa-btn" style="display: none;" onclick="installPWA()">📲 INSTALLA APP</button>
+                <div class="stats-info">
+                    <div><span id="stat-atleti">0</span> <i class="fas fa-users" style="color: #667eea;"></i> Atleti</div>
+                    <div><span id="stat-presenze-oggi">0</span> <i class="fas fa-calendar-day" style="color: #667eea;"></i> Oggi</div>
+                    <div><span id="stat-presenze-mese">0</span> <i class="fas fa-calendar-alt" style="color: #667eea;"></i> Mese</div>
+                </div>
             </div>
         </div>
 
-        <!-- === MENU PRINCIPALE CATEGORIE === -->
+        <!-- MENU PRINCIPALE CATEGORIE -->
         <div class="menu-container" id="main-menu" role="tablist">
             <button class="btn-menu btn-cuccioli" onclick="mostraSezione('cuccioli')" role="tab" aria-selected="false" aria-controls="sez-cuccioli">
-                🧸 CUCCIOLI
-                <span>CUCCIOLI</span>
+                <i class="fas fa-baby"></i>
+                CUCCIOLI
+                <span><i class="fas fa-tag"></i> Under 8</span>
             </button>
             <button class="btn-menu btn-piccoli" onclick="mostraSezione('piccoli')" role="tab" aria-selected="false" aria-controls="sez-piccoli">
-                👦 PICCOLI
-                <span>GIOVANISSIMI • ESORDIENTI (LUN - MER - VEN)</span>
+                <i class="fas fa-child"></i>
+                PICCOLI
+                <span><i class="fas fa-clock"></i> Lun • Mer • Ven</span>
             </button>
             <button class="btn-menu btn-grandi" onclick="mostraSezione('grandi')" role="tab" aria-selected="false" aria-controls="sez-grandi">
-                🏃 GRANDI
-                <span>R12 • RAGAZZI • ALLIEVI • JUNIOR • SENIOR (LUN - VEN)</span>
+                <i class="fas fa-running"></i>
+                GRANDI
+                <span><i class="fas fa-clock"></i> Lun • Mar • Mer • Gio • Ven</span>
             </button>
         </div>
 
-        <!-- === SEZIONI TABELLE === -->
+        <!-- SEZIONI TABELLE -->
         <div id="sez-cuccioli" class="section-container" role="tabpanel" aria-labelledby="tab-cuccioli">
             <div class="table-container">
                 <div class="table-wrapper" id="wrapper-cuccioli" onscroll="handleVirtualScroll('cuccioli')">
@@ -990,7 +1344,7 @@
                         <tbody id="tbody-cuccioli"></tbody>
                     </table>
                 </div>
-                <div style="text-align: center; padding: 15px; color: #666; font-size: 14px;">
+                <div style="text-align: center; padding: 15px; color: #64748b; font-size: 14px;">
                     <span id="virtual-info-cuccioli"></span>
                 </div>
             </div>
@@ -1004,7 +1358,7 @@
                         <tbody id="tbody-piccoli"></tbody>
                     </table>
                 </div>
-                <div style="text-align: center; padding: 15px; color: #666; font-size: 14px;">
+                <div style="text-align: center; padding: 15px; color: #64748b; font-size: 14px;">
                     <span id="virtual-info-piccoli"></span>
                 </div>
             </div>
@@ -1018,40 +1372,73 @@
                         <tbody id="tbody-grandi"></tbody>
                     </table>
                 </div>
-                <div style="text-align: center; padding: 15px; color: #666; font-size: 14px;">
+                <div style="text-align: center; padding: 15px; color: #64748b; font-size: 14px;">
                     <span id="virtual-info-grandi"></span>
                 </div>
             </div>
         </div>
 
-        <!-- === FOOTER === -->
+        <!-- FOOTER -->
         <div class="app-footer">
             <div class="copyright">
-                © 2024-2025 Gruppo Sportivo 2050 - Registro Presenze Digitale<br>
+                <i class="far fa-copyright"></i> 2024-2025 Gruppo Sportivo 2050<br>
                 <small>Ultimo aggiornamento: <span id="last-update">Caricamento...</span></small>
-            </div>
-            <!-- STATO NOTIFICHE NEL FOOTER -->
-            <div class="notification-status" id="notification-status">
-                🔔 Inizializzazione notifiche...
             </div>
         </div>
     </div>
 
-    <!-- === PANNELLO ADMIN === -->
+    <!-- BARRA INFERIORE FISSA CON 2 RIGHE - BADGE COMPLETAMENTE VISIBILI -->
+    <div class="bottom-fixed-bar">
+        <!-- PRIMA RIGA - FUNZIONI PRINCIPALI -->
+        <div class="bottom-row">
+            <button class="btn-action btn-home-bottom" onclick="vaiAllaHome()" title="Torna alla home">
+                <i class="fas fa-home"></i> HOME
+            </button>
+            <button class="btn-action btn-quick-bottom" onclick="avviaRegistrazioneVeloce()" title="Registrazione rapida presenze">
+                <i class="fas fa-bolt"></i> REGISTRAZIONE RAPIDA
+            </button>
+            <button class="btn-action btn-drive-bottom" onclick="aggiornaBackupDrive()" title="Crea backup completo PDF">
+                <i class="fas fa-file-pdf"></i> BACKUP PDF
+            </button>
+            <button class="btn-action btn-open-bottom" onclick="apriFileDrive()" title="Apri ultimo backup">
+                <i class="fas fa-folder-open"></i> APRI PDF
+            </button>
+        </div>
+        <!-- SECONDA RIGA - FUNZIONI AUSILIARIE + INSTALLA CON BADGE VISIBILI -->
+        <div class="bottom-row">
+            <button class="btn-action btn-numeric-bottom" onclick="toggleNumericInput()" id="btn-numeric-bottom" title="Attiva/disattiva input numerico">
+                <i class="fas fa-hashtag"></i> ATTIVA NUMERI
+                <span class="status-badge off" id="numeric-badge">OFF</span>
+            </button>
+            <button class="btn-action btn-backup-bottom attivo" onclick="toggleBackupAutomatico()" id="btn-backup-bottom" title="Backup automatico ogni 10 secondi">
+                <i class="fas fa-clock"></i> SALVATAGGIO AUTOMATICO
+                <span class="status-badge on" id="backup-badge">ON</span>
+            </button>
+            <button class="btn-action btn-admin-bottom" onclick="toggleAdmin()" title="Gestione atleti">
+                <i class="fas fa-users-cog"></i> GESTIONE ATLETI
+            </button>
+            <button class="btn-action btn-notifica-bottom" onclick="apriImpostazioniNotifiche()" title="Gestisci notifiche">
+                <i class="fas fa-bell"></i> NOTIFICHE
+            </button>
+            <button class="btn-action btn-install-bottom" id="install-pwa-btn-bottom" style="display: none;" onclick="installPWA()" title="Installa app sul telefono">
+                <i class="fas fa-download"></i> INSTALLA APP
+            </button>
+        </div>
+    </div>
+
+    <!-- PANNELLO ADMIN -->
     <div id="admin-overlay" role="dialog" aria-labelledby="admin-title" aria-modal="true">
         <div id="admin-panel">
-            <span class="close-admin" onclick="toggleAdmin()" role="button" tabindex="0" aria-label="Chiudi pannello admin">&times;</span>
-            <h2 id="admin-title" style="margin-bottom: 25px; color: #343a40; font-size: 28px;">👤 GESTIONE ATLETI</h2>
+            <span class="close-admin" onclick="toggleAdmin()" role="button" tabindex="0" aria-label="Chiudi pannello admin"><i class="fas fa-times"></i></span>
+            <h2 id="admin-title" style="font-family: 'Poppins', sans-serif; margin-bottom: 25px; color: #0f172a; font-size: 28px;"><i class="fas fa-user-edit"></i> GESTIONE ATLETI</h2>
             
-            <div id="admin-form" style="background: #f8f9fa; padding: 25px; border-radius: 20px; margin-bottom: 25px;">
+            <div id="admin-form">
                 <input type="hidden" id="edit-id">
                 
                 <input type="text" id="new-nome" placeholder="NOME E COGNOME" 
-                       style="width:100%; margin-bottom:15px; padding: 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 16px; outline: none;"
                        aria-label="Nome atleta" required>
                 
-                <select id="new-cat" style="width:100%; margin-bottom:20px; padding: 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 16px; outline: none;"
-                        aria-label="Categoria atleta" required>
+                <select id="new-cat" aria-label="Categoria atleta" required>
                     <option value="CUCCIOLI">CUCCIOLI</option>
                     <option value="GIOVANISSIMI">GIOVANISSIMI</option>
                     <option value="ESORDIENTI">ESORDIENTI</option>
@@ -1062,18 +1449,12 @@
                     <option value="SENIOR">SENIOR</option>
                 </select>
                 
-                <button id="btn-save-atleta" class="btn-action" 
-                        style="width:100%; justify-content:center; padding: 16px; font-size: 18px; background: linear-gradient(135deg, #34a853, #1e7e34);" 
-                        onclick="salvaAtleta()"
-                        aria-label="Aggiungi o aggiorna atleta">
-                    ➕ AGGIUNGI ATLETA
+                <button id="btn-save-atleta" onclick="salvaAtleta()" aria-label="Aggiungi o aggiorna atleta">
+                    <i class="fas fa-plus-circle"></i> AGGIUNGI ATLETA
                 </button>
                 
-                <button id="btn-cancel-edit" 
-                        style="display:none; width:100%; margin-top:12px; background:transparent; border:none; color:#666; font-size:15px; cursor:pointer; padding: 12px;" 
-                        onclick="resetForm()"
-                        aria-label="Annulla modifica">
-                    ❌ ANNULLA MODIFICA
+                <button id="btn-cancel-edit" onclick="resetForm()" aria-label="Annulla modifica">
+                    <i class="fas fa-times"></i> ANNULLA MODIFICA
                 </button>
             </div>
             
@@ -1081,27 +1462,26 @@
         </div>
     </div>
 
-    <!-- === OVERLAY INPUT NUMERICO === -->
+    <!-- OVERLAY INPUT NUMERICO -->
     <div id="number-input-overlay" class="number-input-overlay" style="display: none;" role="dialog" aria-labelledby="number-input-title" aria-modal="true">
         <div class="number-input-container">
-            <h3 id="number-input-title" style="margin: 0 0 20px 0; color: #343a40; font-size: 24px;">🔢 INSERISCI NUMERO</h3>
+            <h3 id="number-input-title"><i class="fas fa-hashtag"></i> INSERISCI NUMERO</h3>
             <input type="number" id="number-input" class="number-input" min="0" max="999" value="1" 
                    pattern="[0-9]*" inputmode="numeric" autofocus
-                   aria-label="Inserisci numero" aria-describedby="number-input-description">
-            <div id="number-input-description" style="display: none;">Inserisci un numero da 0 a 999</div>
-            <div class="input-buttons" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                <button class="input-btn clear" onclick="clearNumberInput()" style="background: #f39c12; padding: 14px 28px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; flex: 1; min-width: 100px;" aria-label="Pulisci campo">PULISCI</button>
-                <button class="input-btn cancel" onclick="cancelNumberInput()" style="background: #e74c3c; padding: 14px 28px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; flex: 1; min-width: 100px;" aria-label="Annulla">ANNULLA</button>
-                <button class="input-btn confirm" onclick="confirmNumberInput()" style="background: #2ecc71; padding: 14px 28px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; flex: 1; min-width: 100px;" aria-label="Conferma">OK</button>
+                   aria-label="Inserisci numero">
+            <div class="input-buttons">
+                <button class="input-btn clear" onclick="clearNumberInput()" aria-label="Pulisci campo"><i class="fas fa-eraser"></i> PULISCI</button>
+                <button class="input-btn cancel" onclick="cancelNumberInput()" aria-label="Annulla"><i class="fas fa-times"></i> ANNULLA</button>
+                <button class="input-btn confirm" onclick="confirmNumberInput()" aria-label="Conferma"><i class="fas fa-check"></i> CONFERMA</button>
             </div>
         </div>
     </div>
 
-    <!-- === OVERLAY REGISTRAZIONE VELOCE === -->
+    <!-- OVERLAY REGISTRAZIONE VELOCE -->
     <div id="quick-register-overlay" role="dialog" aria-labelledby="quick-title" aria-modal="true">
         <div class="quick-register-container">
             <div class="quick-register-header">
-                <h2 id="quick-title">📋 REGISTRA PRESENZE</h2>
+                <h2 id="quick-title"><i class="fas fa-bolt"></i> REGISTRAZIONE RAPIDA</h2>
                 <div class="progress" id="quick-progress">Atleta 1 / 10</div>
             </div>
             
@@ -1111,14 +1491,41 @@
             </div>
             
             <div class="quick-buttons">
-                <button class="quick-btn quick-btn-prev" id="quick-btn-prev" onclick="prevQuickAthlete()" aria-label="Atleta precedente">◀ INDIETRO</button>
-                <button class="quick-btn quick-btn-present" id="quick-btn-present" onclick="toggleQuickPresent()">✅ PRESENTE</button>
-                <button class="quick-btn quick-btn-next" id="quick-btn-next" onclick="nextQuickAthlete()" aria-label="Prossimo atleta">PROSSIMO ▶</button>
+                <button class="quick-btn quick-btn-prev" id="quick-btn-prev" onclick="prevQuickAthlete()" aria-label="Atleta precedente"><i class="fas fa-chevron-left"></i> INDIETRO</button>
+                <button class="quick-btn quick-btn-present" id="quick-btn-present" onclick="toggleQuickPresent()"><i class="fas fa-check"></i> PRESENTE</button>
+                <button class="quick-btn quick-btn-next" id="quick-btn-next" onclick="nextQuickAthlete()" aria-label="Prossimo atleta">PROSSIMO <i class="fas fa-chevron-right"></i></button>
             </div>
             
             <div class="quick-status" id="quick-status"></div>
             
-            <button class="quick-btn quick-btn-close" onclick="chiudiRegistrazioneVeloce()">✖️ CHIUDI</button>
+            <button class="quick-btn quick-btn-close" onclick="chiudiRegistrazioneVeloce()"><i class="fas fa-times"></i> CHIUDI</button>
+        </div>
+    </div>
+
+    <!-- OVERLAY IMPOSTAZIONI NOTIFICHE -->
+    <div id="notifica-settings-overlay" role="dialog" aria-labelledby="notifica-settings-title" aria-modal="true">
+        <div class="notifica-settings-container">
+            <span class="close-admin" onclick="chiudiImpostazioniNotifiche()" role="button" tabindex="0" aria-label="Chiudi impostazioni"><i class="fas fa-times"></i></span>
+            <h2 id="notifica-settings-title"><i class="fas fa-bell"></i> NOTIFICHE</h2>
+            
+            <div class="notifica-status" id="notifica-status-settings">
+                Caricamento stato...
+            </div>
+            
+            <button class="btn-autorizza" onclick="autorizzaNotifiche()" id="btn-autorizza-notifiche">
+                <i class="fas fa-bell"></i> AUTORIZZA NOTIFICHE
+            </button>
+            
+            <div class="time-input-group">
+                <label for="notifica-ora"><i class="fas fa-clock"></i> Ora promemoria serale</label>
+                <input type="number" id="notifica-ora" class="number-input" min="0" max="23" value="21" step="1">
+                <div style="font-size: 14px; color: #64748b; margin-top: 10px;">(0-23, esempio: 21 per le 21:00)</div>
+            </div>
+            
+            <div class="notifica-settings-buttons">
+                <button class="btn-save-settings" onclick="salvaImpostazioniNotifiche()"><i class="fas fa-save"></i> SALVA</button>
+                <button class="btn-close-settings" onclick="chiudiImpostazioniNotifiche()"><i class="fas fa-times"></i> CHIUDI</button>
+            </div>
         </div>
     </div>
 
@@ -1164,44 +1571,38 @@
         
         // =================== CONFIGURAZIONE NOTIFICHE ===================
         const CONFIG_NOTIFICHE = {
-            ORARIO_NOTIFICA: 21, // 21:00 (9 PM)
-            GIORNI_PICCOLI: [1, 3, 5], // Lunedì(1), Mercoledì(3), Venerdì(5)
-            GIORNI_GRANDI: [1, 2, 3, 4, 5], // Lunedì(1) a Venerdì(5)
-            NOTIFICHE_INVIATE: {} // Per tracciare notifiche già inviate oggi
+            ORARIO_NOTIFICA: 21,
+            GIORNI_PICCOLI: [1, 3, 5],
+            GIORNI_GRANDI: [1, 2, 3, 4, 5],
+            NOTIFICHE_INVIATE: {}
         };
         
         // =================== GESTIONE INSTALLAZIONE PWA ===================
         let deferredPrompt;
 
-        // Funzione per installare l'app
         window.installPWA = async function() {
             if (!deferredPrompt) {
                 console.log('❌ Nessun prompt di installazione disponibile');
                 return;
             }
             
-            // Mostra il prompt di installazione
             deferredPrompt.prompt();
             
-            // Aspetta la scelta dell'utente
             const { outcome } = await deferredPrompt.userChoice;
             console.log(`📲 Utente ha ${outcome === 'accepted' ? 'accettato' : 'rifiutato'} l'installazione`);
             
-            // Resetta deferredPrompt
             deferredPrompt = null;
             
-            // Nascondi il pulsante
-            const btn = document.getElementById('install-pwa-btn');
-            if (btn) btn.style.display = 'none';
+            const btnBottom = document.getElementById('install-pwa-btn-bottom');
+            if (btnBottom) btnBottom.style.display = 'none';
         }
 
-        // Controlla se l'app è già installata
         function checkIfInstalled() {
             if (window.matchMedia('(display-mode: standalone)').matches || 
                 window.navigator.standalone === true) {
-                console.log('📲 App già installata (modalità standalone)');
-                const btn = document.getElementById('install-pwa-btn');
-                if (btn) btn.style.display = 'none';
+                console.log('📲 App già installata');
+                const btnBottom = document.getElementById('install-pwa-btn-bottom');
+                if (btnBottom) btnBottom.style.display = 'none';
                 return true;
             }
             return false;
@@ -1214,12 +1615,11 @@
         const CAT_PICCOLI = ['GIOVANISSIMI', 'ESORDIENTI'];
         const CAT_GRANDI = ['R12', 'RAGAZZI', 'ALLIEVI', 'JUNIOR', 'JUNIORES', 'SENIOR'];
 
-        // =================== TOAST NOTIFICATIONS DISATTIVATE ===================
+        // =================== FUNZIONI PRINCIPALI (invariate) ===================
         function mostraToast(messaggio, tipo = 'successo', durata = 3000) {
             console.log(`Toast disattivato: ${messaggio} (${tipo})`);
         }
 
-        // =================== VALIDAZIONE DATI ===================
         function validaAtleta(nome, categoria, id = null) {
             const errori = [];
             
@@ -1246,7 +1646,6 @@
             return errori;
         }
 
-        // =================== GESTIONE ERRORI CON RETRY ===================
         async function gestisciRichiesta(asyncFn, messaggioErrore, retryCount = 3) {
             for (let i = 0; i < retryCount; i++) {
                 try {
@@ -1264,7 +1663,6 @@
             }
         }
 
-        // =================== FUNZIONI CARICAMENTO MENSILE ===================
         async function caricaMese(anno, mese, force = false) {
             const key = `${anno}-${mese}`;
             
@@ -1321,7 +1719,7 @@
             if (mesiDaCaricare.length > 0) {
                 document.getElementById('status-auto').innerHTML = `<span class="loading-spinner"></span> Caricamento dati...`;
                 await Promise.all(mesiDaCaricare);
-                document.getElementById('status-auto').innerText = "✅ Sistema Pronto";
+                document.getElementById('status-auto').innerHTML = '<i class="fas fa-check-circle" style="color: #22c55e;"></i> Sistema attivo';
             }
         }
 
@@ -1330,7 +1728,6 @@
             return presenzePerMese[key] || [];
         }
 
-        // =================== FUNZIONI DI RENDERING ===================
         function renderHeader(sezione) {
             const anno = dataAttuale.getFullYear();
             const mese = dataAttuale.getMonth();
@@ -1406,8 +1803,8 @@
                 virtualScrollStates[sezione].totalRows = totalRows;
                 
                 if (totalRows === 0) {
-                    tbody.innerHTML = `<tr><td colspan="100" style="text-align: center; padding: 50px; color: #666; font-size: 16px;">
-                        Nessun atleta in questa categoria
+                    tbody.innerHTML = `<tr><td colspan="100" style="text-align: center; padding: 50px; color: #64748b; font-size: 16px;">
+                        <i class="fas fa-users" style="font-size: 40px; margin-bottom: 15px; opacity: 0.5;"></i><br>Nessun atleta in questa categoria
                     </td></tr>`;
                     if (infoSpan) infoSpan.innerHTML = '0 atleti';
                     return;
@@ -1576,12 +1973,11 @@
             }
         }
 
-        // =================== FUNZIONI PRINCIPALI ===================
         async function inizializza() {
             console.log('🚀 Inizializzazione applicazione...');
             
-            // Controlla se l'app è già installata
             checkIfInstalled();
+            caricaOraNotifica();
             
             const m = localStorage.getItem('p_mese') || dataAttuale.getMonth();
             const a = localStorage.getItem('p_anno') || dataAttuale.getFullYear();
@@ -1607,7 +2003,6 @@
             caricaStatoNumericInput();
             caricaStatoBackupAuto();
             
-            // Inizializza notifiche dopo 3 secondi
             setTimeout(() => {
                 initSistemaNotifiche();
             }, 3000);
@@ -1615,7 +2010,7 @@
 
         async function caricaDatiIniziali() {
             try {
-                document.getElementById('status-auto').innerHTML = `<span class="loading-spinner"></span> Caricamento atleti...`;
+                document.getElementById('status-auto').innerHTML = `<span class="loading-spinner"></span> Caricamento...`;
                 
                 const { data: atleti, error: errorAtleti } = await gestisciRichiesta(
                     () => supabaseClient
@@ -1632,11 +2027,11 @@
                 
                 renderAdminList();
                 
-                document.getElementById('status-auto').innerText = "✅ Sistema Pronto";
+                document.getElementById('status-auto').innerHTML = '<i class="fas fa-check-circle" style="color: #22c55e;"></i> Sistema attivo';
                 
             } catch (error) {
                 console.error('❌ Errore caricamento dati:', error);
-                document.getElementById('status-auto').innerText = "❌ Errore di connessione";
+                document.getElementById('status-auto').innerHTML = '<i class="fas fa-exclamation-circle" style="color: #ef4444;"></i> Errore di connessione';
             }
         }
 
@@ -1660,7 +2055,6 @@
                                 }
                             }
                             
-                            // Controlla presenze dopo aggiornamento
                             controllaPresenzeGiornaliere();
                         }
                     })
@@ -1677,8 +2071,7 @@
                             aggiornaListaVeloce();
                         }
                         
-                        // Aggiorna badge notifiche
-                        aggiornaBadgeNotifiche(await getRisultatiControllo());
+                        controllaPresenzeGiornaliere();
                     })
                 .subscribe();
         }
@@ -1710,19 +2103,30 @@
             sa.value = a;
         }
 
-        // =================== GESTIONE INPUT NUMERICO ===================
+        // =================== FUNZIONI PULSANTI CON STATO VISIBILE ===================
         function toggleNumericInput() {
             numericInputAttivo = !numericInputAttivo;
-            const btn = document.getElementById('btn-numeric-input');
+            const btnBottom = document.getElementById('btn-numeric-bottom');
+            const badge = document.getElementById('numeric-badge');
             
             if (numericInputAttivo) {
-                btn.innerHTML = "🔢 NUM ON";
-                btn.classList.add('attivo');
-                document.getElementById('status-auto').innerText = "✅ Input numerico ATTIVATO";
+                if (btnBottom) {
+                    btnBottom.classList.add('attivo');
+                    if (badge) {
+                        badge.className = 'status-badge on';
+                        badge.innerText = 'ON';
+                    }
+                }
+                document.getElementById('status-auto').innerHTML = '<i class="fas fa-check-circle" style="color: #22c55e;"></i> Input numerico ATTIVO';
             } else {
-                btn.innerHTML = "🔢 NUM OFF";
-                btn.classList.remove('attivo');
-                document.getElementById('status-auto').innerText = "⏸️ Input numerico DISATTIVATO";
+                if (btnBottom) {
+                    btnBottom.classList.remove('attivo');
+                    if (badge) {
+                        badge.className = 'status-badge off';
+                        badge.innerText = 'OFF';
+                    }
+                }
+                document.getElementById('status-auto').innerHTML = '<i class="fas fa-pause-circle" style="color: #f97316;"></i> Input numerico DISATTIVO';
             }
             
             const sezione = getSezioneCorrente();
@@ -1734,18 +2138,671 @@
             const savedState = localStorage.getItem('numeric_input_attivo');
             if (savedState !== null) {
                 numericInputAttivo = savedState === 'true';
-                const btn = document.getElementById('btn-numeric-input');
+                const btnBottom = document.getElementById('btn-numeric-bottom');
+                const badge = document.getElementById('numeric-badge');
+                
                 if (numericInputAttivo) {
-                    btn.innerHTML = "🔢 NUM ON";
-                    btn.classList.add('attivo');
+                    if (btnBottom) {
+                        btnBottom.classList.add('attivo');
+                        if (badge) {
+                            badge.className = 'status-badge on';
+                            badge.innerText = 'ON';
+                        }
+                    }
                 } else {
-                    btn.innerHTML = "🔢 NUM OFF";
-                    btn.classList.remove('attivo');
+                    if (btnBottom) {
+                        btnBottom.classList.remove('attivo');
+                        if (badge) {
+                            badge.className = 'status-badge off';
+                            badge.innerText = 'OFF';
+                        }
+                    }
                 }
             }
         }
 
-        // =================== GESTIONE LONG PRESS ===================
+        function toggleBackupAutomatico() {
+            backupAutomaticoAttivo = !backupAutomaticoAttivo;
+            const btnBottom = document.getElementById('btn-backup-bottom');
+            const badge = document.getElementById('backup-badge');
+            
+            if (backupAutomaticoAttivo) {
+                if (btnBottom) {
+                    btnBottom.classList.add('attivo');
+                    if (badge) {
+                        badge.className = 'status-badge on';
+                        badge.innerText = 'ON';
+                    }
+                }
+                document.getElementById('status-auto').innerHTML = '<i class="fas fa-check-circle" style="color: #22c55e;"></i> Backup automatico ATTIVO';
+            } else {
+                if (btnBottom) {
+                    btnBottom.classList.remove('attivo');
+                    if (badge) {
+                        badge.className = 'status-badge off';
+                        badge.innerText = 'OFF';
+                    }
+                }
+                document.getElementById('status-auto').innerHTML = '<i class="fas fa-pause-circle" style="color: #f97316;"></i> Backup automatico DISATTIVO';
+            }
+            
+            localStorage.setItem('backup_auto_attivo', backupAutomaticoAttivo);
+        }
+
+        function caricaStatoBackupAuto() {
+            const savedState = localStorage.getItem('backup_auto_attivo');
+            if (savedState !== null) {
+                backupAutomaticoAttivo = savedState === 'true';
+                const btnBottom = document.getElementById('btn-backup-bottom');
+                const badge = document.getElementById('backup-badge');
+                
+                if (backupAutomaticoAttivo) {
+                    if (btnBottom) {
+                        btnBottom.classList.add('attivo');
+                        if (badge) {
+                            badge.className = 'status-badge on';
+                            badge.innerText = 'ON';
+                        }
+                    }
+                } else {
+                    if (btnBottom) {
+                        btnBottom.classList.remove('attivo');
+                        if (badge) {
+                            badge.className = 'status-badge off';
+                            badge.innerText = 'OFF';
+                        }
+                    }
+                }
+            }
+        }
+
+        function avviaTimerBackup() {
+            if (!backupAutomaticoAttivo) return;
+            
+            clearInterval(timerBackup); 
+            secondiMancanti = 10;
+            const status = document.getElementById('status-auto');
+            
+            timerBackup = setInterval(() => { 
+                secondiMancanti--; 
+                status.innerHTML = `<i class="fas fa-hourglass-half"></i> Backup tra ${secondiMancanti}s...`; 
+                if (secondiMancanti <= 0) { 
+                    clearInterval(timerBackup); 
+                    aggiornaBackupDrive(); 
+                } 
+            }, 1000);
+        }
+
+        function aggiornaStatistiche() {
+            const anno = dataAttuale.getFullYear();
+            const mese = dataAttuale.getMonth();
+            
+            document.getElementById('stat-atleti').innerText = atletiCache.filter(a => !a.archiviato).length;
+            
+            const oggiStr = new Date().toLocaleDateString('en-CA');
+            let presenzeOggi = 0;
+            Object.values(presenzePerMese).forEach(mesePresenze => {
+                presenzeOggi += mesePresenze.filter(p => p.data === oggiStr).length;
+            });
+            document.getElementById('stat-presenze-oggi').innerText = presenzeOggi;
+            
+            const presenzeMese = getPresenzeMese(anno, mese);
+            document.getElementById('stat-presenze-mese').innerText = presenzeMese.length;
+            
+            document.getElementById('last-update').innerText = new Date().toLocaleString();
+        }
+
+        function scrollOggi() {
+            const active = document.querySelector('.section-active'); 
+            if (!active) return;
+            
+            const target = active.querySelector('.today-cell'); 
+            const wrapper = active.querySelector('.table-wrapper');
+            const stickyWidth = active.querySelector('.sticky-col')?.offsetWidth || 90;
+            
+            if (target && wrapper) {
+                wrapper.scrollTo({ 
+                    left: target.offsetLeft - stickyWidth - 20, 
+                    behavior: 'smooth' 
+                });
+            }
+        }
+
+        function mostraSezione(s) {
+            sessionStorage.setItem('last_sez', s); 
+            document.getElementById('main-menu').style.display = 'none';
+            
+            document.querySelectorAll('[role="tab"]').forEach(tab => {
+                tab.setAttribute('aria-selected', 'false');
+            });
+            
+            document.getElementById('sez-cuccioli').className = 
+                (s === 'cuccioli') ? 'section-active' : 'section-container';
+            document.getElementById('sez-piccoli').className = 
+                (s === 'piccoli') ? 'section-active' : 'section-container';
+            document.getElementById('sez-grandi').className = 
+                (s === 'grandi') ? 'section-active' : 'section-container';
+            
+            if (s === 'cuccioli') {
+                document.querySelector('.btn-cuccioli').setAttribute('aria-selected', 'true');
+            } else if (s === 'piccoli') {
+                document.querySelector('.btn-piccoli').setAttribute('aria-selected', 'true');
+            } else if (s === 'grandi') {
+                document.querySelector('.btn-grandi').setAttribute('aria-selected', 'true');
+            }
+            
+            renderHeader(s);
+            setTimeout(() => {
+                renderVirtualScroll(s);
+                scrollOggi();
+            }, 100);
+        }
+
+        function vaiAllaHome() { 
+            sessionStorage.removeItem('last_sez'); 
+            location.reload(); 
+        }
+
+        async function cambiaData() { 
+            const nuovoMese = parseInt(document.getElementById('select-mese').value);
+            const nuovoAnno = parseInt(document.getElementById('select-anno').value);
+            
+            localStorage.setItem('p_mese', nuovoMese); 
+            localStorage.setItem('p_anno', nuovoAnno); 
+            
+            dataAttuale = new Date(nuovoAnno, nuovoMese, 1);
+            
+            document.getElementById('status-auto').innerHTML = `<span class="loading-spinner"></span> Caricamento...`;
+            await caricaMesiVicini(nuovoAnno, nuovoMese, 1);
+            
+            const sezione = getSezioneCorrente();
+            if (sezione) {
+                renderHeader(sezione);
+                renderVirtualScroll(sezione);
+            }
+            document.getElementById('status-auto').innerHTML = '<i class="fas fa-check-circle" style="color: #22c55e;"></i> Mese caricato';
+            scrollOggi();
+        }
+
+        function toggleAdmin() { 
+            const ov = document.getElementById('admin-overlay'); 
+            ov.style.display = (ov.style.display === 'flex') ? 'none' : 'flex'; 
+            
+            if (ov.style.display === 'flex') {
+                renderAdminList();
+            }
+        }
+
+        function apriFileDrive() { 
+            const url = localStorage.getItem('ultimo_pdf_url'); 
+            if(url) {
+                window.open(url, '_blank');
+            } else {
+                alert("Nessun backup trovato. Genera prima un backup.");
+            }
+        }
+
+        async function aggiornaBackupDrive() {
+            const status = document.getElementById('status-auto'); 
+            status.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generazione PDF...';
+            
+            try {
+                const { jsPDF } = window.jspdf; 
+                const doc = new jsPDF('l', 'mm', 'a4'); 
+                const annoC = dataAttuale.getFullYear();
+                const oggi = new Date();
+                
+                for (let m = 0; m < 12; m++) {
+                    if (m > 0) doc.addPage();
+                    const g = new Date(annoC, m + 1, 0).getDate();
+                    
+                    await caricaMese(annoC, m);
+                    
+                    const header = [["ATLETA", ...Array.from({length: g}, (_, i) => 
+                        `${nomiGiorni[new Date(annoC, m, i + 1).getDay()]}\n${i + 1}`), "TOT"]];
+                    
+                    doc.setFontSize(16); 
+                    doc.setTextColor(52, 58, 64); 
+                    doc.text(`REGISTRO PRESENZE - ${nomiMesi[m].toUpperCase()} ${annoC}`, 14, 12);
+                    
+                    const colStyles = { 
+                        0: { halign: 'left', cellWidth: 35, fontStyle: 'bold' } 
+                    };
+                    const larghezzaGiorno = (260 - 35 - 10) / g;
+                    for (let i = 1; i <= g; i++) colStyles[i] = { cellWidth: larghezzaGiorno };
+                    colStyles[g + 1] = { cellWidth: 10, fillColor: [248, 249, 250], fontStyle: 'bold' };
+
+                    const config = { 
+                        head: header, 
+                        startY: 20, 
+                        theme: 'grid', 
+                        tableWidth: 'wrap',
+                        styles: { 
+                            fontSize: 6, 
+                            cellPadding: 1, 
+                            halign: 'center', 
+                            overflow: 'linebreak',
+                            lineColor: [200, 200, 200] 
+                        }, 
+                        headStyles: { 
+                            fillColor: [52, 58, 64], 
+                            textColor: [255, 255, 255], 
+                            fontStyle: 'bold', 
+                            fontSize: 5.5 
+                        }, 
+                        columnStyles: colStyles, 
+                        didParseCell: function(data) { 
+                            if (data.section === 'body' && data.column.index > 0 && 
+                                data.column.index <= g && data.cell.text[0] !== '') { 
+                                if (data.cell.text[0] !== '✔' && !isNaN(parseInt(data.cell.text[0]))) {
+                                    data.cell.styles.fillColor = [46, 204, 113];
+                                    data.cell.styles.textColor = [255, 255, 255];
+                                } else if (data.cell.text[0] === '✔') {
+                                    data.cell.styles.fillColor = [46, 204, 113];
+                                    data.cell.styles.textColor = [255, 255, 255];
+                                } else if (data.cell.text[0] === '✗') {
+                                    data.cell.styles.fillColor = [231, 76, 60];
+                                    data.cell.styles.textColor = [255, 255, 255];
+                                }
+                            } 
+                        } 
+                    };
+                    
+                    doc.autoTable({...config, body: preparaDatiPDF(CAT_CUCCIOLI, annoC, m, g, oggi)});
+                    doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g, oggi), 
+                                  startY: doc.lastAutoTable.finalY + 10});
+                    doc.autoTable({...config, body: preparaDatiPDF(CAT_GRANDI, annoC, m, g, oggi), 
+                                  startY: doc.lastAutoTable.finalY + 10});
+                }
+                
+                const b64 = doc.output('datauristring').split(',')[1];
+                status.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Salvataggio su Drive...';
+                
+                const resp = await fetch(WEB_APP_DRIVE_URL, { 
+                    method: 'POST', 
+                    body: JSON.stringify({ 
+                        nomeFile: `Registro_Presenze_${annoC}.pdf`, 
+                        blob: b64 
+                    }) 
+                });
+                
+                const res = await resp.json();
+                if(res.fileUrl) { 
+                    localStorage.setItem('ultimo_pdf_url', res.fileUrl); 
+                    status.innerHTML = `<i class="fas fa-check-circle" style="color: #22c55e;"></i> Backup completato! <a href="${res.fileUrl}" target="_blank" style="color: #3b82f6; font-weight: 700;">APRI PDF</a>`; 
+                } else {
+                    throw new Error('Nessun URL restituito');
+                }
+                
+            } catch(e) { 
+                status.innerHTML = '<i class="fas fa-exclamation-circle" style="color: #ef4444;"></i> Errore durante il backup'; 
+                console.error('Backup error:', e); 
+            }
+        }
+
+        function preparaDatiPDF(cats, anno, mese, giorni, oggi) {
+            const presenzeMese = getPresenzeMese(anno, mese);
+            const oggiMezzanotte = new Date(oggi);
+            oggiMezzanotte.setHours(0, 0, 0, 0);
+            
+            return atletiCache.filter(a => {
+                const inCat = cats.includes((a.categoria || "").trim().toUpperCase());
+                if (!inCat) return false;
+                
+                if (a.archiviato === false || a.archiviato === null) return true;
+                
+                const dInizio = `${anno}-${String(mese+1).padStart(2,'0')}-01`;
+                const dFine = `${anno}-${String(mese+1).padStart(2,'0')}-${giorni}`;
+                
+                return presenzeMese.some(p => 
+                    p.atleta_id === a.id && 
+                    p.data >= dInizio && 
+                    p.data <= dFine && 
+                    (p.stato === 'partecipa' || p.stato.includes('numero:'))
+                );
+            }).map(a => {
+                let riga = [a.nome.toUpperCase()], tot = 0;
+                
+                for(let d = 1; d <= giorni; d++) {
+                    const dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                    const p = presenzeMese.find(x => x.atleta_id === a.id && x.data === dStr);
+                    const dataCella = new Date(anno, mese, d);
+                    dataCella.setHours(0, 0, 0, 0);
+                    
+                    if(p) {
+                        if (p.stato === 'partecipa') {
+                            riga.push("✔");
+                            tot++;
+                        } else if (p.stato && p.stato.includes('numero:')) {
+                            const num = p.stato.split(':')[1];
+                            riga.push(num);
+                            tot++;
+                        } else {
+                            if (dataCella < oggiMezzanotte) {
+                                riga.push("✗");
+                            } else {
+                                riga.push("");
+                            }
+                        }
+                    } else {
+                        if (dataCella < oggiMezzanotte) {
+                            riga.push("✗");
+                        } else {
+                            riga.push("");
+                        }
+                    }
+                }
+                riga.push(tot); 
+                return riga;
+            });
+        }
+
+        // Funzioni per la gestione degli atleti (invariate)
+        async function salvaAtleta() {
+            const id = document.getElementById('edit-id').value;
+            const nome = document.getElementById('new-nome').value.trim().toUpperCase();
+            const cat = document.getElementById('new-cat').value;
+            
+            const errori = validaAtleta(nome, cat, id || null);
+            if (errori.length > 0) {
+                alert(errori.join('\n'));
+                return;
+            }
+            
+            document.getElementById('status-auto').innerHTML = `<span class="loading-spinner"></span> Salvataggio...`;
+            let res;
+            
+            try {
+                if(id) {
+                    res = await supabaseClient
+                        .from('atleti')
+                        .update({ nome, categoria: cat })
+                        .eq('id', id);
+                } else {
+                    res = await supabaseClient
+                        .from('atleti')
+                        .insert([{ 
+                            nome, 
+                            categoria: cat, 
+                            archiviato: false,
+                            created_at: new Date().toISOString()
+                        }]);
+                }
+                
+                if (res.error) throw res.error;
+                
+                resetForm(); 
+                const { data: atleti } = await supabaseClient.from('atleti').select('*').order('nome');
+                atletiCache = atleti || []; 
+                renderAdminList();
+                
+                const sezione = getSezioneCorrente();
+                if (sezione) {
+                    renderHeader(sezione);
+                    renderVirtualScroll(sezione);
+                }
+                
+                document.getElementById('status-auto').innerHTML = '<i class="fas fa-check-circle" style="color: #22c55e;"></i> Atleta salvato';
+                
+            } catch(error) { 
+                console.error('Errore salvataggio atleta:', error);
+                document.getElementById('status-auto').innerHTML = '<i class="fas fa-exclamation-circle" style="color: #ef4444;"></i> Errore salvataggio';
+            }
+        }
+
+        function preparaModifica(id, nome, cat) {
+            document.getElementById('edit-id').value = id;
+            document.getElementById('new-nome').value = nome;
+            document.getElementById('new-cat').value = cat;
+            document.getElementById('btn-save-atleta').innerHTML = '<i class="fas fa-save"></i> AGGIORNA ATLETA';
+            document.getElementById('btn-cancel-edit').style.display = "block";
+            document.getElementById('new-nome').focus();
+        }
+
+        function resetForm() {
+            document.getElementById('edit-id').value = "";
+            document.getElementById('new-nome').value = "";
+            document.getElementById('new-cat').selectedIndex = 0;
+            document.getElementById('btn-save-atleta').innerHTML = '<i class="fas fa-plus-circle"></i> AGGIUNGI ATLETA';
+            document.getElementById('btn-cancel-edit').style.display = "none";
+        }
+
+        function renderAdminList() {
+            const container = document.getElementById('lista-atleti-admin');
+            if (!container) return;
+            
+            if (atletiCache.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 30px; color: #64748b;"><i class="fas fa-users" style="font-size: 40px; margin-bottom: 15px; opacity: 0.5;"></i><br>Nessun atleta registrato</div>';
+                return;
+            }
+            
+            container.innerHTML = atletiCache.map(a => `
+                <div class="atleta-item ${a.archiviato ? 'archiviato' : ''}" role="listitem">
+                    <div class="atleta-info">
+                        <span class="atleta-name">${a.nome} ${a.archiviato ? '(ARCHIVIATO)' : ''}</span>
+                        <span class="atleta-cat">${a.categoria}</span>
+                    </div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+                        <button style="background:#3b82f6; color:white; border:none; padding:10px 16px; border-radius:40px; font-weight:600; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;" 
+                            onclick="preparaModifica(${a.id}, '${a.nome.replace(/'/g, "\\'")}', '${a.categoria}')"
+                            aria-label="Modifica ${a.nome}">
+                            <i class="fas fa-edit"></i> MODIFICA
+                        </button>
+                        <button style="background:${a.archiviato ? '#10b981' : '#f59e0b'}; color:white; border:none; padding:10px 16px; border-radius:40px; font-weight:600; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;" 
+                            onclick="setArchiviazione(${a.id}, ${!a.archiviato})"
+                            aria-label="${a.archiviato ? 'Ripristina' : 'Archivia'} ${a.nome}">
+                            <i class="fas ${a.archiviato ? 'fa-undo' : 'fa-archive'}"></i> ${a.archiviato ? 'RIPRISTINA' : 'ARCHIVIA'}
+                        </button>
+                        <button style="background:#ef4444; color:white; border:none; padding:10px 16px; border-radius:40px; font-weight:600; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; gap:5px;" 
+                            onclick="eliminaDefinitivo(${a.id})"
+                            aria-label="Elimina definitivamente ${a.nome}">
+                            <i class="fas fa-trash"></i> ELIMINA
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function setArchiviazione(id, stato) {
+            try {
+                await supabaseClient
+                    .from('atleti')
+                    .update({ archiviato: stato })
+                    .eq('id', id);
+                    
+                const { data: atleti } = await supabaseClient.from('atleti').select('*').order('nome');
+                atletiCache = atleti || []; 
+                renderAdminList();
+                
+                const sezione = getSezioneCorrente();
+                if (sezione) {
+                    renderHeader(sezione);
+                    renderVirtualScroll(sezione);
+                }
+                
+                document.getElementById('status-auto').innerHTML = '<i class="fas fa-check-circle" style="color: #22c55e;"></i> ' + 
+                    (stato ? "Atleta archiviato" : "Atleta ripristinato");
+                    
+            } catch(error) {
+                console.error('Errore archiviazione:', error);
+            }
+        }
+
+        async function eliminaDefinitivo(id) { 
+            const atleta = atletiCache.find(a => a.id === id);
+            if (!atleta) return;
+            
+            if(confirm(`ATTENZIONE! Eliminando definitivamente "${atleta.nome}" sparirà da TUTTI i registri passati e futuri.\n\nSei assolutamente sicuro?`)) { 
+                try {
+                    await supabaseClient.from('atleti').delete().eq('id', id); 
+                    const { data: atleti } = await supabaseClient.from('atleti').select('*').order('nome');
+                    atletiCache = atleti || []; 
+                    renderAdminList();
+                    
+                    const sezione = getSezioneCorrente();
+                    if (sezione) {
+                        renderHeader(sezione);
+                        renderVirtualScroll(sezione);
+                    }
+                    
+                    document.getElementById('status-auto').innerHTML = '<i class="fas fa-check-circle" style="color: #22c55e;"></i> Atleta eliminato';
+                } catch(error) {
+                    console.error('Errore eliminazione:', error);
+                }
+            } 
+        }
+
+        // Funzioni per registrazione veloce (invariate)
+        function avviaRegistrazioneVeloce() {
+            const sezione = getSezioneCorrente();
+            if (!sezione) {
+                alert('Seleziona prima una categoria');
+                return;
+            }
+            
+            const atleti = getAtletiFiltrati(sezione);
+            if (atleti.length === 0) {
+                alert('Nessun atleta in questa categoria');
+                return;
+            }
+            
+            const oggi = new Date();
+            const oggiStr = oggi.toLocaleDateString('en-CA');
+            
+            quickAthletes = atleti;
+            quickCurrentIndex = 0;
+            quickDate = oggiStr;
+            quickSezione = sezione;
+            quickRegisterActive = true;
+            
+            document.getElementById('quick-register-overlay').style.display = 'flex';
+            aggiornaVeloceDisplay();
+            aggiornaStatoPulsantiNavigazione();
+        }
+
+        function aggiornaVeloceDisplay() {
+            if (!quickRegisterActive || quickAthletes.length === 0) return;
+            
+            const atleta = quickAthletes[quickCurrentIndex];
+            const quickCard = document.getElementById('quick-athlete-card');
+            const quickCategoriaClass = getQuickCategoriaClass(atleta.categoria);
+            
+            quickCard.className = 'quick-athlete-card ' + quickCategoriaClass;
+            
+            document.getElementById('quick-athlete-name').innerText = atleta.nome;
+            document.getElementById('quick-athlete-category').innerText = atleta.categoria;
+            document.getElementById('quick-progress').innerText = `Atleta ${quickCurrentIndex + 1} / ${quickAthletes.length}`;
+            
+            aggiornaStatoVeloce();
+            aggiornaStatoPulsantiNavigazione();
+        }
+
+        function aggiornaStatoVeloce() {
+            const atleta = quickAthletes[quickCurrentIndex];
+            const presenzeMese = getPresenzeMese(dataAttuale.getFullYear(), dataAttuale.getMonth());
+            const p = presenzeMese.find(x => x.atleta_id === atleta.id && x.data === quickDate);
+            
+            const btn = document.getElementById('quick-btn-present');
+            const statusDiv = document.getElementById('quick-status');
+            
+            if (p && (p.stato === 'partecipa' || p.stato.includes('numero:'))) {
+                btn.innerHTML = '<i class="fas fa-times"></i> RIMUOVI';
+                btn.classList.add('partecipa');
+                statusDiv.innerHTML = '<i class="fas fa-check-circle" style="color: #22c55e;"></i> Presente';
+            } else {
+                btn.innerHTML = '<i class="fas fa-check"></i> PRESENTE';
+                btn.classList.remove('partecipa');
+                statusDiv.innerHTML = '<i class="fas fa-clock"></i> Non presente';
+            }
+        }
+
+        function aggiornaStatoPulsantiNavigazione() {
+            const prevBtn = document.getElementById('quick-btn-prev');
+            const nextBtn = document.getElementById('quick-btn-next');
+            
+            prevBtn.disabled = quickCurrentIndex === 0;
+            nextBtn.disabled = quickCurrentIndex === quickAthletes.length - 1;
+        }
+
+        async function toggleQuickPresent() {
+            const atleta = quickAthletes[quickCurrentIndex];
+            const presenzeMese = getPresenzeMese(dataAttuale.getFullYear(), dataAttuale.getMonth());
+            const p = presenzeMese.find(x => x.atleta_id === atleta.id && x.data === quickDate);
+            
+            try {
+                if (p) {
+                    await supabaseClient.from('presenze').delete().eq('atleta_id', atleta.id).eq('data', quickDate);
+                } else {
+                    await supabaseClient.from('presenze').upsert({ 
+                        atleta_id: atleta.id, 
+                        data: quickDate, 
+                        stato: 'partecipa' 
+                    }, { onConflict: 'atleta_id, data' });
+                }
+                
+                await caricaMese(dataAttuale.getFullYear(), dataAttuale.getMonth(), true);
+                aggiornaStatoVeloce();
+                
+                const sezione = getSezioneCorrente();
+                if (sezione) renderVirtualScroll(sezione);
+                
+                controllaPresenzeGiornaliere();
+                
+                if (quickCurrentIndex < quickAthletes.length - 1) {
+                    setTimeout(() => {
+                        nextQuickAthlete();
+                    }, 300);
+                } else {
+                    alert('Ultimo atleta! Premi PROSSIMO o CHIUDI');
+                }
+                
+            } catch (error) {
+                console.error('Errore registrazione veloce:', error);
+            }
+        }
+
+        function nextQuickAthlete() {
+            if (quickCurrentIndex < quickAthletes.length - 1) {
+                quickCurrentIndex++;
+                aggiornaVeloceDisplay();
+            } else {
+                chiudiRegistrazioneVeloce();
+            }
+        }
+
+        function prevQuickAthlete() {
+            if (quickCurrentIndex > 0) {
+                quickCurrentIndex--;
+                aggiornaVeloceDisplay();
+            }
+        }
+
+        function chiudiRegistrazioneVeloce() {
+            document.getElementById('quick-register-overlay').style.display = 'none';
+            quickRegisterActive = false;
+        }
+
+        function aggiornaListaVeloce() {
+            if (!quickRegisterActive) return;
+            
+            const sezione = getSezioneCorrente();
+            if (sezione === quickSezione) {
+                const atleti = getAtletiFiltrati(sezione);
+                quickAthletes = atleti;
+                
+                if (quickCurrentIndex >= quickAthletes.length) {
+                    quickCurrentIndex = Math.max(0, quickAthletes.length - 1);
+                }
+                
+                if (quickAthletes.length > 0) {
+                    aggiornaVeloceDisplay();
+                } else {
+                    chiudiRegistrazioneVeloce();
+                }
+            }
+        }
+
+        // Funzioni per long press
         function startLongPress(el, aId, data, sezione) {
             if (!numericInputAttivo) return;
             
@@ -1850,7 +2907,6 @@
                     avviaTimerBackup();
                 }
                 
-                // Controlla presenze dopo modifica
                 controllaPresenzeGiornaliere();
                 
             } catch (error) {
@@ -1921,7 +2977,6 @@
                         avviaTimerBackup();
                     }
                     
-                    // Controlla presenze dopo modifica
                     controllaPresenzeGiornaliere();
                     
                 } catch (error) {
@@ -1951,704 +3006,85 @@
             totCell.innerText = total;
         }
 
-        // =================== BACKUP AUTOMATICO ===================
-        function avviaTimerBackup() {
-            if (!backupAutomaticoAttivo) return;
-            
-            clearInterval(timerBackup); 
-            secondiMancanti = 10;
-            const status = document.getElementById('status-auto');
-            
-            timerBackup = setInterval(() => { 
-                secondiMancanti--; 
-                status.innerText = `⏳ BACKUP IN ${secondiMancanti}s...`; 
-                if (secondiMancanti <= 0) { 
-                    clearInterval(timerBackup); 
-                    aggiornaBackupDrive(); 
-                } 
-            }, 1000);
-        }
-
-        function toggleBackupAutomatico() {
-            backupAutomaticoAttivo = !backupAutomaticoAttivo;
-            const btn = document.getElementById('btn-backup-auto');
-            
-            if (backupAutomaticoAttivo) {
-                btn.innerHTML = "▶️ AUTO ON";
-                btn.classList.add('attivo');
-                document.getElementById('status-auto').innerText = "✅ Backup automatico ATTIVATO";
-            } else {
-                btn.innerHTML = "⏸️ AUTO OFF";
-                btn.classList.remove('attivo');
-                document.getElementById('status-auto').innerText = "⏸️ Backup automatico DISATTIVATO";
-            }
-            
-            localStorage.setItem('backup_auto_attivo', backupAutomaticoAttivo);
-        }
-
-        function caricaStatoBackupAuto() {
-            const savedState = localStorage.getItem('backup_auto_attivo');
-            if (savedState !== null) {
-                backupAutomaticoAttivo = savedState === 'true';
-                const btn = document.getElementById('btn-backup-auto');
-                if (backupAutomaticoAttivo) {
-                    btn.innerHTML = "▶️ AUTO ON";
-                    btn.classList.add('attivo');
-                } else {
-                    btn.innerHTML = "⏸️ AUTO OFF";
-                    btn.classList.remove('attivo');
-                }
-            }
-        }
-
-        // =================== STATISTICHE ===================
-        function aggiornaStatistiche() {
-            const anno = dataAttuale.getFullYear();
-            const mese = dataAttuale.getMonth();
-            
-            document.getElementById('stat-atleti').innerText = atletiCache.filter(a => !a.archiviato).length;
-            
-            const oggiStr = new Date().toLocaleDateString('en-CA');
-            let presenzeOggi = 0;
-            Object.values(presenzePerMese).forEach(mesePresenze => {
-                presenzeOggi += mesePresenze.filter(p => p.data === oggiStr).length;
-            });
-            document.getElementById('stat-presenze-oggi').innerText = presenzeOggi;
-            
-            const presenzeMese = getPresenzeMese(anno, mese);
-            document.getElementById('stat-presenze-mese').innerText = presenzeMese.length;
-            
-            document.getElementById('last-update').innerText = new Date().toLocaleString();
-        }
-
-        // =================== NAVIGAZIONE ===================
-        function scrollOggi() {
-            const active = document.querySelector('.section-active'); 
-            if (!active) return;
-            
-            const target = active.querySelector('.today-cell'); 
-            const wrapper = active.querySelector('.table-wrapper');
-            const stickyWidth = active.querySelector('.sticky-col')?.offsetWidth || 90;
-            
-            if (target && wrapper) {
-                wrapper.scrollTo({ 
-                    left: target.offsetLeft - stickyWidth - 20, 
-                    behavior: 'smooth' 
-                });
-            }
-        }
-
-        function mostraSezione(s) {
-            sessionStorage.setItem('last_sez', s); 
-            document.getElementById('main-menu').style.display = 'none';
-            
-            document.querySelectorAll('[role="tab"]').forEach(tab => {
-                tab.setAttribute('aria-selected', 'false');
-            });
-            
-            document.getElementById('sez-cuccioli').className = 
-                (s === 'cuccioli') ? 'section-active' : 'section-container';
-            document.getElementById('sez-piccoli').className = 
-                (s === 'piccoli') ? 'section-active' : 'section-container';
-            document.getElementById('sez-grandi').className = 
-                (s === 'grandi') ? 'section-active' : 'section-container';
-            
-            if (s === 'cuccioli') {
-                document.querySelector('.btn-cuccioli').setAttribute('aria-selected', 'true');
-            } else if (s === 'piccoli') {
-                document.querySelector('.btn-piccoli').setAttribute('aria-selected', 'true');
-            } else if (s === 'grandi') {
-                document.querySelector('.btn-grandi').setAttribute('aria-selected', 'true');
-            }
-            
-            renderHeader(s);
-            setTimeout(() => {
-                renderVirtualScroll(s);
-                scrollOggi();
-            }, 100);
-        }
-
-        function vaiAllaHome() { 
-            sessionStorage.removeItem('last_sez'); 
-            location.reload(); 
-        }
-
-        async function cambiaData() { 
-            const nuovoMese = parseInt(document.getElementById('select-mese').value);
-            const nuovoAnno = parseInt(document.getElementById('select-anno').value);
-            
-            localStorage.setItem('p_mese', nuovoMese); 
-            localStorage.setItem('p_anno', nuovoAnno); 
-            
-            dataAttuale = new Date(nuovoAnno, nuovoMese, 1);
-            
-            document.getElementById('status-auto').innerHTML = `<span class="loading-spinner"></span> Caricamento mese...`;
-            await caricaMesiVicini(nuovoAnno, nuovoMese, 1);
-            
-            const sezione = getSezioneCorrente();
-            if (sezione) {
-                renderHeader(sezione);
-                renderVirtualScroll(sezione);
-            }
-            document.getElementById('status-auto').innerText = "✅ Mese caricato";
-            scrollOggi();
-        }
-
-        function toggleAdmin() { 
-            const ov = document.getElementById('admin-overlay'); 
-            ov.style.display = (ov.style.display === 'flex') ? 'none' : 'flex'; 
-            
-            if (ov.style.display === 'flex') {
-                renderAdminList();
-            }
-        }
-
-        function apriFileDrive() { 
-            const url = localStorage.getItem('ultimo_pdf_url'); 
-            if(url) {
-                window.open(url, '_blank');
-            } else {
-                alert("Nessun backup trovato. Genera prima un backup.");
-            }
-        }
-
-        // =================== BACKUP PDF ===================
-        async function aggiornaBackupDrive() {
-            const status = document.getElementById('status-auto'); 
-            status.innerText = "📄 GENERAZIONE PDF...";
-            
-            try {
-                const { jsPDF } = window.jspdf; 
-                const doc = new jsPDF('l', 'mm', 'a4'); 
-                const annoC = dataAttuale.getFullYear();
-                const oggi = new Date();
-                
-                for (let m = 0; m < 12; m++) {
-                    if (m > 0) doc.addPage();
-                    const g = new Date(annoC, m + 1, 0).getDate();
-                    
-                    await caricaMese(annoC, m);
-                    
-                    const header = [["ATLETA", ...Array.from({length: g}, (_, i) => 
-                        `${nomiGiorni[new Date(annoC, m, i + 1).getDay()]}\n${i + 1}`), "TOT"]];
-                    
-                    doc.setFontSize(16); 
-                    doc.setTextColor(52, 58, 64); 
-                    doc.text(`REGISTRO PRESENZE - ${nomiMesi[m].toUpperCase()} ${annoC}`, 14, 12);
-                    
-                    const colStyles = { 
-                        0: { halign: 'left', cellWidth: 35, fontStyle: 'bold' } 
-                    };
-                    const larghezzaGiorno = (260 - 35 - 10) / g;
-                    for (let i = 1; i <= g; i++) colStyles[i] = { cellWidth: larghezzaGiorno };
-                    colStyles[g + 1] = { cellWidth: 10, fillColor: [248, 249, 250], fontStyle: 'bold' };
-
-                    const config = { 
-                        head: header, 
-                        startY: 20, 
-                        theme: 'grid', 
-                        tableWidth: 'wrap',
-                        styles: { 
-                            fontSize: 6, 
-                            cellPadding: 1, 
-                            halign: 'center', 
-                            overflow: 'linebreak',
-                            lineColor: [200, 200, 200] 
-                        }, 
-                        headStyles: { 
-                            fillColor: [52, 58, 64], 
-                            textColor: [255, 255, 255], 
-                            fontStyle: 'bold', 
-                            fontSize: 5.5 
-                        }, 
-                        columnStyles: colStyles, 
-                        didParseCell: function(data) { 
-                            if (data.section === 'body' && data.column.index > 0 && 
-                                data.column.index <= g && data.cell.text[0] !== '') { 
-                                if (data.cell.text[0] !== '✔' && !isNaN(parseInt(data.cell.text[0]))) {
-                                    data.cell.styles.fillColor = [46, 204, 113];
-                                    data.cell.styles.textColor = [255, 255, 255];
-                                } else if (data.cell.text[0] === '✔') {
-                                    data.cell.styles.fillColor = [46, 204, 113];
-                                    data.cell.styles.textColor = [255, 255, 255];
-                                } else if (data.cell.text[0] === '✗') {
-                                    data.cell.styles.fillColor = [231, 76, 60];
-                                    data.cell.styles.textColor = [255, 255, 255];
-                                }
-                            } 
-                        } 
-                    };
-                    
-                    doc.autoTable({...config, body: preparaDatiPDF(CAT_CUCCIOLI, annoC, m, g, oggi)});
-                    doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g, oggi), 
-                                  startY: doc.lastAutoTable.finalY + 10});
-                    doc.autoTable({...config, body: preparaDatiPDF(CAT_GRANDI, annoC, m, g, oggi), 
-                                  startY: doc.lastAutoTable.finalY + 10});
-                }
-                
-                const b64 = doc.output('datauristring').split(',')[1];
-                status.innerText = "☁️ SALVATAGGIO SU DRIVE...";
-                
-                const resp = await fetch(WEB_APP_DRIVE_URL, { 
-                    method: 'POST', 
-                    body: JSON.stringify({ 
-                        nomeFile: `Registro_Presenze_${annoC}.pdf`, 
-                        blob: b64 
-                    }) 
-                });
-                
-                const res = await resp.json();
-                if(res.fileUrl) { 
-                    localStorage.setItem('ultimo_pdf_url', res.fileUrl); 
-                    status.innerHTML = `✅ BACKUP COMPLETATO! <a href="${res.fileUrl}" target="_blank" style="color: #4285F4; font-weight: bold;">APRI PDF</a>`; 
-                } else {
-                    throw new Error('Nessun URL restituito');
-                }
-                
-            } catch(e) { 
-                status.innerText = "❌ ERRORE DURANTE IL BACKUP"; 
-                console.error('Backup error:', e); 
-            }
-        }
-
-        function preparaDatiPDF(cats, anno, mese, giorni, oggi) {
-            const presenzeMese = getPresenzeMese(anno, mese);
-            const oggiMezzanotte = new Date(oggi);
-            oggiMezzanotte.setHours(0, 0, 0, 0);
-            
-            return atletiCache.filter(a => {
-                const inCat = cats.includes((a.categoria || "").trim().toUpperCase());
-                if (!inCat) return false;
-                
-                if (a.archiviato === false || a.archiviato === null) return true;
-                
-                const dInizio = `${anno}-${String(mese+1).padStart(2,'0')}-01`;
-                const dFine = `${anno}-${String(mese+1).padStart(2,'0')}-${giorni}`;
-                
-                return presenzeMese.some(p => 
-                    p.atleta_id === a.id && 
-                    p.data >= dInizio && 
-                    p.data <= dFine && 
-                    (p.stato === 'partecipa' || p.stato.includes('numero:'))
-                );
-            }).map(a => {
-                let riga = [a.nome.toUpperCase()], tot = 0;
-                
-                for(let d = 1; d <= giorni; d++) {
-                    const dStr = `${anno}-${String(mese+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                    const p = presenzeMese.find(x => x.atleta_id === a.id && x.data === dStr);
-                    const dataCella = new Date(anno, mese, d);
-                    dataCella.setHours(0, 0, 0, 0);
-                    
-                    if(p) {
-                        if (p.stato === 'partecipa') {
-                            riga.push("✔");
-                            tot++;
-                        } else if (p.stato && p.stato.includes('numero:')) {
-                            const num = p.stato.split(':')[1];
-                            riga.push(num);
-                            tot++;
-                        } else {
-                            if (dataCella < oggiMezzanotte) {
-                                riga.push("✗");
-                            } else {
-                                riga.push("");
-                            }
-                        }
-                    } else {
-                        if (dataCella < oggiMezzanotte) {
-                            riga.push("✗");
-                        } else {
-                            riga.push("");
-                        }
-                    }
-                }
-                riga.push(tot); 
-                return riga;
-            });
-        }
-
-        // =================== GESTIONE ATLETI CON VALIDAZIONE ===================
-        async function salvaAtleta() {
-            const id = document.getElementById('edit-id').value;
-            const nome = document.getElementById('new-nome').value.trim().toUpperCase();
-            const cat = document.getElementById('new-cat').value;
-            
-            const errori = validaAtleta(nome, cat, id || null);
-            if (errori.length > 0) {
-                alert(errori.join('\n'));
-                return;
-            }
-            
-            document.getElementById('status-auto').innerHTML = `<span class="loading-spinner"></span> Salvataggio...`;
-            let res;
-            
-            try {
-                if(id) {
-                    res = await supabaseClient
-                        .from('atleti')
-                        .update({ nome, categoria: cat })
-                        .eq('id', id);
-                } else {
-                    res = await supabaseClient
-                        .from('atleti')
-                        .insert([{ 
-                            nome, 
-                            categoria: cat, 
-                            archiviato: false,
-                            created_at: new Date().toISOString()
-                        }]);
-                }
-                
-                if (res.error) throw res.error;
-                
-                resetForm(); 
-                const { data: atleti } = await supabaseClient.from('atleti').select('*').order('nome');
-                atletiCache = atleti || []; 
-                renderAdminList();
-                
-                const sezione = getSezioneCorrente();
-                if (sezione) {
-                    renderHeader(sezione);
-                    renderVirtualScroll(sezione);
-                }
-                
-                document.getElementById('status-auto').innerText = "✅ Atleta salvato";
-                
-            } catch(error) { 
-                console.error('Errore salvataggio atleta:', error);
-                document.getElementById('status-auto').innerText = "❌ Errore salvataggio";
-            }
-        }
-
-        function preparaModifica(id, nome, cat) {
-            document.getElementById('edit-id').value = id;
-            document.getElementById('new-nome').value = nome;
-            document.getElementById('new-cat').value = cat;
-            document.getElementById('btn-save-atleta').innerText = "💾 AGGIORNA ATLETA";
-            document.getElementById('btn-cancel-edit').style.display = "block";
-            document.getElementById('new-nome').focus();
-        }
-
-        function resetForm() {
-            document.getElementById('edit-id').value = "";
-            document.getElementById('new-nome').value = "";
-            document.getElementById('new-cat').selectedIndex = 0;
-            document.getElementById('btn-save-atleta').innerText = "➕ AGGIUNGI ATLETA";
-            document.getElementById('btn-cancel-edit').style.display = "none";
-        }
-
-        function renderAdminList() {
-            const container = document.getElementById('lista-atleti-admin');
-            if (!container) return;
-            
-            if (atletiCache.length === 0) {
-                container.innerHTML = '<div style="text-align: center; padding: 30px; color: #666;">Nessun atleta registrato</div>';
-                return;
-            }
-            
-            container.innerHTML = atletiCache.map(a => `
-                <div class="atleta-item ${a.archiviato ? 'archiviato' : ''}" role="listitem">
-                    <div class="atleta-info">
-                        <span class="atleta-name">${a.nome} ${a.archiviato ? '(ARCHIVIATO)' : ''}</span>
-                        <span class="atleta-cat">${a.categoria}</span>
-                    </div>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
-                        <button style="background:#4285F4; color:white; border:none; padding:10px 16px; border-radius:10px; font-weight:bold; font-size:13px; cursor:pointer;" 
-                            onclick="preparaModifica(${a.id}, '${a.nome.replace(/'/g, "\\'")}', '${a.categoria}')"
-                            aria-label="Modifica ${a.nome}">
-                            MODIFICA
-                        </button>
-                        <button style="background:${a.archiviato ? '#34a853' : '#f39c12'}; color:white; border:none; padding:10px 16px; border-radius:10px; font-weight:bold; font-size:13px; cursor:pointer;" 
-                            onclick="setArchiviazione(${a.id}, ${!a.archiviato})"
-                            aria-label="${a.archiviato ? 'Ripristina' : 'Archivia'} ${a.nome}">
-                            ${a.archiviato ? 'RIPRISTINA' : 'ARCHIVIA'}
-                        </button>
-                        <button style="background:#e74c3c; color:white; border:none; padding:10px 16px; border-radius:10px; font-weight:bold; font-size:13px; cursor:pointer;" 
-                            onclick="eliminaDefinitivo(${a.id})"
-                            aria-label="Elimina definitivamente ${a.nome}">
-                            ELIMINA
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        async function setArchiviazione(id, stato) {
-            try {
-                await supabaseClient
-                    .from('atleti')
-                    .update({ archiviato: stato })
-                    .eq('id', id);
-                    
-                const { data: atleti } = await supabaseClient.from('atleti').select('*').order('nome');
-                atletiCache = atleti || []; 
-                renderAdminList();
-                
-                const sezione = getSezioneCorrente();
-                if (sezione) {
-                    renderHeader(sezione);
-                    renderVirtualScroll(sezione);
-                }
-                
-                document.getElementById('status-auto').innerText = 
-                    stato ? "✅ Atleta archiviato" : "✅ Atleta ripristinato";
-                    
-            } catch(error) {
-                console.error('Errore archiviazione:', error);
-            }
-        }
-
-        async function eliminaDefinitivo(id) { 
-            const atleta = atletiCache.find(a => a.id === id);
-            if (!atleta) return;
-            
-            if(confirm(`ATTENZIONE! Eliminando definitivamente "${atleta.nome}" sparirà da TUTTI i registri passati e futuri.\n\nSei assolutamente sicuro?`)) { 
-                try {
-                    await supabaseClient.from('atleti').delete().eq('id', id); 
-                    const { data: atleti } = await supabaseClient.from('atleti').select('*').order('nome');
-                    atletiCache = atleti || []; 
-                    renderAdminList();
-                    
-                    const sezione = getSezioneCorrente();
-                    if (sezione) {
-                        renderHeader(sezione);
-                        renderVirtualScroll(sezione);
-                    }
-                    
-                    document.getElementById('status-auto').innerText = "✅ Atleta eliminato";
-                } catch(error) {
-                    console.error('Errore eliminazione:', error);
-                }
-            } 
-        }
-
-        // =================== REGISTRAZIONE VELOCE ===================
-        function avviaRegistrazioneVeloce() {
-            const sezione = getSezioneCorrente();
-            if (!sezione) {
-                alert('Seleziona prima una categoria');
-                return;
-            }
-            
-            const atleti = getAtletiFiltrati(sezione);
-            if (atleti.length === 0) {
-                alert('Nessun atleta in questa categoria');
-                return;
-            }
-            
-            const oggi = new Date();
-            const oggiStr = oggi.toLocaleDateString('en-CA');
-            
-            quickAthletes = atleti;
-            quickCurrentIndex = 0;
-            quickDate = oggiStr;
-            quickSezione = sezione;
-            quickRegisterActive = true;
-            
-            document.getElementById('quick-register-overlay').style.display = 'flex';
-            aggiornaVeloceDisplay();
-            aggiornaStatoPulsantiNavigazione();
-        }
-
-        function aggiornaVeloceDisplay() {
-            if (!quickRegisterActive || quickAthletes.length === 0) return;
-            
-            const atleta = quickAthletes[quickCurrentIndex];
-            const quickCard = document.getElementById('quick-athlete-card');
-            const quickCategoriaClass = getQuickCategoriaClass(atleta.categoria);
-            
-            quickCard.className = 'quick-athlete-card ' + quickCategoriaClass;
-            
-            document.getElementById('quick-athlete-name').innerText = atleta.nome;
-            document.getElementById('quick-athlete-category').innerText = atleta.categoria;
-            document.getElementById('quick-progress').innerText = `Atleta ${quickCurrentIndex + 1} / ${quickAthletes.length}`;
-            
-            aggiornaStatoVeloce();
-            aggiornaStatoPulsantiNavigazione();
-        }
-
-        function aggiornaStatoVeloce() {
-            const atleta = quickAthletes[quickCurrentIndex];
-            const presenzeMese = getPresenzeMese(dataAttuale.getFullYear(), dataAttuale.getMonth());
-            const p = presenzeMese.find(x => x.atleta_id === atleta.id && x.data === quickDate);
-            
-            const btn = document.getElementById('quick-btn-present');
-            const statusDiv = document.getElementById('quick-status');
-            
-            if (p && (p.stato === 'partecipa' || p.stato.includes('numero:'))) {
-                btn.innerHTML = '❌ RIMUOVI';
-                btn.classList.add('partecipa');
-                statusDiv.innerHTML = '✅ Atleta segnato come presente';
-            } else {
-                btn.innerHTML = '✅ PRESENTE';
-                btn.classList.remove('partecipa');
-                statusDiv.innerHTML = '⏺️ Atleta non presente';
-            }
-        }
-
-        function aggiornaStatoPulsantiNavigazione() {
-            const prevBtn = document.getElementById('quick-btn-prev');
-            const nextBtn = document.getElementById('quick-btn-next');
-            
-            if (quickCurrentIndex === 0) {
-                prevBtn.disabled = true;
-            } else {
-                prevBtn.disabled = false;
-            }
-            
-            if (quickCurrentIndex === quickAthletes.length - 1) {
-                nextBtn.disabled = true;
-            } else {
-                nextBtn.disabled = false;
-            }
-        }
-
-        async function toggleQuickPresent() {
-            const atleta = quickAthletes[quickCurrentIndex];
-            const presenzeMese = getPresenzeMese(dataAttuale.getFullYear(), dataAttuale.getMonth());
-            const p = presenzeMese.find(x => x.atleta_id === atleta.id && x.data === quickDate);
-            
-            try {
-                if (p) {
-                    await supabaseClient.from('presenze').delete().eq('atleta_id', atleta.id).eq('data', quickDate);
-                } else {
-                    await supabaseClient.from('presenze').upsert({ 
-                        atleta_id: atleta.id, 
-                        data: quickDate, 
-                        stato: 'partecipa' 
-                    }, { onConflict: 'atleta_id, data' });
-                }
-                
-                await caricaMese(dataAttuale.getFullYear(), dataAttuale.getMonth(), true);
-                aggiornaStatoVeloce();
-                
-                const sezione = getSezioneCorrente();
-                if (sezione) renderVirtualScroll(sezione);
-                
-                // Controlla presenze dopo modifica
-                controllaPresenzeGiornaliere();
-                
-                if (quickCurrentIndex < quickAthletes.length - 1) {
-                    setTimeout(() => {
-                        nextQuickAthlete();
-                    }, 300);
-                } else {
-                    alert('Ultimo atleta! Premi PROSSIMO o CHIUDI');
-                }
-                
-            } catch (error) {
-                console.error('Errore registrazione veloce:', error);
-            }
-        }
-
-        function nextQuickAthlete() {
-            if (quickCurrentIndex < quickAthletes.length - 1) {
-                quickCurrentIndex++;
-                aggiornaVeloceDisplay();
-            } else {
-                chiudiRegistrazioneVeloce();
-            }
-        }
-
-        function prevQuickAthlete() {
-            if (quickCurrentIndex > 0) {
-                quickCurrentIndex--;
-                aggiornaVeloceDisplay();
-            }
-        }
-
-        function chiudiRegistrazioneVeloce() {
-            document.getElementById('quick-register-overlay').style.display = 'none';
-            quickRegisterActive = false;
-        }
-
-        function aggiornaListaVeloce() {
-            if (!quickRegisterActive) return;
-            
-            const sezione = getSezioneCorrente();
-            if (sezione === quickSezione) {
-                const atleti = getAtletiFiltrati(sezione);
-                quickAthletes = atleti;
-                
-                if (quickCurrentIndex >= quickAthletes.length) {
-                    quickCurrentIndex = Math.max(0, quickAthletes.length - 1);
-                }
-                
-                if (quickAthletes.length > 0) {
-                    aggiornaVeloceDisplay();
-                } else {
-                    chiudiRegistrazioneVeloce();
-                }
-            }
-        }
-
-        // =================== SISTEMA NOTIFICHE PUSH ===================
+        // Funzioni per notifiche
         async function initSistemaNotifiche() {
             console.log('🔔 Inizializzazione sistema notifiche...');
             
             const swRegistrato = await registraServiceWorker();
             if (!swRegistrato) {
-                aggiornaStatoNotificheUI('❌ Service Worker non registrato');
-                return false;
-            }
-            
-            const permessi = await richiediPermessiNotifiche();
-            if (!permessi) {
-                aggiornaStatoNotificheUI('❌ Permessi negati');
                 return false;
             }
             
             setupMessageListener();
             avviaMonitoraggioPersonalizzato();
-            aggiornaStatoNotificheUI('✅ Notifiche attive');
             
             return true;
         }
 
         async function registraServiceWorker() {
-    if (!('serviceWorker' in navigator)) {
-        console.log('Service Worker non supportato');
-        return false;
-    }
+            if (!('serviceWorker' in navigator)) {
+                console.log('Service Worker non supportato');
+                return false;
+            }
 
-    try {
-        const registration = await navigator.serviceWorker.register('sw.js', {
-            scope: '/presenze-allenamenti/'    // <--- CORRETTO!
-        });
-        console.log('Service Worker registrato:', registration);
-        
-        await navigator.serviceWorker.ready;
-        return true;
-        
-    } catch (error) {
-        console.error('Errore registrazione Service Worker:', error);
-        return false;
-    }
-}
+            try {
+                const registration = await navigator.serviceWorker.register('sw.js', {
+                    scope: '/presenze-allenamenti/'
+                });
+                console.log('Service Worker registrato:', registration);
+                
+                await navigator.serviceWorker.ready;
+                return true;
+                
+            } catch (error) {
+                console.error('Errore registrazione Service Worker:', error);
+                return false;
+            }
+        }
 
         async function richiediPermessiNotifiche() {
             if (!('Notification' in window)) {
-                console.log('Notifiche non supportate');
+                alert('Notifiche non supportate dal tuo browser');
                 return false;
             }
 
             if (Notification.permission === 'granted') {
+                alert('✅ Notifiche già autorizzate');
+                aggiornaStatoNotificheUI();
                 return true;
             }
 
             if (Notification.permission === 'denied') {
-                console.log('Permessi notifiche negati');
+                alert('❌ Permessi notifiche negati. Abilita manualmente dalle impostazioni del browser.');
                 return false;
             }
 
             try {
                 const permission = await Notification.requestPermission();
-                return permission === 'granted';
+                const autorizzato = permission === 'granted';
+                
+                if (autorizzato) {
+                    alert('✅ Notifiche autorizzate con successo!');
+                } else {
+                    alert('❌ Autorizzazione notifiche negata');
+                }
+                
+                aggiornaStatoNotificheUI();
+                return autorizzato;
+                
             } catch (error) {
                 console.error('Errore richiesta permessi:', error);
+                alert('Errore durante la richiesta dei permessi');
                 return false;
             }
+        }
+
+        window.autorizzaNotifiche = async function() {
+            const risultato = await richiediPermessiNotifiche();
+            if (risultato) {
+                avviaMonitoraggioPersonalizzato();
+            }
+            aggiornaStatoNotificheUI();
         }
 
         function setupMessageListener() {
@@ -2668,16 +3104,11 @@
                     
                     setTimeout(scrollOggi, 500);
                 }
-                
-                if (event.data.type === 'SW_ACTIVATED') {
-                    console.log('✅ Service Worker attivato versione:', event.data.version);
-                    aggiornaStatoNotificheUI();
-                }
             });
         }
 
         function avviaMonitoraggioPersonalizzato() {
-            console.log('📊 Avvio monitoraggio presenze personalizzato...');
+            console.log('📊 Avvio monitoraggio presenze...');
             
             controllaPresenzeGiornaliere();
             
@@ -2771,17 +3202,17 @@
                 const oraCorrente = oggi.getHours();
                 
                 if (giornoSettimana === 0) {
-                    console.log('Domenica - nessun controllo necessario');
+                    console.log('Domenica - nessun controllo');
                     return;
                 }
                 
                 const risultati = await getRisultatiControllo();
                 
-                console.log('📊 Risultati controllo:', risultati);
+                const permessiOk = Notification.permission === 'granted';
                 
                 const inviaNotifica = forzaNotifica || oraCorrente >= CONFIG_NOTIFICHE.ORARIO_NOTIFICA;
                 
-                if (inviaNotifica) {
+                if (permessiOk && inviaNotifica) {
                     const oggiStr = oggi.toDateString();
                     
                     if (risultati.piccoli.deveAllenarsi && 
@@ -2828,13 +3259,12 @@
             
             let titolo = '';
             let corpo = '';
-            let categoriaNotifica = categoria.toUpperCase();
             
             if (categoria === 'piccoli') {
-                titolo = '👦 PICCOLI - Nessuna presenza registrata';
+                titolo = '👦 PICCOLI - Nessuna presenza';
                 corpo = `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i PICCOLI. ${totaleAtleti} atleti in lista.`;
             } else {
-                titolo = '🏃 GRANDI - Nessuna presenza registrata';
+                titolo = '🏃 GRANDI - Nessuna presenza';
                 corpo = `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i GRANDI. ${totaleAtleti} atleti in lista.`;
             }
             
@@ -2927,114 +3357,88 @@
             }
         }
 
-        function aggiornaStatoNotificheUI(stato) {
-            const statoEl = document.getElementById('notification-status');
-            if (!statoEl) return;
-            
-            if (stato) {
-                statoEl.innerHTML = `🔔 ${stato}`;
-                return;
-            }
+        function aggiornaStatoNotificheUI() {
+            const statusDiv = document.getElementById('notifica-status-settings');
+            if (!statusDiv) return;
             
             if (!('Notification' in window)) {
-                statoEl.innerHTML = '🔔 ❌ Non supportato';
+                statusDiv.innerHTML = '<i class="fas fa-times-circle" style="color: #ef4444;"></i> Notifiche non supportate';
                 return;
             }
             
             switch(Notification.permission) {
                 case 'granted':
-                    statoEl.innerHTML = '🔔 ✅ Notifiche attive - Controllo ogni ora, notifica alle 21:00';
+                    statusDiv.innerHTML = '<i class="fas fa-check-circle" style="color: #22c55e;"></i> Notifiche ATTIVE';
                     break;
                 case 'denied':
-                    statoEl.innerHTML = '🔔 ❌ Notifiche bloccate - Abilita dalle impostazioni';
+                    statusDiv.innerHTML = '<i class="fas fa-ban" style="color: #ef4444;"></i> Notifiche BLOCCATE';
                     break;
                 default:
-                    statoEl.innerHTML = '🔔 ⏸️ Notifiche non attivate - Clicca su TEST NOTIFICA per abilitare';
+                    statusDiv.innerHTML = '<i class="fas fa-hourglass-half" style="color: #f97316;"></i> Notifiche NON AUTORIZZATE';
             }
         }
 
-        async function testNotifiche() {
-            console.log('🔔 Test sistema notifiche...');
+        function apriImpostazioniNotifiche() {
+            const overlay = document.getElementById('notifica-settings-overlay');
+            const inputOra = document.getElementById('notifica-ora');
             
-            const permesso = await initSistemaNotifiche();
+            inputOra.value = CONFIG_NOTIFICHE.ORARIO_NOTIFICA;
             
-            if (permesso) {
-                const risultati = {
-                    piccoli: {
-                        deveAllenarsi: true,
-                        presenze: 0,
-                        totaleAtleti: getAtletiFiltrati('piccoli').length
-                    },
-                    grandi: {
-                        deveAllenarsi: true,
-                        presenze: 0,
-                        totaleAtleti: getAtletiFiltrati('grandi').length
-                    }
-                };
-                
-                await inviaNotificaCompleta(risultati);
-            } else {
-                alert('Permessi notifiche non concessi. Controlla le impostazioni del browser.');
-            }
+            aggiornaStatoNotificheUI();
+            
+            overlay.style.display = 'flex';
         }
 
-        function mostraStatoNotifiche() {
-            const oggi = new Date();
-            const giorno = oggi.getDay();
-            const giornoNome = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'][giorno];
-            
-            const piccoliAllenamento = CONFIG_NOTIFICHE.GIORNI_PICCOLI.includes(giorno) ? 'SÌ' : 'NO';
-            const grandiAllenamento = CONFIG_NOTIFICHE.GIORNI_GRANDI.includes(giorno) ? 'SÌ' : 'NO';
-            
-            const atletiPiccoli = getAtletiFiltrati('piccoli').length;
-            const atletiGrandi = getAtletiFiltrati('grandi').length;
-            
-            const oggiStr = oggi.toLocaleDateString('en-CA');
-            let presenzeOggi = 0;
-            Object.values(presenzePerMese).forEach(mesePresenze => {
-                presenzeOggi += mesePresenze.filter(p => p.data === oggiStr).length;
-            });
-            
-            const messaggio = `
-📊 STATO NOTIFICHE
-📅 Oggi: ${giornoNome}
-👦 Piccoli allenamento: ${piccoliAllenamento} (${atletiPiccoli} atleti)
-🏃 Grandi allenamento: ${grandiAllenamento} (${atletiGrandi} atleti)
-📝 Presenze oggi: ${presenzeOggi}
-⏰ Orario notifica: 21:00
-🔔 Notifiche: ${Notification.permission === 'granted' ? 'ATTIVE ✅' : 'NON ATTIVE ❌'}
-            `;
-            
-            alert(messaggio);
+        function chiudiImpostazioniNotifiche() {
+            document.getElementById('notifica-settings-overlay').style.display = 'none';
         }
 
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                console.log('App tornata in primo piano, controllo presenze...');
-                controllaPresenzeGiornaliere();
+        function salvaImpostazioniNotifiche() {
+            const nuovaOra = parseInt(document.getElementById('notifica-ora').value);
+            
+            if (isNaN(nuovaOra) || nuovaOra < 0 || nuovaOra > 23) {
+                alert('Inserisci un orario valido tra 0 e 23');
+                return;
             }
-        });
+            
+            CONFIG_NOTIFICHE.ORARIO_NOTIFICA = nuovaOra;
+            localStorage.setItem('notifica_ora', nuovaOra);
+            
+            alert(`✅ Ora notifica impostata alle ${nuovaOra}:00`);
+            chiudiImpostazioniNotifiche();
+        }
+
+        function caricaOraNotifica() {
+            const oraSalvata = localStorage.getItem('notifica_ora');
+            if (oraSalvata !== null) {
+                CONFIG_NOTIFICHE.ORARIO_NOTIFICA = parseInt(oraSalvata);
+            }
+        }
 
         // Eventi per l'installazione PWA
         window.addEventListener('beforeinstallprompt', (e) => {
             console.log('📲 Evento beforeinstallprompt catturato');
             e.preventDefault();
             deferredPrompt = e;
-            const btn = document.getElementById('install-pwa-btn');
-            if (btn) btn.style.display = 'inline-flex';
+            const btnBottom = document.getElementById('install-pwa-btn-bottom');
+            if (btnBottom) btnBottom.style.display = 'inline-flex';
         });
 
         window.addEventListener('appinstalled', (evt) => {
             console.log('📲 App installata con successo');
-            const btn = document.getElementById('install-pwa-btn');
-            if (btn) btn.style.display = 'none';
+            const btnBottom = document.getElementById('install-pwa-btn-bottom');
+            if (btnBottom) btnBottom.style.display = 'none';
             deferredPrompt = null;
-            alert('✅ Grazie per aver installato Registro Presenze 2050!');
         });
 
-        // =================== INIZIALIZZAZIONE ===================
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                console.log('App tornata in primo piano');
+                controllaPresenzeGiornaliere();
+            }
+        });
+
         window.onload = inizializza;
     </script>
 </body>
 </html>
-
