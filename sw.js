@@ -1,10 +1,9 @@
 // =================== SERVICE WORKER REGISTRO PRESENZE ===================
-// Versione: 5.1.0 (con notifiche intelligenti + backup automatico)
+// Versione: 5.0.0 (con notifiche intelligenti)
 // Compatibile con Android e iOS
 
 const CACHE_NAME = 'registro-presenze-v5';
-const APP_VERSION = '5.1.0';
-const BACKUP_URL = "https://script.google.com/macros/s/AKfycbwFpB0x-xfGXm0JT60QjtO8VVTIsLBHOFvWvcEB-gY83lFCB6GQoYM9LNitDUSuP43rZQ/exec";
+const APP_VERSION = '5.0.0';
 
 // Risorse da memorizzare nella cache
 const urlsToCache = [
@@ -68,9 +67,7 @@ self.addEventListener('activate', (event) => {
           })
         );
       }),
-      self.clients.claim(),
-      // Registra il backup periodico all'attivazione
-      registraBackupPeriodico()
+      self.clients.claim()
     ])
     .then(() => {
       console.log('[SW] ✅ Service Worker attivo e pronto');
@@ -81,131 +78,6 @@ self.addEventListener('activate', (event) => {
     })
   );
 });
-
-// =================== PERIODIC SYNC (BACKUP AUTOMATICO) ===================
-self.addEventListener('periodicsync', (event) => {
-  console.log('[SW] 🔄 Periodic sync ricevuto:', event.tag);
-  
-  if (event.tag === 'backup-giornaliero') {
-    event.waitUntil(eseguiBackupAutomatico());
-  }
-});
-
-async function eseguiBackupAutomatico() {
-  const ora = new Date().getHours();
-  const minuti = new Date().getMinutes();
-  
-  console.log(`[SW] ⏰ Esecuzione backup automatico alle ${ora}:${minuti}`);
-  
-  try {
-    // Recupera i dati necessari per il backup
-    const response = await fetch(BACKUP_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        tipo: 'backup_automatico',
-        timestamp: new Date().toISOString()
-      })
-    });
-    
-    const result = await response.json();
-    
-    if (result.fileUrl) {
-      // Salva l'URL nel localStorage (tramite client)
-      const clients = await self.clients.matchAll();
-      clients.forEach(client => {
-        client.postMessage({
-          type: 'BACKUP_COMPLETATO',
-          url: result.fileUrl,
-          timestamp: new Date().toLocaleString()
-        });
-      });
-      
-      // Invia notifica di conferma
-      await self.registration.showNotification('✅ Backup automatico completato', {
-        body: `Backup giornaliero eseguito con successo alle ${ora}:${minuti.toString().padStart(2, '0')}`,
-        icon: '/presenze-allenamenti/icon-192.png',
-        badge: '/presenze-allenamenti/icon-72.png',
-        tag: `backup-${new Date().toDateString()}`,
-        requireInteraction: false,
-        actions: [
-          {
-            action: 'apri-backup',
-            title: '📂 APRI BACKUP'
-          }
-        ],
-        data: {
-          url: result.fileUrl,
-          tipo: 'backup'
-        }
-      });
-      
-      console.log('[SW] ✅ Backup automatico completato:', result.fileUrl);
-      return true;
-    } else {
-      throw new Error('Nessun URL ricevuto');
-    }
-    
-  } catch (error) {
-    console.error('[SW] ❌ Errore backup automatico:', error);
-    
-    // Notifica errore
-    await self.registration.showNotification('❌ Backup automatico fallito', {
-      body: 'Riprova manualmente domattina',
-      icon: '/presenze-allenamenti/icon-192.png',
-      badge: '/presenze-allenamenti/icon-72.png',
-      tag: `backup-fallito-${new Date().toDateString()}`
-    });
-    
-    return false;
-  }
-}
-
-async function registraBackupPeriodico() {
-  try {
-    if ('periodicSync' in self.registration) {
-      // Controlla se esiste già una registrazione
-      const tags = await self.registration.periodicSync.getTags();
-      
-      if (!tags.includes('backup-giornaliero')) {
-        await self.registration.periodicSync.register('backup-giornaliero', {
-          minInterval: 24 * 60 * 60 * 1000 // 24 ore
-        });
-        console.log('[SW] ✅ Backup giornaliero programmato (alle 23:00)');
-      } else {
-        console.log('[SW] ℹ️ Backup giornaliero già programmato');
-      }
-    } else {
-      console.log('[SW] ⚠️ Periodic Sync non supportato, uso fallback');
-      // Fallback con setTimeout
-      programmaBackupFallback();
-    }
-  } catch (error) {
-    console.error('[SW] ❌ Errore registrazione periodic sync:', error);
-  }
-}
-
-function programmaBackupFallback() {
-  const ora = new Date().getHours();
-  const minuti = new Date().getMinutes();
-  
-  // Calcola millisecondi fino alle 23:00
-  let msFinoAlle23 = (23 - ora) * 60 * 60 * 1000 - (minuti * 60 * 1000);
-  
-  if (msFinoAlle23 < 0) {
-    msFinoAlle23 += 24 * 60 * 60 * 1000; // Domani
-  }
-  
-  console.log(`[SW] ⏰ Prossimo backup (fallback) tra ${Math.round(msFinoAlle23 / 1000 / 60)} minuti`);
-  
-  setTimeout(async () => {
-    await eseguiBackupAutomatico();
-    // Riprogramma per domani
-    programmaBackupFallback();
-  }, msFinoAlle23);
-}
 
 // =================== GESTIONE RICHIESTE ===================
 self.addEventListener('fetch', (event) => {
@@ -305,6 +177,7 @@ self.addEventListener('message', (event) => {
       break;
       
     case 'TEST_NOTIFICATION':
+      // Invia una notifica di test
       self.registration.showNotification('🔔 Test Notifica', {
         body: 'Le notifiche funzionano correttamente!',
         icon: '/presenze-allenamenti/icon-192.png',
@@ -313,22 +186,6 @@ self.addEventListener('message', (event) => {
         vibrate: [200, 100, 200],
         data: {
           url: '/presenze-allenamenti/'
-        }
-      });
-      break;
-      
-    case 'ESEGUI_BACKUP':
-      // Per backup manuale
-      event.waitUntil(eseguiBackupAutomatico());
-      break;
-      
-    case 'GET_BACKUP_STATUS':
-      sendMessageToClient(event.source, {
-        type: 'BACKUP_STATUS',
-        data: {
-          supportato: 'periodicSync' in self.registration,
-          programmato: true,
-          orario: '23:00'
         }
       });
       break;
@@ -391,16 +248,6 @@ self.addEventListener('notificationclick', (event) => {
   console.log('[SW] 👆 Click su notifica:', event.notification.tag);
   event.notification.close();
   
-  // Gestione specifica per backup
-  if (event.action === 'apri-backup' || 
-      (event.notification.data && event.notification.data.tipo === 'backup')) {
-    const url = event.notification.data?.url;
-    if (url) {
-      event.waitUntil(clients.openWindow(url));
-      return;
-    }
-  }
-  
   const categoriaDaAprire = event.action === 'open-piccoli' ? 'piccoli' : 
                            (event.action === 'open-grandi' ? 'grandi' : null);
   
@@ -446,5 +293,4 @@ function sendMessageToClient(client, message) {
 }
 
 console.log('[SW] 🚀 Service Worker caricato e pronto (v' + APP_VERSION + ')');
-
 

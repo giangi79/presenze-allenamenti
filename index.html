@@ -72,58 +72,19 @@
             top: 0;
         }
         
-        /* TOAST NOTIFICATIONS */
+        /* TOAST NOTIFICATIONS - COMPLETAMENTE NASCOSTI */
         .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-        }
-        
-        .toast {
-            background: white;
-            color: #333;
-            padding: 15px 25px;
-            border-radius: 50px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 600;
-            animation: slideIn 0.3s ease;
-            pointer-events: auto;
-            border-left: 5px solid;
-            max-width: 350px;
-        }
-        
-        .toast.success { border-left-color: #2ecc71; }
-        .toast.error { border-left-color: #e74c3c; }
-        .toast.info { border-left-color: #3498db; }
-        .toast.warning { border-left-color: #f39c12; }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        @keyframes slideOut {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(100%); opacity: 0; }
+            display: none !important;
         }
         
         /* CONTENITORE PRINCIPALE */
         .app-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px 15px 140px;
+            padding: 20px 15px 40px;
             min-height: 100vh;
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 0 50px rgba(0,0,0,0.1);
-            position: relative;
         }
         
         /* HEADER */
@@ -162,7 +123,6 @@
             background: #f8f9fa;
             padding: 10px 15px;
             border-radius: 15px;
-            align-items: center;
         }
         
         select, input { 
@@ -183,29 +143,78 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
         }
         
-        /* PULSANTE OGGI */
+        /* PULSANTI AZIONE */
+        .actions-container { 
+            display: flex; 
+            justify-content: center; 
+            gap: 12px; 
+            margin: 20px 0 25px; 
+            flex-wrap: wrap; 
+        }
+        
+        .btn-action { 
+            padding: 14px 22px; 
+            border-radius: 14px; 
+            border: none; 
+            font-weight: 900; 
+            cursor: pointer; 
+            color: white; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 15px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
+            text-transform: uppercase; 
+            transition: transform 0.3s;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-action:active { 
+            transform: translateY(2px); 
+        }
+        
+        .btn-action:focus-visible {
+            outline: 3px solid #ffbf47;
+            outline-offset: 2px;
+        }
+        
+        .btn-drive { background: linear-gradient(135deg, #4285F4, #0d47a1); } 
+        .btn-open-drive { background: linear-gradient(135deg, #34a853, #1e7e34); } 
+        .btn-admin { background: linear-gradient(135deg, #6c757d, #343a40); } 
+        .btn-home { background: linear-gradient(135deg, #ff9800, #f57c00); }
         .btn-oggi { 
             background: linear-gradient(135deg, #17a2b8, #0f6674); 
             width: 52px; 
             height: 52px; 
-            display: flex;
-            align-items: center;
             justify-content: center; 
             font-size: 24px; 
             border-radius: 14px; 
-            border: none;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            transition: transform 0.3s;
+        }
+        .btn-backup-auto { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .btn-backup-auto.attivo { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .btn-numeric-input { background: linear-gradient(135deg, #8e44ad, #6c3483); }
+        .btn-numeric-input.attivo { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .btn-quick-register { background: linear-gradient(135deg, #e67e22, #d35400); }
+        .btn-notifica { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .btn-stato-notifiche { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .btn-install { 
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            animation: pulse-install 2s infinite;
         }
         
-        .btn-oggi:hover {
-            transform: translateY(-2px);
-        }
-        
-        .btn-oggi:active { 
-            transform: translateY(2px); 
+        @keyframes pulse-install {
+            0% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+            }
         }
         
         /* STATUS BAR */
@@ -319,14 +328,13 @@
             background: #ff4444;
             color: white;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            font-size: 14px;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            border: 2px solid white;
         }
         
         /* === TABELLA === */
@@ -514,82 +522,6 @@
             pointer-events: none;
         }
         
-        /* BOTTOM ACTIONS FISSE */
-        .bottom-actions {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.15);
-            z-index: 1000;
-            border-top: 1px solid rgba(0,0,0,0.1);
-        }
-        
-        .bottom-actions .btn-action {
-            padding: 10px 14px;
-            border-radius: 12px;
-            border: none;
-            font-weight: 800;
-            cursor: pointer;
-            color: white;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 13px;
-            box-shadow: 0 5px 12px rgba(0,0,0,0.15);
-            text-transform: uppercase;
-            transition: transform 0.2s;
-            white-space: nowrap;
-        }
-        
-        .bottom-actions .btn-action:hover {
-            transform: translateY(-2px);
-        }
-        
-        .bottom-actions .btn-action:active { 
-            transform: translateY(1px); 
-        }
-        
-        .bottom-actions .btn-action:focus-visible {
-            outline: 3px solid #ffbf47;
-            outline-offset: 2px;
-        }
-        
-        .btn-drive { background: linear-gradient(135deg, #4285F4, #0d47a1); } 
-        .btn-open-drive { background: linear-gradient(135deg, #34a853, #1e7e34); } 
-        .btn-admin { background: linear-gradient(135deg, #6c757d, #343a40); } 
-        .btn-backup-auto { background: linear-gradient(135deg, #f39c12, #e67e22); }
-        .btn-backup-auto.attivo { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-        .btn-numeric-input { background: linear-gradient(135deg, #8e44ad, #6c3483); }
-        .btn-numeric-input.attivo { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-        .btn-quick-register { background: linear-gradient(135deg, #e67e22, #d35400); }
-        .btn-home { background: linear-gradient(135deg, #ff9800, #f57c00); }
-        .btn-notifica { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-        .btn-notifica.attivo { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-        .btn-install { 
-            background: linear-gradient(135deg, #667eea, #764ba2) !important;
-            animation: pulse-install 2s infinite;
-        }
-        
-        @keyframes pulse-install {
-            0% {
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
-            }
-        }
-        
         /* FOOTER */
         .app-footer {
             margin-top: 40px;
@@ -608,26 +540,11 @@
         /* Stato notifiche nel footer */
         .notification-status {
             margin-top: 15px;
-            padding: 15px;
+            padding: 10px;
             background: #f8f9fa;
-            border-radius: 15px;
-            font-size: 14px;
-            text-align: left;
-            border-left: 5px solid #667eea;
+            border-radius: 10px;
+            font-size: 13px;
         }
-        
-        .notification-status .badge {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 12px;
-            margin-right: 10px;
-        }
-        
-        .badge-success { background: #2ecc71; color: white; }
-        .badge-warning { background: #f39c12; color: white; }
-        .badge-error { background: #e74c3c; color: white; }
         
         /* PANNELLO ADMIN */
         #admin-overlay { 
@@ -638,7 +555,7 @@
             width: 100%; 
             height: 100%; 
             background: rgba(0,0,0,0.8); 
-            z-index: 2000; 
+            z-index: 1000; 
             justify-content: center; 
             align-items: center; 
             padding: 20px;
@@ -892,7 +809,7 @@
         
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            .app-container { padding: 15px 10px 120px; }
+            .app-container { padding: 15px 10px 30px; }
             .top-bar { flex-direction: column; align-items: stretch; }
             
             th.sticky-col, td.sticky-col { 
@@ -941,28 +858,6 @@
                 padding: 15px;
                 font-size: 18px;
             }
-            
-            .bottom-actions {
-                padding: 10px 10px;
-                gap: 6px;
-            }
-            
-            .bottom-actions .btn-action {
-                padding: 8px 10px;
-                font-size: 11px;
-            }
-            
-            .btn-oggi {
-                width: 46px;
-                height: 46px;
-                font-size: 20px;
-            }
-            
-            .toast {
-                max-width: 280px;
-                padding: 12px 18px;
-                font-size: 14px;
-            }
         }
         
         @media (max-width: 480px) {
@@ -1005,11 +900,6 @@
                 padding: 12px;
                 font-size: 16px;
             }
-            
-            .bottom-actions .btn-action {
-                padding: 6px 8px;
-                font-size: 10px;
-            }
         }
         
         /* ANIMAZIONI CARICAMENTO */
@@ -1029,7 +919,7 @@
     <!-- SKIP LINK PER ACCESSIBILITÀ -->
     <a href="#main-content" class="skip-link">Salta al contenuto principale</a>
     
-    <!-- CONTAINER PER TOAST NOTIFICATIONS -->
+    <!-- CONTAINER PER TOAST NOTIFICATIONS - COMPLETAMENTE NASCOSTO -->
     <div id="toast-container" class="toast-container"></div>
     
     <div class="app-container" id="main-content">
@@ -1044,8 +934,9 @@
                 <div class="date-controls">
                     <select id="select-mese" onchange="cambiaData()" aria-label="Seleziona mese"></select>
                     <select id="select-anno" onchange="cambiaData()" aria-label="Seleziona anno"></select>
-                    <button class="btn-oggi" onclick="scrollOggi()" title="Vai a oggi" aria-label="Vai al giorno corrente">🎯</button>
+                    <button class="btn-action btn-oggi" onclick="scrollOggi()" title="Vai a oggi" aria-label="Vai al giorno corrente">🎯</button>
                 </div>
+                <button class="btn-action btn-home" onclick="vaiAllaHome()" title="Home" aria-label="Torna alla home">🏠 HOME</button>
             </div>
             
             <!-- STATUS BAR CON STATISTICHE BASE -->
@@ -1056,6 +947,21 @@
                     <div><span id="stat-presenze-oggi" aria-label="Presenze oggi">0</span> Oggi</div>
                     <div><span id="stat-presenze-mese" aria-label="Presenze questo mese">0</span> Questo Mese</div>
                 </div>
+            </div>
+            
+            <!-- PULSANTI AZIONE -->
+            <div class="actions-container">
+                <button class="btn-action btn-quick-register" onclick="avviaRegistrazioneVeloce()" title="Registrazione veloce" aria-label="Avvia registrazione veloce atleti">⚡ REGISTRA VELOCE</button>
+                <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()" title="Crea backup PDF" aria-label="Crea backup PDF su Drive">☁️ BACKUP PDF</button>
+                <button class="btn-action btn-open-drive" onclick="apriFileDrive()" title="Apri ultimo backup" aria-label="Apri ultimo backup su Drive">📂 APRI DRIVE</button>
+                <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input" title="Input numerico" aria-label="Attiva o disattiva input numerico">🔢 NUM OFF</button>
+                <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto" title="Backup automatico" aria-label="Attiva o disattiva backup automatico">▶️ AUTO ON</button>
+                <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti" aria-label="Apri pannello gestione atleti">⚙️ GESTISCI ATLETI</button>
+                <!-- PULSANTI NOTIFICHE -->
+                <button class="btn-action btn-notifica" onclick="testNotifiche()" title="Test notifiche" aria-label="Test sistema notifiche">🔔 TEST NOTIFICA</button>
+                <button class="btn-action btn-stato-notifiche" onclick="mostraStatoNotifiche()" title="Stato notifiche" aria-label="Mostra stato notifiche">📊 STATO NOTIFICHE</button>
+                <!-- PULSANTE INSTALLAZIONE (inizialmente nascosto) -->
+                <button class="btn-action btn-install" id="install-pwa-btn" style="display: none;" onclick="installPWA()">📲 INSTALLA APP</button>
             </div>
         </div>
 
@@ -1118,36 +1024,17 @@
             </div>
         </div>
 
-        <!-- === FOOTER CON STATO NOTIFICHE === -->
+        <!-- === FOOTER === -->
         <div class="app-footer">
             <div class="copyright">
                 © 2024-2025 Gruppo Sportivo 2050 - Registro Presenze Digitale<br>
                 <small>Ultimo aggiornamento: <span id="last-update">Caricamento...</span></small>
             </div>
-            
-            <!-- STATO NOTIFICHE DETTAGLIATO -->
+            <!-- STATO NOTIFICHE NEL FOOTER -->
             <div class="notification-status" id="notification-status">
-                <div style="display: flex; align-items: center; margin-bottom: 10px;">
-                    <span class="badge badge-warning" id="notify-badge">⚪</span>
-                    <strong>STATO NOTIFICHE</strong>
-                </div>
-                <div id="notify-details">Inizializzazione in corso...</div>
-                <div style="margin-top: 10px; font-size: 12px; color: #666;" id="notify-time"></div>
+                🔔 Inizializzazione notifiche...
             </div>
         </div>
-    </div>
-    
-    <!-- === BOTTOM ACTIONS FISSE === -->
-    <div class="bottom-actions">
-        <button class="btn-action btn-quick-register" onclick="avviaRegistrazioneVeloce()" title="Registrazione veloce" aria-label="Avvia registrazione veloce atleti">⚡ REGISTRA VELOCE</button>
-        <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()" title="Crea backup PDF" aria-label="Crea backup PDF su Drive">☁️ BACKUP PDF</button>
-        <button class="btn-action btn-open-drive" onclick="apriFileDrive()" title="Apri ultimo backup" aria-label="Apri ultimo backup su Drive">📂 APRI DRIVE</button>
-        <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input" title="Input numerico" aria-label="Attiva o disattiva input numerico">🔢 NUM OFF</button>
-        <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto" title="Backup automatico" aria-label="Attiva o disattiva backup automatico">▶️ AUTO ON</button>
-        <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti" aria-label="Apri pannello gestione atleti">⚙️ GESTISCI ATLETI</button>
-        <button class="btn-action btn-notifica" onclick="gestisciNotifiche()" id="btn-notifica" title="Gestisci notifiche" aria-label="Gestisci notifiche">🔔 NOTIFICHE</button>
-        <button class="btn-action btn-home" onclick="vaiAllaHome()" title="Torna alla Home" aria-label="Torna alla pagina principale">🏠 HOME</button>
-        <button class="btn-action btn-install" id="install-pwa-btn" style="display: none;" onclick="installPWA()">📲 INSTALLA APP</button>
     </div>
 
     <!-- === PANNELLO ADMIN === -->
@@ -1235,70 +1122,6 @@
         </div>
     </div>
 
-    <!-- === OVERLAY GESTIONE NOTIFICHE === -->
-    <div id="notifiche-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center; padding: 20px;">
-        <div style="background: white; width: 100%; max-width: 500px; padding: 35px; border-radius: 30px; position: relative;">
-            <span class="close-admin" onclick="chiudiGestioneNotifiche()">&times;</span>
-            <h2 style="margin-bottom: 25px; color: #343a40; font-size: 28px;">🔔 GESTIONE NOTIFICHE</h2>
-            
-            <div style="background: #f8f9fa; padding: 25px; border-radius: 20px; margin-bottom: 25px;">
-                <div style="margin-bottom: 20px;">
-                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                        <input type="checkbox" id="notify-abilita" onchange="toggleNotificheAbilitate()" checked>
-                        <span style="font-weight: bold;">ABILITA NOTIFICHE</span>
-                    </label>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 10px; font-weight: bold;">ORARIO NOTIFICA SERALE</label>
-                    <select id="notify-orario" style="width:100%; padding: 12px; border-radius: 12px; border: 2px solid #ddd;" onchange="salvaImpostazioniNotifiche()">
-                        <option value="20">20:00</option>
-                        <option value="21" selected>21:00</option>
-                        <option value="22">22:00</option>
-                        <option value="23">23:00</option>
-                    </select>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 10px; font-weight: bold;">NOTIFICHE PER:</label>
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                        <label style="display: flex; align-items: center; gap: 5px;">
-                            <input type="checkbox" id="notify-piccoli" checked onchange="salvaImpostazioniNotifiche()"> PICCOLI
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 5px;">
-                            <input type="checkbox" id="notify-grandi" checked onchange="salvaImpostazioniNotifiche()"> GRANDI
-                        </label>
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 10px; font-weight: bold;">BACKUP AUTOMATICO</label>
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                        <label style="display: flex; align-items: center; gap: 5px;">
-                            <input type="checkbox" id="backup-abilita" checked onchange="toggleBackupAutomatico()"> ABILITA BACKUP GIORNALIERO
-                        </label>
-                    </div>
-                    <div style="font-size: 13px; color: #666; margin-top: 8px;">
-                        ⏰ Backup automatico ogni giorno alle 23:00
-                    </div>
-                </div>
-            </div>
-            
-            <div style="display: flex; gap: 10px;">
-                <button class="btn-action" style="flex: 1; background: linear-gradient(135deg, #3498db, #2980b9); justify-content: center;" onclick="testNotifiche()">
-                    🔔 TEST NOTIFICA
-                </button>
-                <button class="btn-action" style="flex: 1; background: linear-gradient(135deg, #2ecc71, #27ae60); justify-content: center;" onclick="richiediPermessiNotifiche()">
-                    🔄 RICHIEDI PERMESSI
-                </button>
-            </div>
-            
-            <div style="margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 15px; font-size: 13px;" id="notify-stato-dettaglio">
-                Caricamento stato...
-            </div>
-        </div>
-    </div>
-
     <script>
         // =================== CONFIGURAZIONE ===================
         const CONFIG = {
@@ -1306,7 +1129,7 @@
             supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3Rkc3Z3ZXJxc3RybHRod3h1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgyNDkxMDEsImV4cCI6MjA4MzgyNTEwMX0.wmEnME6GaHXrvLoQH7MDijiTU4dZfoi9wOcrqs9fP10'
         };
         
-        const WEB_APP_DRIVE_URL = "https://script.google.com/macros/s/AKfycbwFpB0x-xfGXm0JT60QjtO8VVTIsLBHOFvWvcEB-gY83lFCB6GQoYM9LNitDUSuP43rZQ/exec";
+        const WEB_APP_DRIVE_URL = "https://script.google.com/macros/s/AKfycbx1mEyj7Ul-XjAS1EwIZybiHDc2ti1TLe9fY22nTpxK_W0eAgOWwcSEltvoerB6YuB8WQ/exec";
 
         // =================== VARIABILI GLOBALI ===================
         const supabaseClient = supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey);
@@ -1341,13 +1164,10 @@
         
         // =================== CONFIGURAZIONE NOTIFICHE ===================
         const CONFIG_NOTIFICHE = {
-            ORARIO_NOTIFICA: parseInt(localStorage.getItem('notify_orario')) || 21,
-            GIORNI_PICCOLI: [1, 3, 5],
-            GIORNI_GRANDI: [1, 2, 3, 4, 5],
-            NOTIFICHE_INVIATE: {},
-            NOTIFICHE_ABILITATE: localStorage.getItem('notify_abilita') !== 'false',
-            NOTIFICHE_PICCOLI: localStorage.getItem('notify_piccoli') !== 'false',
-            NOTIFICHE_GRANDI: localStorage.getItem('notify_grandi') !== 'false'
+            ORARIO_NOTIFICA: 21, // 21:00 (9 PM)
+            GIORNI_PICCOLI: [1, 3, 5], // Lunedì(1), Mercoledì(3), Venerdì(5)
+            GIORNI_GRANDI: [1, 2, 3, 4, 5], // Lunedì(1) a Venerdì(5)
+            NOTIFICHE_INVIATE: {} // Per tracciare notifiche già inviate oggi
         };
         
         // =================== GESTIONE INSTALLAZIONE PWA ===================
@@ -1356,26 +1176,32 @@
         // Funzione per installare l'app
         window.installPWA = async function() {
             if (!deferredPrompt) {
-                mostraToast('❌ Installazione non disponibile', 'error');
+                console.log('❌ Nessun prompt di installazione disponibile');
                 return;
             }
             
+            // Mostra il prompt di installazione
             deferredPrompt.prompt();
+            
+            // Aspetta la scelta dell'utente
             const { outcome } = await deferredPrompt.userChoice;
+            console.log(`📲 Utente ha ${outcome === 'accepted' ? 'accettato' : 'rifiutato'} l'installazione`);
             
-            if (outcome === 'accepted') {
-                mostraToast('✅ App installata con successo!', 'success');
-            }
-            
+            // Resetta deferredPrompt
             deferredPrompt = null;
-            document.getElementById('install-pwa-btn').style.display = 'none';
+            
+            // Nascondi il pulsante
+            const btn = document.getElementById('install-pwa-btn');
+            if (btn) btn.style.display = 'none';
         }
 
         // Controlla se l'app è già installata
         function checkIfInstalled() {
             if (window.matchMedia('(display-mode: standalone)').matches || 
                 window.navigator.standalone === true) {
-                document.getElementById('install-pwa-btn').style.display = 'none';
+                console.log('📲 App già installata (modalità standalone)');
+                const btn = document.getElementById('install-pwa-btn');
+                if (btn) btn.style.display = 'none';
                 return true;
             }
             return false;
@@ -1388,24 +1214,9 @@
         const CAT_PICCOLI = ['GIOVANISSIMI', 'ESORDIENTI'];
         const CAT_GRANDI = ['R12', 'RAGAZZI', 'ALLIEVI', 'JUNIOR', 'JUNIORES', 'SENIOR'];
 
-        // =================== TOAST NOTIFICATIONS ===================
-        function mostraToast(messaggio, tipo = 'success', durata = 3000) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${tipo}`;
-            
-            let icona = '✅';
-            if (tipo === 'error') icona = '❌';
-            if (tipo === 'warning') icona = '⚠️';
-            if (tipo === 'info') icona = 'ℹ️';
-            
-            toast.innerHTML = `${icona} ${messaggio}`;
-            container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.animation = 'slideOut 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, durata);
+        // =================== TOAST NOTIFICATIONS DISATTIVATE ===================
+        function mostraToast(messaggio, tipo = 'successo', durata = 3000) {
+            console.log(`Toast disattivato: ${messaggio} (${tipo})`);
         }
 
         // =================== VALIDAZIONE DATI ===================
@@ -1769,6 +1580,7 @@
         async function inizializza() {
             console.log('🚀 Inizializzazione applicazione...');
             
+            // Controlla se l'app è già installata
             checkIfInstalled();
             
             const m = localStorage.getItem('p_mese') || dataAttuale.getMonth();
@@ -1794,9 +1606,11 @@
             
             caricaStatoNumericInput();
             caricaStatoBackupAuto();
-            caricaImpostazioniNotifiche();
-            initSistemaNotifiche();
-            setupMessageListener();
+            
+            // Inizializza notifiche dopo 3 secondi
+            setTimeout(() => {
+                initSistemaNotifiche();
+            }, 3000);
         }
 
         async function caricaDatiIniziali() {
@@ -1819,7 +1633,6 @@
                 renderAdminList();
                 
                 document.getElementById('status-auto').innerText = "✅ Sistema Pronto";
-                aggiornaStatoNotificheUI();
                 
             } catch (error) {
                 console.error('❌ Errore caricamento dati:', error);
@@ -1847,6 +1660,7 @@
                                 }
                             }
                             
+                            // Controlla presenze dopo aggiornamento
                             controllaPresenzeGiornaliere();
                         }
                     })
@@ -1863,6 +1677,7 @@
                             aggiornaListaVeloce();
                         }
                         
+                        // Aggiorna badge notifiche
                         aggiornaBadgeNotifiche(await getRisultatiControllo());
                     })
                 .subscribe();
@@ -1903,11 +1718,11 @@
             if (numericInputAttivo) {
                 btn.innerHTML = "🔢 NUM ON";
                 btn.classList.add('attivo');
-                mostraToast("Input numerico ATTIVATO", 'info');
+                document.getElementById('status-auto').innerText = "✅ Input numerico ATTIVATO";
             } else {
                 btn.innerHTML = "🔢 NUM OFF";
                 btn.classList.remove('attivo');
-                mostraToast("Input numerico DISATTIVATO", 'info');
+                document.getElementById('status-auto').innerText = "⏸️ Input numerico DISATTIVATO";
             }
             
             const sezione = getSezioneCorrente();
@@ -2035,11 +1850,11 @@
                     avviaTimerBackup();
                 }
                 
+                // Controlla presenze dopo modifica
                 controllaPresenzeGiornaliere();
                 
             } catch (error) {
                 console.error('Errore aggiornamento presenza:', error);
-                mostraToast('Errore salvataggio', 'error');
             }
         }
 
@@ -2106,12 +1921,11 @@
                         avviaTimerBackup();
                     }
                     
+                    // Controlla presenze dopo modifica
                     controllaPresenzeGiornaliere();
-                    mostraToast(`Numero ${numberValue} salvato`, 'success');
                     
                 } catch (error) {
                     console.error('Errore salvataggio numero:', error);
-                    mostraToast('Errore salvataggio', 'error');
                 }
             }
             
@@ -2162,15 +1976,14 @@
             if (backupAutomaticoAttivo) {
                 btn.innerHTML = "▶️ AUTO ON";
                 btn.classList.add('attivo');
-                mostraToast("Backup automatico ATTIVATO", 'success');
+                document.getElementById('status-auto').innerText = "✅ Backup automatico ATTIVATO";
             } else {
                 btn.innerHTML = "⏸️ AUTO OFF";
                 btn.classList.remove('attivo');
-                mostraToast("Backup automatico DISATTIVATO", 'info');
+                document.getElementById('status-auto').innerText = "⏸️ Backup automatico DISATTIVATO";
             }
             
             localStorage.setItem('backup_auto_attivo', backupAutomaticoAttivo);
-            document.getElementById('backup-abilita').checked = backupAutomaticoAttivo;
         }
 
         function caricaStatoBackupAuto() {
@@ -2295,7 +2108,7 @@
             if(url) {
                 window.open(url, '_blank');
             } else {
-                mostraToast("Nessun backup trovato", 'warning');
+                alert("Nessun backup trovato. Genera prima un backup.");
             }
         }
 
@@ -2303,7 +2116,6 @@
         async function aggiornaBackupDrive() {
             const status = document.getElementById('status-auto'); 
             status.innerText = "📄 GENERAZIONE PDF...";
-            mostraToast("Generazione PDF in corso...", 'info');
             
             try {
                 const { jsPDF } = window.jspdf; 
@@ -2389,15 +2201,6 @@
                 if(res.fileUrl) { 
                     localStorage.setItem('ultimo_pdf_url', res.fileUrl); 
                     status.innerHTML = `✅ BACKUP COMPLETATO! <a href="${res.fileUrl}" target="_blank" style="color: #4285F4; font-weight: bold;">APRI PDF</a>`; 
-                    mostraToast('Backup completato con successo!', 'success');
-                    
-                    if (navigator.serviceWorker.controller) {
-                        navigator.serviceWorker.controller.postMessage({
-                            type: 'BACKUP_COMPLETATO',
-                            url: res.fileUrl,
-                            timestamp: new Date().toLocaleString()
-                        });
-                    }
                 } else {
                     throw new Error('Nessun URL restituito');
                 }
@@ -2405,7 +2208,6 @@
             } catch(e) { 
                 status.innerText = "❌ ERRORE DURANTE IL BACKUP"; 
                 console.error('Backup error:', e); 
-                mostraToast('Errore durante il backup', 'error');
             }
         }
 
@@ -2474,7 +2276,7 @@
             
             const errori = validaAtleta(nome, cat, id || null);
             if (errori.length > 0) {
-                mostraToast(errori.join('\n'), 'error');
+                alert(errori.join('\n'));
                 return;
             }
             
@@ -2512,12 +2314,10 @@
                 }
                 
                 document.getElementById('status-auto').innerText = "✅ Atleta salvato";
-                mostraToast('Atleta salvato con successo', 'success');
                 
             } catch(error) { 
                 console.error('Errore salvataggio atleta:', error);
                 document.getElementById('status-auto').innerText = "❌ Errore salvataggio";
-                mostraToast('Errore salvataggio', 'error');
             }
         }
 
@@ -2591,11 +2391,11 @@
                     renderVirtualScroll(sezione);
                 }
                 
-                mostraToast(stato ? "Atleta archiviato" : "Atleta ripristinato", 'success');
+                document.getElementById('status-auto').innerText = 
+                    stato ? "✅ Atleta archiviato" : "✅ Atleta ripristinato";
                     
             } catch(error) {
                 console.error('Errore archiviazione:', error);
-                mostraToast('Errore operazione', 'error');
             }
         }
 
@@ -2616,10 +2416,9 @@
                         renderVirtualScroll(sezione);
                     }
                     
-                    mostraToast('Atleta eliminato', 'success');
+                    document.getElementById('status-auto').innerText = "✅ Atleta eliminato";
                 } catch(error) {
                     console.error('Errore eliminazione:', error);
-                    mostraToast('Errore eliminazione', 'error');
                 }
             } 
         }
@@ -2628,13 +2427,13 @@
         function avviaRegistrazioneVeloce() {
             const sezione = getSezioneCorrente();
             if (!sezione) {
-                mostraToast('Seleziona prima una categoria', 'warning');
+                alert('Seleziona prima una categoria');
                 return;
             }
             
             const atleti = getAtletiFiltrati(sezione);
             if (atleti.length === 0) {
-                mostraToast('Nessun atleta in questa categoria', 'warning');
+                alert('Nessun atleta in questa categoria');
                 return;
             }
             
@@ -2727,6 +2526,7 @@
                 const sezione = getSezioneCorrente();
                 if (sezione) renderVirtualScroll(sezione);
                 
+                // Controlla presenze dopo modifica
                 controllaPresenzeGiornaliere();
                 
                 if (quickCurrentIndex < quickAthletes.length - 1) {
@@ -2734,12 +2534,11 @@
                         nextQuickAthlete();
                     }, 300);
                 } else {
-                    mostraToast('Ultimo atleta!', 'info');
+                    alert('Ultimo atleta! Premi PROSSIMO o CHIUDI');
                 }
                 
             } catch (error) {
                 console.error('Errore registrazione veloce:', error);
-                mostraToast('Errore registrazione', 'error');
             }
         }
 
@@ -2784,68 +2583,68 @@
             }
         }
 
-        // =================== SISTEMA NOTIFICHE ===================
+        // =================== SISTEMA NOTIFICHE PUSH ===================
         async function initSistemaNotifiche() {
             console.log('🔔 Inizializzazione sistema notifiche...');
             
-            if (!('Notification' in window)) {
-                aggiornaStatoNotificheUI('❌ Non supportato');
+            const swRegistrato = await registraServiceWorker();
+            if (!swRegistrato) {
+                aggiornaStatoNotificheUI('❌ Service Worker non registrato');
                 return false;
             }
             
-            if (Notification.permission === 'granted') {
-                await registraServiceWorker();
-                avviaMonitoraggioPresenze();
-                aggiornaStatoNotificheUI('✅ Notifiche attive');
-                return true;
+            const permessi = await richiediPermessiNotifiche();
+            if (!permessi) {
+                aggiornaStatoNotificheUI('❌ Permessi negati');
+                return false;
             }
             
-            aggiornaStatoNotificheUI('⏸️ Permessi non concessi');
-            return false;
+            setupMessageListener();
+            avviaMonitoraggioPersonalizzato();
+            aggiornaStatoNotificheUI('✅ Notifiche attive');
+            
+            return true;
         }
 
         async function registraServiceWorker() {
-            if (!('serviceWorker' in navigator)) return false;
-            
-            try {
-                const registration = await navigator.serviceWorker.register('sw.js', {
-                    scope: '/presenze-allenamenti/'
-                });
-                console.log('Service Worker registrato:', registration);
-                
-                // Attendiamo che il Service Worker sia attivo
-                await navigator.serviceWorker.ready;
-                console.log('Service Worker pronto');
-                
-                return true;
-            } catch (error) {
-                console.error('Errore registrazione SW:', error);
-                return false;
-            }
-        }
+    if (!('serviceWorker' in navigator)) {
+        console.log('Service Worker non supportato');
+        return false;
+    }
+
+    try {
+        const registration = await navigator.serviceWorker.register('sw.js', {
+            scope: '/presenze-allenamenti/'    // <--- CORRETTO!
+        });
+        console.log('Service Worker registrato:', registration);
+        
+        await navigator.serviceWorker.ready;
+        return true;
+        
+    } catch (error) {
+        console.error('Errore registrazione Service Worker:', error);
+        return false;
+    }
+}
 
         async function richiediPermessiNotifiche() {
+            if (!('Notification' in window)) {
+                console.log('Notifiche non supportate');
+                return false;
+            }
+
+            if (Notification.permission === 'granted') {
+                return true;
+            }
+
+            if (Notification.permission === 'denied') {
+                console.log('Permessi notifiche negati');
+                return false;
+            }
+
             try {
                 const permission = await Notification.requestPermission();
-                
-                if (permission === 'granted') {
-                    await registraServiceWorker();
-                    avviaMonitoraggioPresenze();
-                    aggiornaStatoNotificheUI('✅ Notifiche attive');
-                    mostraToast('Permessi notifiche concessi!', 'success');
-                    
-                    // Inviamo una notifica di test dopo 1 secondo
-                    setTimeout(async () => {
-                        await testNotifiche();
-                    }, 1000);
-                } else {
-                    aggiornaStatoNotificheUI('❌ Permessi negati');
-                    mostraToast('Permessi notifiche negati', 'error');
-                }
-                
-                aggiornaStatoNotifichePopup();
                 return permission === 'granted';
-                
             } catch (error) {
                 console.error('Errore richiesta permessi:', error);
                 return false;
@@ -2854,54 +2653,69 @@
 
         function setupMessageListener() {
             navigator.serviceWorker.addEventListener('message', (event) => {
-                console.log('Messaggio da SW:', event.data);
-                
                 if (event.data.type === 'APRI_CATEGORIA') {
                     const categoria = event.data.categoria;
-                    if (categoria === 'piccoli' || categoria === 'grandi') {
-                        mostraSezione(categoria);
+                    
+                    if (categoria === 'piccoli') {
+                        mostraSezione('piccoli');
+                    } else if (categoria === 'grandi') {
+                        mostraSezione('grandi');
                     }
+                    
+                    if (document.hidden) {
+                        window.focus();
+                    }
+                    
+                    setTimeout(scrollOggi, 500);
                 }
                 
                 if (event.data.type === 'SW_ACTIVATED') {
-                    console.log('✅ Service Worker attivato');
-                    mostraToast('Service Worker pronto', 'success');
-                }
-                
-                if (event.data.type === 'BACKUP_COMPLETATO') {
-                    mostraToast(`Backup automatico completato!`, 'success');
-                    localStorage.setItem('ultimo_pdf_url', event.data.url);
+                    console.log('✅ Service Worker attivato versione:', event.data.version);
                     aggiornaStatoNotificheUI();
-                }
-                
-                if (event.data.type === 'CACHE_INFO') {
-                    console.log('Info cache:', event.data.data);
                 }
             });
         }
 
-        function avviaMonitoraggioPresenze() {
+        function avviaMonitoraggioPersonalizzato() {
+            console.log('📊 Avvio monitoraggio presenze personalizzato...');
+            
             controllaPresenzeGiornaliere();
+            
             setInterval(controllaPresenzeGiornaliere, 60 * 60 * 1000);
+            
             programmaControlloSerale();
+            programmaPuliziaTracciamento();
         }
 
         function programmaControlloSerale() {
             const ora = new Date().getHours();
             const minuti = new Date().getMinutes();
             
-            let msFinoAlle = (CONFIG_NOTIFICHE.ORARIO_NOTIFICA - ora) * 60 * 60 * 1000 - (minuti * 60 * 1000);
+            let msFinoAlle21 = (CONFIG_NOTIFICHE.ORARIO_NOTIFICA - ora) * 60 * 60 * 1000 - (minuti * 60 * 1000);
             
-            if (msFinoAlle < 0) {
-                msFinoAlle += 24 * 60 * 60 * 1000;
+            if (msFinoAlle21 < 0) {
+                msFinoAlle21 += 24 * 60 * 60 * 1000;
             }
             
-            console.log(`⏰ Prossimo controllo tra ${Math.round(msFinoAlle / 1000 / 60)} minuti`);
+            console.log(`⏰ Prossimo controllo tra ${Math.round(msFinoAlle21 / 1000 / 60)} minuti`);
             
             setTimeout(() => {
                 controllaPresenzeGiornaliere(true);
                 setInterval(() => controllaPresenzeGiornaliere(true), 24 * 60 * 60 * 1000);
-            }, msFinoAlle);
+            }, msFinoAlle21);
+        }
+
+        function programmaPuliziaTracciamento() {
+            const ora = new Date().getHours();
+            const minuti = new Date().getMinutes();
+            
+            let msFinoMezzanotte = (24 - ora) * 60 * 60 * 1000 - (minuti * 60 * 1000);
+            
+            setTimeout(() => {
+                CONFIG_NOTIFICHE.NOTIFICHE_INVIATE = {};
+                console.log('🧹 Tracciamento notifiche azzerato');
+                programmaPuliziaTracciamento();
+            }, msFinoMezzanotte);
         }
 
         async function getRisultatiControllo() {
@@ -2950,23 +2764,27 @@
         }
 
         async function controllaPresenzeGiornaliere(forzaNotifica = false) {
-            if (!CONFIG_NOTIFICHE.NOTIFICHE_ABILITATE) return;
-            
             try {
                 const oggi = new Date();
                 const giornoSettimana = oggi.getDay();
+                const dataStr = oggi.toLocaleDateString('en-CA');
                 const oraCorrente = oggi.getHours();
                 
-                if (giornoSettimana === 0) return;
+                if (giornoSettimana === 0) {
+                    console.log('Domenica - nessun controllo necessario');
+                    return;
+                }
                 
                 const risultati = await getRisultatiControllo();
+                
+                console.log('📊 Risultati controllo:', risultati);
+                
                 const inviaNotifica = forzaNotifica || oraCorrente >= CONFIG_NOTIFICHE.ORARIO_NOTIFICA;
                 
                 if (inviaNotifica) {
                     const oggiStr = oggi.toDateString();
                     
-                    if (CONFIG_NOTIFICHE.NOTIFICHE_PICCOLI && 
-                        risultati.piccoli.deveAllenarsi && 
+                    if (risultati.piccoli.deveAllenarsi && 
                         risultati.piccoli.totaleAtleti > 0 && 
                         risultati.piccoli.presenze === 0 &&
                         !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`piccoli-${oggiStr}`]) {
@@ -2975,8 +2793,7 @@
                         CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`piccoli-${oggiStr}`] = true;
                     }
                     
-                    if (CONFIG_NOTIFICHE.NOTIFICHE_GRANDI && 
-                        risultati.grandi.deveAllenarsi && 
+                    if (risultati.grandi.deveAllenarsi && 
                         risultati.grandi.totaleAtleti > 0 && 
                         risultati.grandi.presenze === 0 &&
                         !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`grandi-${oggiStr}`]) {
@@ -2984,10 +2801,19 @@
                         await inviaNotificaCategoria('grandi', risultati.grandi.totaleAtleti);
                         CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`grandi-${oggiStr}`] = true;
                     }
+                    
+                    if (risultati.piccoli.deveAllenarsi && 
+                        risultati.grandi.deveAllenarsi && 
+                        risultati.piccoli.presenze === 0 && 
+                        risultati.grandi.presenze === 0 &&
+                        !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`entrambi-${oggiStr}`]) {
+                        
+                        await inviaNotificaCompleta(risultati);
+                        CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`entrambi-${oggiStr}`] = true;
+                    }
                 }
                 
                 aggiornaBadgeNotifiche(risultati);
-                aggiornaStatoNotificheUI();
                 
             } catch (error) {
                 console.error('Errore controllo presenze:', error);
@@ -2995,25 +2821,47 @@
         }
 
         async function inviaNotificaCategoria(categoria, totaleAtleti) {
-            if (!navigator.serviceWorker.controller || Notification.permission !== 'granted') {
-                console.log('Service Worker non disponibile o permessi non concessi');
-                return;
+            const oggi = new Date();
+            const giorniItaliani = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
+            const giornoNome = giorniItaliani[oggi.getDay()];
+            const dataFormattata = oggi.toLocaleDateString('it-IT');
+            
+            let titolo = '';
+            let corpo = '';
+            let categoriaNotifica = categoria.toUpperCase();
+            
+            if (categoria === 'piccoli') {
+                titolo = '👦 PICCOLI - Nessuna presenza registrata';
+                corpo = `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i PICCOLI. ${totaleAtleti} atleti in lista.`;
+            } else {
+                titolo = '🏃 GRANDI - Nessuna presenza registrata';
+                corpo = `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i GRANDI. ${totaleAtleti} atleti in lista.`;
             }
             
+            await inviaNotificaPush(titolo, corpo, categoria);
+        }
+
+        async function inviaNotificaCompleta(risultati) {
+            const oggi = new Date();
+            const giorniItaliani = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
+            const giornoNome = giorniItaliani[oggi.getDay()];
+            const dataFormattata = oggi.toLocaleDateString('it-IT');
+            
+            const titolo = '⚠️ NESSUNA PRESENZA OGGI';
+            const corpo = `${giornoNome} ${dataFormattata} - Nessun atleta presente!\n` +
+                        `PICCOLI: ${risultati.piccoli.totaleAtleti} atleti\n` +
+                        `GRANDI: ${risultati.grandi.totaleAtleti} atleti`;
+            
+            await inviaNotificaPush(titolo, corpo, 'TUTTI');
+        }
+
+        async function inviaNotificaPush(titolo, corpo, categoria) {
+            if (!('serviceWorker' in navigator) || Notification.permission !== 'granted') {
+                console.log('Impossibile inviare notifica:', titolo);
+                return;
+            }
+
             try {
-                const oggi = new Date();
-                const giorniItaliani = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
-                const giornoNome = giorniItaliani[oggi.getDay()];
-                const dataFormattata = oggi.toLocaleDateString('it-IT');
-                
-                let titolo = categoria === 'piccoli' 
-                    ? '👦 PICCOLI - Nessuna presenza registrata'
-                    : '🏃 GRANDI - Nessuna presenza registrata';
-                    
-                let corpo = categoria === 'piccoli'
-                    ? `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i PICCOLI. ${totaleAtleti} atleti in lista.`
-                    : `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i GRANDI. ${totaleAtleti} atleti in lista.`;
-                
                 const registration = await navigator.serviceWorker.ready;
                 
                 await registration.showNotification(titolo, {
@@ -3021,21 +2869,30 @@
                     icon: 'icon-192.png',
                     badge: 'icon-72.png',
                     vibrate: [200, 100, 200, 100, 200, 100, 400],
-                    tag: `presenze-${categoria}-${oggi.toDateString()}`,
+                    tag: `presenze-${categoria}-${new Date().toDateString()}`,
                     renotify: true,
                     requireInteraction: true,
                     actions: [
-                        { action: `open-${categoria}`, title: `👤 APRI ${categoria.toUpperCase()}` },
-                        { action: 'close', title: '⏰ RICORDA DOMANI' }
+                        {
+                            action: 'open-piccoli',
+                            title: '👦 APRI PICCOLI'
+                        },
+                        {
+                            action: 'open-grandi',
+                            title: '🏃 APRI GRANDI'
+                        },
+                        {
+                            action: 'close',
+                            title: '⏰ RICORDA DOMANI'
+                        }
                     ],
-                    data: { 
-                        categoria: categoria, 
-                        timestamp: Date.now(),
-                        url: '/presenze-allenamenti/'
+                    data: {
+                        categoria: categoria,
+                        timestamp: Date.now()
                     }
                 });
                 
-                console.log('✅ Notifica inviata per', categoria);
+                console.log('✅ Notifica inviata:', titolo);
                 
             } catch (error) {
                 console.error('Errore invio notifica:', error);
@@ -3050,8 +2907,7 @@
             const grandiBtn = document.querySelector('.btn-grandi');
             
             if (piccoliBtn) {
-                if (CONFIG_NOTIFICHE.NOTIFICHE_PICCOLI &&
-                    CONFIG_NOTIFICHE.GIORNI_PICCOLI.includes(giorno) && 
+                if (CONFIG_NOTIFICHE.GIORNI_PICCOLI.includes(giorno) && 
                     risultati.piccoli.totaleAtleti > 0 && 
                     risultati.piccoli.presenze === 0) {
                     piccoliBtn.classList.add('attenzione');
@@ -3061,8 +2917,7 @@
             }
             
             if (grandiBtn) {
-                if (CONFIG_NOTIFICHE.NOTIFICHE_GRANDI &&
-                    CONFIG_NOTIFICHE.GIORNI_GRANDI.includes(giorno) && 
+                if (CONFIG_NOTIFICHE.GIORNI_GRANDI.includes(giorno) && 
                     risultati.grandi.totaleAtleti > 0 && 
                     risultati.grandi.presenze === 0) {
                     grandiBtn.classList.add('attenzione');
@@ -3072,182 +2927,109 @@
             }
         }
 
-        function aggiornaStatoNotificheUI() {
-            const statusEl = document.getElementById('notification-status');
-            if (!statusEl) return;
+        function aggiornaStatoNotificheUI(stato) {
+            const statoEl = document.getElementById('notification-status');
+            if (!statoEl) return;
             
-            const badge = document.getElementById('notify-badge');
-            const details = document.getElementById('notify-details');
-            const timeEl = document.getElementById('notify-time');
-            
-            let stato = '';
-            let badgeClass = 'badge-warning';
-            let dettaglio = '';
+            if (stato) {
+                statoEl.innerHTML = `🔔 ${stato}`;
+                return;
+            }
             
             if (!('Notification' in window)) {
-                stato = '❌';
-                badgeClass = 'badge-error';
-                dettaglio = 'Notifiche non supportate dal browser';
-            } else if (Notification.permission === 'granted') {
-                stato = '✅';
-                badgeClass = 'badge-success';
-                dettaglio = `Notifiche attive - Controllo alle ${CONFIG_NOTIFICHE.ORARIO_NOTIFICA}:00`;
-                if (CONFIG_NOTIFICHE.NOTIFICHE_PICCOLI) dettaglio += ' • PICCOLI';
-                if (CONFIG_NOTIFICHE.NOTIFICHE_GRANDI) dettaglio += ' • GRANDI';
-            } else if (Notification.permission === 'denied') {
-                stato = '❌';
-                badgeClass = 'badge-error';
-                dettaglio = 'Notifiche bloccate - Abilita dalle impostazioni';
-            } else {
-                stato = '⏸️';
-                badgeClass = 'badge-warning';
-                dettaglio = 'Notifiche non attivate - Clicca su NOTIFICHE';
+                statoEl.innerHTML = '🔔 ❌ Non supportato';
+                return;
             }
             
-            badge.className = `badge ${badgeClass}`;
-            badge.innerText = stato;
-            details.innerText = dettaglio;
-            
-            const prossimoControllo = new Date();
-            prossimoControllo.setHours(CONFIG_NOTIFICHE.ORARIO_NOTIFICA, 0, 0, 0);
-            if (prossimoControllo < new Date()) {
-                prossimoControllo.setDate(prossimoControllo.getDate() + 1);
+            switch(Notification.permission) {
+                case 'granted':
+                    statoEl.innerHTML = '🔔 ✅ Notifiche attive - Controllo ogni ora, notifica alle 21:00';
+                    break;
+                case 'denied':
+                    statoEl.innerHTML = '🔔 ❌ Notifiche bloccate - Abilita dalle impostazioni';
+                    break;
+                default:
+                    statoEl.innerHTML = '🔔 ⏸️ Notifiche non attivate - Clicca su TEST NOTIFICA per abilitare';
             }
-            timeEl.innerText = `Prossimo controllo: ${prossimoControllo.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}`;
-        }
-
-        function aggiornaStatoNotifichePopup() {
-            document.getElementById('notify-abilita').checked = CONFIG_NOTIFICHE.NOTIFICHE_ABILITATE;
-            document.getElementById('notify-orario').value = CONFIG_NOTIFICHE.ORARIO_NOTIFICA;
-            document.getElementById('notify-piccoli').checked = CONFIG_NOTIFICHE.NOTIFICHE_PICCOLI;
-            document.getElementById('notify-grandi').checked = CONFIG_NOTIFICHE.NOTIFICHE_GRANDI;
-            document.getElementById('backup-abilita').checked = backupAutomaticoAttivo;
-            
-            let stato = '';
-            if (Notification.permission === 'granted') {
-                stato = '✅ Permessi concessi - Notifiche attive';
-            } else if (Notification.permission === 'denied') {
-                stato = '❌ Permessi negati - Abilita dalle impostazioni del browser';
-            } else {
-                stato = '⏸️ Permessi non richiesti - Clicca su RICHIEDI PERMESSI';
-            }
-            document.getElementById('notify-stato-dettaglio').innerHTML = stato;
-        }
-
-        function caricaImpostazioniNotifiche() {
-            CONFIG_NOTIFICHE.ORARIO_NOTIFICA = parseInt(localStorage.getItem('notify_orario')) || 21;
-            CONFIG_NOTIFICHE.NOTIFICHE_ABILITATE = localStorage.getItem('notify_abilita') !== 'false';
-            CONFIG_NOTIFICHE.NOTIFICHE_PICCOLI = localStorage.getItem('notify_piccoli') !== 'false';
-            CONFIG_NOTIFICHE.NOTIFICHE_GRANDI = localStorage.getItem('notify_grandi') !== 'false';
-            
-            aggiornaStatoNotifichePopup();
-        }
-
-        function salvaImpostazioniNotifiche() {
-            CONFIG_NOTIFICHE.ORARIO_NOTIFICA = parseInt(document.getElementById('notify-orario').value);
-            CONFIG_NOTIFICHE.NOTIFICHE_PICCOLI = document.getElementById('notify-piccoli').checked;
-            CONFIG_NOTIFICHE.NOTIFICHE_GRANDI = document.getElementById('notify-grandi').checked;
-            
-            localStorage.setItem('notify_orario', CONFIG_NOTIFICHE.ORARIO_NOTIFICA);
-            localStorage.setItem('notify_piccoli', CONFIG_NOTIFICHE.NOTIFICHE_PICCOLI);
-            localStorage.setItem('notify_grandi', CONFIG_NOTIFICHE.NOTIFICHE_GRANDI);
-            
-            aggiornaStatoNotificheUI();
-            mostraToast('Impostazioni notifiche salvate', 'success');
-        }
-
-        function toggleNotificheAbilitate() {
-            CONFIG_NOTIFICHE.NOTIFICHE_ABILITATE = document.getElementById('notify-abilita').checked;
-            localStorage.setItem('notify_abilita', CONFIG_NOTIFICHE.NOTIFICHE_ABILITATE);
-            aggiornaStatoNotificheUI();
-        }
-
-        function gestisciNotifiche() {
-            document.getElementById('notifiche-overlay').style.display = 'flex';
-            aggiornaStatoNotifichePopup();
-        }
-
-        function chiudiGestioneNotifiche() {
-            document.getElementById('notifiche-overlay').style.display = 'none';
         }
 
         async function testNotifiche() {
-            console.log('Test notifiche avviato...');
+            console.log('🔔 Test sistema notifiche...');
             
-            // Controlla se il Service Worker è registrato
-            if (!('serviceWorker' in navigator)) {
-                mostraToast('Service Worker non supportato', 'error');
-                return;
-            }
+            const permesso = await initSistemaNotifiche();
             
-            // Controlla i permessi
-            if (Notification.permission !== 'granted') {
-                mostraToast('Richiedi prima i permessi', 'warning');
-                return;
-            }
-            
-            try {
-                // Attendiamo che il Service Worker sia pronto
-                const registration = await navigator.serviceWorker.ready;
-                console.log('Service Worker pronto, invio notifica...');
-                
-                // Metodo 1: Direttamente con showNotification
-                await registration.showNotification('🔔 TEST NOTIFICA', {
-                    body: 'Le notifiche funzionano correttamente!',
-                    icon: 'icon-192.png',
-                    badge: 'icon-72.png',
-                    tag: 'test-notification-' + Date.now(),
-                    vibrate: [200, 100, 200],
-                    requireInteraction: true,
-                    actions: [
-                        { action: 'ok', title: '✅ OK' },
-                        { action: 'close', title: '❌ CHIUDI' }
-                    ],
-                    data: {
-                        timestamp: Date.now(),
-                        test: true
+            if (permesso) {
+                const risultati = {
+                    piccoli: {
+                        deveAllenarsi: true,
+                        presenze: 0,
+                        totaleAtleti: getAtletiFiltrati('piccoli').length
+                    },
+                    grandi: {
+                        deveAllenarsi: true,
+                        presenze: 0,
+                        totaleAtleti: getAtletiFiltrati('grandi').length
                     }
-                });
+                };
                 
-                mostraToast('✅ Notifica inviata!', 'success');
-                console.log('Notifica di test inviata con successo');
-                
-            } catch (error) {
-                console.error('Errore invio notifica di test:', error);
-                mostraToast('Errore invio notifica: ' + error.message, 'error');
-                
-                // Fallback: prova con postMessage
-                try {
-                    if (navigator.serviceWorker.controller) {
-                        navigator.serviceWorker.controller.postMessage({ 
-                            type: 'TEST_NOTIFICATION' 
-                        });
-                        mostraToast('Notifica inviata via postMessage', 'info');
-                    }
-                } catch (e) {
-                    console.error('Fallback fallito:', e);
-                }
+                await inviaNotificaCompleta(risultati);
+            } else {
+                alert('Permessi notifiche non concessi. Controlla le impostazioni del browser.');
             }
         }
 
-        // Eventi per l'installazione PWA
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('install-pwa-btn').style.display = 'inline-flex';
-        });
-
-        window.addEventListener('appinstalled', () => {
-            document.getElementById('install-pwa-btn').style.display = 'none';
-            deferredPrompt = null;
-            mostraToast('✅ App installata con successo!', 'success');
-        });
+        function mostraStatoNotifiche() {
+            const oggi = new Date();
+            const giorno = oggi.getDay();
+            const giornoNome = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'][giorno];
+            
+            const piccoliAllenamento = CONFIG_NOTIFICHE.GIORNI_PICCOLI.includes(giorno) ? 'SÌ' : 'NO';
+            const grandiAllenamento = CONFIG_NOTIFICHE.GIORNI_GRANDI.includes(giorno) ? 'SÌ' : 'NO';
+            
+            const atletiPiccoli = getAtletiFiltrati('piccoli').length;
+            const atletiGrandi = getAtletiFiltrati('grandi').length;
+            
+            const oggiStr = oggi.toLocaleDateString('en-CA');
+            let presenzeOggi = 0;
+            Object.values(presenzePerMese).forEach(mesePresenze => {
+                presenzeOggi += mesePresenze.filter(p => p.data === oggiStr).length;
+            });
+            
+            const messaggio = `
+📊 STATO NOTIFICHE
+📅 Oggi: ${giornoNome}
+👦 Piccoli allenamento: ${piccoliAllenamento} (${atletiPiccoli} atleti)
+🏃 Grandi allenamento: ${grandiAllenamento} (${atletiGrandi} atleti)
+📝 Presenze oggi: ${presenzeOggi}
+⏰ Orario notifica: 21:00
+🔔 Notifiche: ${Notification.permission === 'granted' ? 'ATTIVE ✅' : 'NON ATTIVE ❌'}
+            `;
+            
+            alert(messaggio);
+        }
 
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
+                console.log('App tornata in primo piano, controllo presenze...');
                 controllaPresenzeGiornaliere();
-                aggiornaStatoNotificheUI();
             }
+        });
+
+        // Eventi per l'installazione PWA
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('📲 Evento beforeinstallprompt catturato');
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('install-pwa-btn');
+            if (btn) btn.style.display = 'inline-flex';
+        });
+
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('📲 App installata con successo');
+            const btn = document.getElementById('install-pwa-btn');
+            if (btn) btn.style.display = 'none';
+            deferredPrompt = null;
+            alert('✅ Grazie per aver installato Registro Presenze 2050!');
         });
 
         // =================== INIZIALIZZAZIONE ===================
@@ -3255,5 +3037,4 @@
     </script>
 </body>
 </html>
-
 
