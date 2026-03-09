@@ -4,7 +4,7 @@
 
 const CACHE_NAME = 'registro-presenze-v5';
 const APP_VERSION = '5.1.0';
-const BACKUP_URL = "https://script.google.com/macros/s/AKfycbx1mEyj7Ul-XjAS1EwIZybiHDc2ti1TLe9fY22nTpxK_W0eAgOWwcSEltvoerB6YuB8WQ/exec";
+const BACKUP_URL = "https://script.google.com/macros/s/AKfycbw8bpfHmdw28CcXZf2prGXX9Pr6MnHMQ5Ij50un8Qjs8YXNgjjPz7MKUL_5u8EfHvqHRQ/exec";
 
 // Risorse da memorizzare nella cache
 const urlsToCache = [
@@ -446,3 +446,4 @@ function sendMessageToClient(client, message) {
 }
 
 console.log('[SW] 🚀 Service Worker caricato e pronto (v' + APP_VERSION + ')');
+
