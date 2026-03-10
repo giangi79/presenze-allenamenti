@@ -204,7 +204,7 @@
             transform: scale(0.95);
         }
         
-        /* === MENU A TENDINA CORRETTO - FISSO E CENTRATO === */
+        /* === MENU A TENDINA - VERSIONE SEMPLIFICATA === */
         .dropdown-menu {
             position: relative;
             display: inline-block;
@@ -225,49 +225,37 @@
             box-shadow: 0 5px 10px rgba(102, 126, 234, 0.3);
             transition: all 0.3s;
             white-space: nowrap;
-            -webkit-tap-highlight-color: transparent;
         }
         
         .dropdown-button:active {
             transform: scale(0.98);
-            opacity: 0.9;
         }
         
-        /* Menu centrato orizzontalmente con larghezza controllata */
+        /* Menu semplice - non fixed */
         .dropdown-content {
             display: none;
-            position: fixed;
-            left: 50%;
-            transform: translateX(-50%);
-            top: 90px;
-            width: calc(100% - 40px);
-            max-width: 340px;
+            position: absolute;
+            right: 0;
+            top: 60px;
+            width: 280px;
             background: white;
-            border-radius: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             z-index: 10000;
             overflow: hidden;
             border: 1px solid #e2e8f0;
-            max-height: 70vh;
-            overflow-y: auto;
-            margin: 0 auto;
-            -webkit-overflow-scrolling: touch;
         }
         
-        /* Regolazioni per schermi piccoli */
+        /* Versione mobile */
         @media (max-width: 600px) {
             .dropdown-content {
+                position: fixed;
+                left: 50%;
+                transform: translateX(-50%);
+                right: auto;
                 top: 80px;
-                width: calc(100% - 30px);
+                width: calc(100% - 40px);
                 max-width: 320px;
-            }
-        }
-        
-        @media (max-width: 400px) {
-            .dropdown-content {
-                top: 75px;
-                width: calc(100% - 20px);
-                max-width: 300px;
             }
         }
         
@@ -275,7 +263,7 @@
             display: block;
         }
         
-        /* Overlay per chiudere il menu */
+        /* Overlay semplificato */
         .dropdown-overlay {
             display: none;
             position: fixed;
@@ -285,7 +273,6 @@
             bottom: 0;
             background: rgba(0,0,0,0.5);
             z-index: 9999;
-            -webkit-tap-highlight-color: transparent;
         }
         
         .dropdown-overlay.show {
@@ -293,20 +280,15 @@
         }
         
         .dropdown-item {
-            padding: 18px 20px;
+            padding: 16px 20px;
             display: flex;
             align-items: center;
             gap: 15px;
             cursor: pointer;
             border-bottom: 1px solid #f1f5f9;
             font-weight: 600;
-            transition: all 0.2s;
             font-size: 15px;
             background: white;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
         }
         
         .dropdown-item:active {
@@ -325,7 +307,7 @@
         
         .dropdown-badge {
             margin-left: auto;
-            padding: 5px 12px;
+            padding: 4px 12px;
             border-radius: 30px;
             font-size: 12px;
             font-weight: 700;
@@ -499,7 +481,6 @@
             background: white; 
             position: relative; 
             -webkit-overflow-scrolling: touch; 
-            overscroll-behavior: contain;
             scroll-behavior: smooth;
         }
         
@@ -603,7 +584,6 @@
             transition: all 0.2s;
             vertical-align: middle;
             font-family: 'Poppins', sans-serif;
-            -webkit-tap-highlight-color: transparent;
         }
         
         .day-cell:active {
@@ -1311,7 +1291,7 @@
     <a href="#main-content" class="skip-link"><i class="fas fa-arrow-down"></i> Salta al contenuto</a>
     
     <!-- OVERLAY PER CHIUDERE MENU -->
-    <div class="dropdown-overlay" id="dropdown-overlay" onclick="closeDropdown()" ontouchstart="closeDropdown()"></div>
+    <div class="dropdown-overlay" id="dropdown-overlay" onclick="closeDropdown()"></div>
     
     <!-- CONTAINER TOAST - NASCOSTO -->
     <div id="toast-container" class="toast-container"></div>
@@ -1326,46 +1306,46 @@
             <!-- TOP BAR CON MENU A TENDINA -->
             <div class="top-bar">
                 <div class="date-controls">
-                    <select id="select-mese" onchange="cambiaData()" aria-label="Seleziona mese"></select>
-                    <select id="select-anno" onchange="cambiaData()" aria-label="Seleziona anno"></select>
-                    <button class="btn-oggi" onclick="scrollOggi()" title="Vai al giorno corrente" aria-label="Vai al giorno corrente">
+                    <select id="select-mese" aria-label="Seleziona mese"></select>
+                    <select id="select-anno" aria-label="Seleziona anno"></select>
+                    <button class="btn-oggi" id="btnOggi" title="Vai al giorno corrente" aria-label="Vai al giorno corrente">
                         <i class="fas fa-calendar-check"></i>
                     </button>
                 </div>
                 
-                <!-- MENU A TENDINA - CORRETTO -->
-                <div class="dropdown-menu" id="dropdown-menu">
-                    <button class="dropdown-button" onclick="toggleDropdown()" id="dropdown-btn" ontouchstart="toggleDropdown()">
+                <!-- MENU A TENDINA - VERSIONE SEMPLIFICATA -->
+                <div class="dropdown-menu">
+                    <button class="dropdown-button" id="menuButton">
                         <i class="fas fa-bars"></i> MENU
                     </button>
-                    <div class="dropdown-content" id="dropdown-content">
-                        <div class="dropdown-item" onclick="toggleNumericInput(); closeDropdown()" ontouchstart="toggleNumericInput(); closeDropdown()">
+                    <div class="dropdown-content" id="dropdownMenu">
+                        <div class="dropdown-item" data-action="numeric">
                             <i class="fas fa-hashtag"></i>
                             <span>INPUT NUMERICO</span>
-                            <span class="dropdown-badge off" id="numeric-badge">OFF</span>
+                            <span class="dropdown-badge off" id="numericBadge">OFF</span>
                         </div>
-                        <div class="dropdown-item" onclick="toggleBackupAutomatico(); closeDropdown()" ontouchstart="toggleBackupAutomatico(); closeDropdown()">
+                        <div class="dropdown-item" data-action="backup">
                             <i class="fas fa-clock"></i>
                             <span>BACKUP AUTO</span>
-                            <span class="dropdown-badge on" id="backup-badge">ON</span>
+                            <span class="dropdown-badge on" id="backupBadge">ON</span>
                         </div>
-                        <div class="dropdown-item" onclick="aggiornaBackupDrive(); closeDropdown()" ontouchstart="aggiornaBackupDrive(); closeDropdown()">
+                        <div class="dropdown-item" data-action="pdf">
                             <i class="fas fa-file-pdf"></i>
                             <span>BACKUP PDF</span>
                         </div>
-                        <div class="dropdown-item" onclick="apriFileDrive(); closeDropdown()" ontouchstart="apriFileDrive(); closeDropdown()">
+                        <div class="dropdown-item" data-action="open">
                             <i class="fas fa-folder-open"></i>
                             <span>APRI PDF</span>
                         </div>
-                        <div class="dropdown-item" onclick="toggleAdmin(); closeDropdown()" ontouchstart="toggleAdmin(); closeDropdown()">
+                        <div class="dropdown-item" data-action="admin">
                             <i class="fas fa-users-cog"></i>
                             <span>GESTIONE ATLETI</span>
                         </div>
-                        <div class="dropdown-item" onclick="apriImpostazioniNotifiche(); closeDropdown()" ontouchstart="apriImpostazioniNotifiche(); closeDropdown()">
+                        <div class="dropdown-item" data-action="notifiche">
                             <i class="fas fa-bell"></i>
                             <span>NOTIFICHE</span>
                         </div>
-                        <div class="dropdown-item" id="install-pwa-item" style="display: none;" onclick="installPWA(); closeDropdown()" ontouchstart="installPWA(); closeDropdown()">
+                        <div class="dropdown-item" id="installItem" style="display: none;" data-action="install">
                             <i class="fas fa-download"></i>
                             <span>INSTALLA APP</span>
                         </div>
@@ -1388,17 +1368,17 @@
 
         <!-- MENU PRINCIPALE CATEGORIE -->
         <div class="menu-container" id="main-menu" role="tablist">
-            <button class="btn-menu btn-cuccioli" onclick="mostraSezione('cuccioli')" role="tab" aria-selected="false" aria-controls="sez-cuccioli">
+            <button class="btn-menu btn-cuccioli" data-sezione="cuccioli" role="tab" aria-selected="false" aria-controls="sez-cuccioli">
                 <i class="fas fa-baby"></i>
                 CUCCIOLI
                 <span><i class="fas fa-tag"></i> Under 8</span>
             </button>
-            <button class="btn-menu btn-piccoli" onclick="mostraSezione('piccoli')" role="tab" aria-selected="false" aria-controls="sez-piccoli">
+            <button class="btn-menu btn-piccoli" data-sezione="piccoli" role="tab" aria-selected="false" aria-controls="sez-piccoli">
                 <i class="fas fa-child"></i>
                 PICCOLI
                 <span><i class="fas fa-clock"></i> Lun • Mer • Ven</span>
             </button>
-            <button class="btn-menu btn-grandi" onclick="mostraSezione('grandi')" role="tab" aria-selected="false" aria-controls="sez-grandi">
+            <button class="btn-menu btn-grandi" data-sezione="grandi" role="tab" aria-selected="false" aria-controls="sez-grandi">
                 <i class="fas fa-running"></i>
                 GRANDI
                 <span><i class="fas fa-clock"></i> Lun • Mar • Mer • Gio • Ven</span>
@@ -1408,7 +1388,7 @@
         <!-- SEZIONI TABELLE -->
         <div id="sez-cuccioli" class="section-container" role="tabpanel" aria-labelledby="tab-cuccioli">
             <div class="table-container">
-                <div class="table-wrapper" id="wrapper-cuccioli" onscroll="handleVirtualScroll('cuccioli')">
+                <div class="table-wrapper" id="wrapper-cuccioli">
                     <table id="tab-cuccioli">
                         <thead id="thead-cuccioli"></thead>
                         <tbody id="tbody-cuccioli"></tbody>
@@ -1422,7 +1402,7 @@
         
         <div id="sez-piccoli" class="section-container" role="tabpanel" aria-labelledby="tab-piccoli">
             <div class="table-container">
-                <div class="table-wrapper" id="wrapper-piccoli" onscroll="handleVirtualScroll('piccoli')">
+                <div class="table-wrapper" id="wrapper-piccoli">
                     <table id="tab-piccoli">
                         <thead id="thead-piccoli"></thead>
                         <tbody id="tbody-piccoli"></tbody>
@@ -1436,7 +1416,7 @@
         
         <div id="sez-grandi" class="section-container" role="tabpanel" aria-labelledby="tab-grandi">
             <div class="table-container">
-                <div class="table-wrapper" id="wrapper-grandi" onscroll="handleVirtualScroll('grandi')">
+                <div class="table-wrapper" id="wrapper-grandi">
                     <table id="tab-grandi">
                         <thead id="thead-grandi"></thead>
                         <tbody id="tbody-grandi"></tbody>
@@ -1459,10 +1439,10 @@
 
     <!-- BARRA INFERIORE FISSA - SOLO HOME E RAPIDO -->
     <div class="bottom-fixed-bar">
-        <button class="btn-action btn-home-bottom" onclick="vaiAllaHome()" title="Torna alla home">
+        <button class="btn-action btn-home-bottom" id="homeButton" title="Torna alla home">
             <i class="fas fa-home"></i> HOME
         </button>
-        <button class="btn-action btn-quick-bottom" onclick="avviaRegistrazioneVeloce()" title="Registrazione rapida presenze">
+        <button class="btn-action btn-quick-bottom" id="quickButton" title="Registrazione rapida presenze">
             <i class="fas fa-bolt"></i> RAPIDO
         </button>
     </div>
@@ -1470,7 +1450,7 @@
     <!-- PANNELLO ADMIN -->
     <div id="admin-overlay" role="dialog" aria-labelledby="admin-title" aria-modal="true">
         <div id="admin-panel">
-            <span class="close-admin" onclick="toggleAdmin()" role="button" tabindex="0" aria-label="Chiudi pannello admin"><i class="fas fa-times"></i></span>
+            <span class="close-admin" id="closeAdmin" role="button" tabindex="0" aria-label="Chiudi pannello admin"><i class="fas fa-times"></i></span>
             <h2 id="admin-title" style="font-family: 'Poppins', sans-serif; margin-bottom: 20px; color: #0f172a; font-size: 24px;"><i class="fas fa-user-edit"></i> GESTIONE ATLETI</h2>
             
             <div id="admin-form">
@@ -1490,7 +1470,7 @@
                     <option value="SENIOR">SENIOR</option>
                 </select>
                 
-                <button id="btn-save-atleta" onclick="salvaAtleta()" aria-label="Aggiungi o aggiorna atleta">
+                <button id="btn-save-atleta" aria-label="Aggiungi o aggiorna atleta">
                     <i class="fas fa-plus-circle"></i> AGGIUNGI ATLETA
                 </button>
                 
@@ -1511,9 +1491,9 @@
                    pattern="[0-9]*" inputmode="numeric" autofocus
                    aria-label="Inserisci numero">
             <div class="input-buttons">
-                <button class="input-btn clear" onclick="clearNumberInput()" aria-label="Pulisci campo"><i class="fas fa-eraser"></i> PULISCI</button>
-                <button class="input-btn cancel" onclick="cancelNumberInput()" aria-label="Annulla"><i class="fas fa-times"></i> ANNULLA</button>
-                <button class="input-btn confirm" onclick="confirmNumberInput()" aria-label="Conferma"><i class="fas fa-check"></i> CONFERMA</button>
+                <button class="input-btn clear" id="clearNumber" aria-label="Pulisci campo"><i class="fas fa-eraser"></i> PULISCI</button>
+                <button class="input-btn cancel" id="cancelNumber" aria-label="Annulla"><i class="fas fa-times"></i> ANNULLA</button>
+                <button class="input-btn confirm" id="confirmNumber" aria-label="Conferma"><i class="fas fa-check"></i> CONFERMA</button>
             </div>
         </div>
     </div>
@@ -1532,28 +1512,28 @@
             </div>
             
             <div class="quick-buttons">
-                <button class="quick-btn quick-btn-prev" id="quick-btn-prev" onclick="prevQuickAthlete()" aria-label="Atleta precedente"><i class="fas fa-chevron-left"></i> INDIETRO</button>
-                <button class="quick-btn quick-btn-present" id="quick-btn-present" onclick="toggleQuickPresent()"><i class="fas fa-check"></i> PRESENTE</button>
-                <button class="quick-btn quick-btn-next" id="quick-btn-next" onclick="nextQuickAthlete()" aria-label="Prossimo atleta">PROSSIMO <i class="fas fa-chevron-right"></i></button>
+                <button class="quick-btn quick-btn-prev" id="quick-btn-prev" aria-label="Atleta precedente"><i class="fas fa-chevron-left"></i> INDIETRO</button>
+                <button class="quick-btn quick-btn-present" id="quick-btn-present"><i class="fas fa-check"></i> PRESENTE</button>
+                <button class="quick-btn quick-btn-next" id="quick-btn-next" aria-label="Prossimo atleta">PROSSIMO <i class="fas fa-chevron-right"></i></button>
             </div>
             
             <div class="quick-status" id="quick-status"></div>
             
-            <button class="quick-btn quick-btn-close" onclick="chiudiRegistrazioneVeloce()"><i class="fas fa-times"></i> CHIUDI</button>
+            <button class="quick-btn quick-btn-close" id="quick-btn-close"><i class="fas fa-times"></i> CHIUDI</button>
         </div>
     </div>
 
     <!-- OVERLAY IMPOSTAZIONI NOTIFICHE -->
     <div id="notifica-settings-overlay" role="dialog" aria-labelledby="notifica-settings-title" aria-modal="true">
         <div class="notifica-settings-container">
-            <span class="close-admin" onclick="chiudiImpostazioniNotifiche()" role="button" tabindex="0" aria-label="Chiudi impostazioni"><i class="fas fa-times"></i></span>
+            <span class="close-admin" id="closeNotifiche" role="button" tabindex="0" aria-label="Chiudi impostazioni"><i class="fas fa-times"></i></span>
             <h2 id="notifica-settings-title"><i class="fas fa-bell"></i> NOTIFICHE</h2>
             
             <div class="notifica-status" id="notifica-status-settings">
                 Caricamento stato...
             </div>
             
-            <button class="btn-autorizza" onclick="autorizzaNotifiche()" id="btn-autorizza-notifiche">
+            <button class="btn-autorizza" id="btn-autorizza-notifiche">
                 <i class="fas fa-bell"></i> AUTORIZZA NOTIFICHE
             </button>
             
@@ -1564,8 +1544,8 @@
             </div>
             
             <div class="notifica-settings-buttons">
-                <button class="btn-save-settings" onclick="salvaImpostazioniNotifiche()"><i class="fas fa-save"></i> SALVA</button>
-                <button class="btn-close-settings" onclick="chiudiImpostazioniNotifiche()"><i class="fas fa-times"></i> CHIUDI</button>
+                <button class="btn-save-settings" id="saveNotifiche"><i class="fas fa-save"></i> SALVA</button>
+                <button class="btn-close-settings" id="closeNotificheBtn"><i class="fas fa-times"></i> CHIUDI</button>
             </div>
         </div>
     </div>
@@ -1621,61 +1601,256 @@
         // =================== GESTIONE INSTALLAZIONE PWA ===================
         let deferredPrompt;
 
-        window.installPWA = async function() {
-            if (!deferredPrompt) {
-                console.log('❌ Nessun prompt di installazione disponibile');
-                return;
+        // =================== INIZIALIZZAZIONE GESTORI EVENTI ===================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM caricato, inizializzo gestori eventi...');
+            
+            // Menu a tendina
+            const menuButton = document.getElementById('menuButton');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+            const dropdownOverlay = document.getElementById('dropdown-overlay');
+            
+            if (menuButton) {
+                // Gestione click sul pulsante menu
+                menuButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Click menu button');
+                    dropdownMenu.classList.toggle('show');
+                    dropdownOverlay.classList.toggle('show');
+                });
+                
+                // Gestione touch
+                menuButton.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Touch menu button');
+                    dropdownMenu.classList.toggle('show');
+                    dropdownOverlay.classList.toggle('show');
+                });
             }
             
-            deferredPrompt.prompt();
-            
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log(`📲 Utente ha ${outcome === 'accepted' ? 'accettato' : 'rifiutato'} l'installazione`);
-            
-            deferredPrompt = null;
-            
-            const btnBottom = document.getElementById('install-pwa-item');
-            if (btnBottom) btnBottom.style.display = 'none';
-        }
-
-        function checkIfInstalled() {
-            if (window.matchMedia('(display-mode: standalone)').matches || 
-                window.navigator.standalone === true) {
-                console.log('📲 App già installata');
-                const btnBottom = document.getElementById('install-pwa-item');
-                if (btnBottom) btnBottom.style.display = 'none';
-                return true;
+            // Chiudi menu cliccando sull'overlay
+            if (dropdownOverlay) {
+                dropdownOverlay.addEventListener('click', function() {
+                    dropdownMenu.classList.remove('show');
+                    dropdownOverlay.classList.remove('show');
+                });
+                
+                dropdownOverlay.addEventListener('touchstart', function() {
+                    dropdownMenu.classList.remove('show');
+                    dropdownOverlay.classList.remove('show');
+                });
             }
-            return false;
-        }
-
-        // =================== FUNZIONI MENU A TENDINA ===================
-        window.toggleDropdown = function(e) {
-            if (e) e.preventDefault();
-            const dropdown = document.getElementById('dropdown-content');
-            const overlay = document.getElementById('dropdown-overlay');
-            dropdown.classList.toggle('show');
-            overlay.classList.toggle('show');
-        }
-
-        window.closeDropdown = function(e) {
-            if (e) e.preventDefault();
-            const dropdown = document.getElementById('dropdown-content');
-            const overlay = document.getElementById('dropdown-overlay');
-            dropdown.classList.remove('show');
-            overlay.classList.remove('show');
-        }
-        
-        const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", 
-                          "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
-        const nomiGiorni = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
-        const CAT_CUCCIOLI = ['CUCCIOLI'];
-        const CAT_PICCOLI = ['GIOVANISSIMI', 'ESORDIENTI'];
-        const CAT_GRANDI = ['R12', 'RAGAZZI', 'ALLIEVI', 'JUNIOR', 'JUNIORES', 'SENIOR'];
+            
+            // Gestione click sulle voci del menu
+            const menuItems = document.querySelectorAll('.dropdown-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const action = this.dataset.action;
+                    console.log('Menu item clicked:', action);
+                    
+                    // Chiudi il menu
+                    dropdownMenu.classList.remove('show');
+                    dropdownOverlay.classList.remove('show');
+                    
+                    // Esegui l'azione corrispondente
+                    switch(action) {
+                        case 'numeric':
+                            toggleNumericInput();
+                            break;
+                        case 'backup':
+                            toggleBackupAutomatico();
+                            break;
+                        case 'pdf':
+                            aggiornaBackupDrive();
+                            break;
+                        case 'open':
+                            apriFileDrive();
+                            break;
+                        case 'admin':
+                            toggleAdmin();
+                            break;
+                        case 'notifiche':
+                            apriImpostazioniNotifiche();
+                            break;
+                        case 'install':
+                            installPWA();
+                            break;
+                    }
+                });
+                
+                // Gestione touch
+                item.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const action = this.dataset.action;
+                    console.log('Menu item touched:', action);
+                    
+                    dropdownMenu.classList.remove('show');
+                    dropdownOverlay.classList.remove('show');
+                    
+                    switch(action) {
+                        case 'numeric':
+                            toggleNumericInput();
+                            break;
+                        case 'backup':
+                            toggleBackupAutomatico();
+                            break;
+                        case 'pdf':
+                            aggiornaBackupDrive();
+                            break;
+                        case 'open':
+                            apriFileDrive();
+                            break;
+                        case 'admin':
+                            toggleAdmin();
+                            break;
+                        case 'notifiche':
+                            apriImpostazioniNotifiche();
+                            break;
+                        case 'install':
+                            installPWA();
+                            break;
+                    }
+                });
+            });
+            
+            // Pulsante Oggi
+            const btnOggi = document.getElementById('btnOggi');
+            if (btnOggi) {
+                btnOggi.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    scrollOggi();
+                });
+                btnOggi.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    scrollOggi();
+                });
+            }
+            
+            // Selettori mese/anno
+            const selectMese = document.getElementById('select-mese');
+            const selectAnno = document.getElementById('select-anno');
+            
+            if (selectMese) {
+                selectMese.addEventListener('change', cambiaData);
+            }
+            if (selectAnno) {
+                selectAnno.addEventListener('change', cambiaData);
+            }
+            
+            // Pulsanti categorie
+            document.querySelectorAll('.btn-menu').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const sezione = this.dataset.sezione;
+                    mostraSezione(sezione);
+                });
+            });
+            
+            // Home button
+            const homeButton = document.getElementById('homeButton');
+            if (homeButton) {
+                homeButton.addEventListener('click', vaiAllaHome);
+                homeButton.addEventListener('touchstart', vaiAllaHome);
+            }
+            
+            // Quick button
+            const quickButton = document.getElementById('quickButton');
+            if (quickButton) {
+                quickButton.addEventListener('click', avviaRegistrazioneVeloce);
+                quickButton.addEventListener('touchstart', avviaRegistrazioneVeloce);
+            }
+            
+            // Admin panel
+            const closeAdmin = document.getElementById('closeAdmin');
+            if (closeAdmin) {
+                closeAdmin.addEventListener('click', toggleAdmin);
+                closeAdmin.addEventListener('touchstart', toggleAdmin);
+            }
+            
+            // Save atleta
+            const saveAtleta = document.getElementById('btn-save-atleta');
+            if (saveAtleta) {
+                saveAtleta.addEventListener('click', salvaAtleta);
+                saveAtleta.addEventListener('touchstart', salvaAtleta);
+            }
+            
+            // Number input
+            const clearNumber = document.getElementById('clearNumber');
+            const cancelNumber = document.getElementById('cancelNumber');
+            const confirmNumber = document.getElementById('confirmNumber');
+            
+            if (clearNumber) {
+                clearNumber.addEventListener('click', clearNumberInput);
+                clearNumber.addEventListener('touchstart', clearNumberInput);
+            }
+            if (cancelNumber) {
+                cancelNumber.addEventListener('click', cancelNumberInput);
+                cancelNumber.addEventListener('touchstart', cancelNumberInput);
+            }
+            if (confirmNumber) {
+                confirmNumber.addEventListener('click', confirmNumberInput);
+                confirmNumber.addEventListener('touchstart', confirmNumberInput);
+            }
+            
+            // Quick register
+            const quickPrev = document.getElementById('quick-btn-prev');
+            const quickPresent = document.getElementById('quick-btn-present');
+            const quickNext = document.getElementById('quick-btn-next');
+            const quickClose = document.getElementById('quick-btn-close');
+            
+            if (quickPrev) {
+                quickPrev.addEventListener('click', prevQuickAthlete);
+                quickPrev.addEventListener('touchstart', prevQuickAthlete);
+            }
+            if (quickPresent) {
+                quickPresent.addEventListener('click', toggleQuickPresent);
+                quickPresent.addEventListener('touchstart', toggleQuickPresent);
+            }
+            if (quickNext) {
+                quickNext.addEventListener('click', nextQuickAthlete);
+                quickNext.addEventListener('touchstart', nextQuickAthlete);
+            }
+            if (quickClose) {
+                quickClose.addEventListener('click', chiudiRegistrazioneVeloce);
+                quickClose.addEventListener('touchstart', chiudiRegistrazioneVeloce);
+            }
+            
+            // Notifiche
+            const autorizzaNotifiche = document.getElementById('btn-autorizza-notifiche');
+            const saveNotifiche = document.getElementById('saveNotifiche');
+            const closeNotifiche = document.getElementById('closeNotifiche');
+            const closeNotificheBtn = document.getElementById('closeNotificheBtn');
+            
+            if (autorizzaNotifiche) {
+                autorizzaNotifiche.addEventListener('click', window.autorizzaNotifiche);
+                autorizzaNotifiche.addEventListener('touchstart', window.autorizzaNotifiche);
+            }
+            if (saveNotifiche) {
+                saveNotifiche.addEventListener('click', salvaImpostazioniNotifiche);
+                saveNotifiche.addEventListener('touchstart', salvaImpostazioniNotifiche);
+            }
+            if (closeNotifiche) {
+                closeNotifiche.addEventListener('click', chiudiImpostazioniNotifiche);
+                closeNotifiche.addEventListener('touchstart', chiudiImpostazioniNotifiche);
+            }
+            if (closeNotificheBtn) {
+                closeNotificheBtn.addEventListener('click', chiudiImpostazioniNotifiche);
+                closeNotificheBtn.addEventListener('touchstart', chiudiImpostazioniNotifiche);
+            }
+            
+            // Avvia l'app
+            inizializza();
+        });
 
         // =================== FUNZIONI PRINCIPALI ===================
         function mostraToast(messaggio, tipo = 'successo', durata = 3000) {
-            console.log(`Toast disattivato: ${messaggio} (${tipo})`);
+            console.log(`Toast: ${messaggio} (${tipo})`);
+            // Puoi implementare un toast semplice se vuoi
+            alert(messaggio);
         }
 
         function validaAtleta(nome, categoria, id = null) {
@@ -1923,12 +2098,7 @@
                         if(isGreen) totMese++;
                         
                         const longPressAttrs = numericInputAttivo ? 
-                            `onmousedown="startLongPress(this, ${a.id}, '${dStr}', '${sezione}')" 
-                             onmouseup="endLongPress()" 
-                             onmouseleave="cancelLongPress()"
-                             ontouchstart="startLongPress(this, ${a.id}, '${dStr}', '${sezione}')" 
-                             ontouchend="endLongPress()" 
-                             ontouchcancel="cancelLongPress()"` : '';
+                            `data-longpress="true" data-atleta="${a.id}" data-data="${dStr}" data-sezione="${sezione}"` : '';
                         
                         let cellClass = '';
                         let cellContent = '';
@@ -1955,7 +2125,9 @@
                         
                         html += `<td class="day-cell ${cellClass}" 
                             ${longPressAttrs}
-                            onclick="handleCellClick(event, this, ${a.id}, '${dStr}', '${sezione}')"
+                            data-atleta-id="${a.id}"
+                            data-data="${dStr}"
+                            data-sezione="${sezione}"
                             title="${dStr}"
                             role="gridcell"
                             aria-label="${dStr} ${isGreen ? 'Presente' : (dataCella < oggiMezzanotte ? 'Assente' : 'Futuro')}">
@@ -1976,7 +2148,77 @@
                 }
                 
                 aggiornaStatistiche();
+                
+                // Aggiungi event listener alle celle
+                aggiungiEventiCelle(sezione);
             });
+        }
+
+        function aggiungiEventiCelle(sezione) {
+            const cells = document.querySelectorAll(`#tbody-${sezione} .day-cell`);
+            cells.forEach(cell => {
+                // Rimuovi vecchi listener
+                cell.removeEventListener('click', handleCellClickEvent);
+                cell.removeEventListener('touchstart', handleTouchStart);
+                cell.removeEventListener('touchend', handleTouchEnd);
+                cell.removeEventListener('touchcancel', handleTouchCancel);
+                
+                // Aggiungi nuovi listener
+                cell.addEventListener('click', handleCellClickEvent);
+                
+                if (numericInputAttivo) {
+                    cell.addEventListener('touchstart', handleTouchStart);
+                    cell.addEventListener('touchend', handleTouchEnd);
+                    cell.addEventListener('touchcancel', handleTouchCancel);
+                }
+            });
+        }
+
+        function handleCellClickEvent(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const cell = e.currentTarget;
+            const aId = cell.dataset.atletaId;
+            const data = cell.dataset.data;
+            const sezione = cell.dataset.sezione;
+            
+            if (isLongPress) {
+                isLongPress = false;
+                return;
+            }
+            
+            toggleCellState(cell, parseInt(aId), data, sezione);
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const cell = e.currentTarget;
+            const aId = parseInt(cell.dataset.atletaId);
+            const data = cell.dataset.data;
+            const sezione = cell.dataset.sezione;
+            
+            currentCellData = { el: cell, aId, data, sezione };
+            longPressTimer = setTimeout(() => {
+                isLongPress = true;
+                showNumberInput(cell, aId, data, sezione);
+            }, LONG_PRESS_DURATION);
+        }
+
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+            }
+        }
+
+        function handleTouchCancel(e) {
+            e.preventDefault();
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+            }
         }
 
         function initVirtualScroll(sezione) {
@@ -2036,6 +2278,19 @@
             
             checkIfInstalled();
             caricaOraNotifica();
+            
+            const nomiMesi = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", 
+                              "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+            const nomiGiorni = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
+            const CAT_CUCCIOLI = ['CUCCIOLI'];
+            const CAT_PICCOLI = ['GIOVANISSIMI', 'ESORDIENTI'];
+            const CAT_GRANDI = ['R12', 'RAGAZZI', 'ALLIEVI', 'JUNIOR', 'JUNIORES', 'SENIOR'];
+            
+            window.nomiMesi = nomiMesi;
+            window.nomiGiorni = nomiGiorni;
+            window.CAT_CUCCIOLI = CAT_CUCCIOLI;
+            window.CAT_PICCOLI = CAT_PICCOLI;
+            window.CAT_GRANDI = CAT_GRANDI;
             
             const m = localStorage.getItem('p_mese') || dataAttuale.getMonth();
             const a = localStorage.getItem('p_anno') || dataAttuale.getFullYear();
@@ -2148,7 +2403,7 @@
             sm.innerHTML = ""; 
             sa.innerHTML = "";
             
-            nomiMesi.forEach((nome, i) => {
+            window.nomiMesi.forEach((nome, i) => {
                 sm.add(new Option(nome, i));
             });
             
@@ -2164,7 +2419,7 @@
         // =================== FUNZIONI PULSANTI CON STATO VISIBILE ===================
         function toggleNumericInput() {
             numericInputAttivo = !numericInputAttivo;
-            const badge = document.getElementById('numeric-badge');
+            const badge = document.getElementById('numericBadge');
             
             if (numericInputAttivo) {
                 if (badge) {
@@ -2189,7 +2444,7 @@
             const savedState = localStorage.getItem('numeric_input_attivo');
             if (savedState !== null) {
                 numericInputAttivo = savedState === 'true';
-                const badge = document.getElementById('numeric-badge');
+                const badge = document.getElementById('numericBadge');
                 
                 if (numericInputAttivo) {
                     if (badge) {
@@ -2207,7 +2462,7 @@
 
         function toggleBackupAutomatico() {
             backupAutomaticoAttivo = !backupAutomaticoAttivo;
-            const badge = document.getElementById('backup-badge');
+            const badge = document.getElementById('backupBadge');
             
             if (backupAutomaticoAttivo) {
                 if (badge) {
@@ -2230,7 +2485,7 @@
             const savedState = localStorage.getItem('backup_auto_attivo');
             if (savedState !== null) {
                 backupAutomaticoAttivo = savedState === 'true';
-                const badge = document.getElementById('backup-badge');
+                const badge = document.getElementById('backupBadge');
                 
                 if (backupAutomaticoAttivo) {
                     if (badge) {
@@ -2283,29 +2538,52 @@
         }
 
         function scrollOggi() {
+            console.log('scrollOggi chiamata');
             const active = document.querySelector('.section-active'); 
-            if (!active) return;
+            if (!active) {
+                console.log('Nessuna sezione attiva');
+                return;
+            }
             
-            const target = active.querySelector('.today-cell'); 
+            // Trova la cella di oggi
+            const oggi = new Date().toLocaleDateString('en-CA');
+            console.log('Oggi:', oggi);
+            
+            // Cerca in tutta la tabella
+            const cells = active.querySelectorAll('.day-cell');
+            let target = null;
+            
+            for (let cell of cells) {
+                if (cell.dataset.data === oggi) {
+                    target = cell;
+                    break;
+                }
+            }
+            
+            if (!target) {
+                console.log('Cella di oggi non trovata');
+                return;
+            }
+            
             const wrapper = active.querySelector('.table-wrapper');
-            const stickyWidth = active.querySelector('.sticky-col')?.offsetWidth || 90;
+            const stickyCol = active.querySelector('.sticky-col');
             
-            if (target && wrapper) {
-                // Forza il calcolo delle dimensioni
+            if (wrapper && target) {
+                // Calcola la posizione di scroll
                 const targetRect = target.getBoundingClientRect();
                 const wrapperRect = wrapper.getBoundingClientRect();
+                const stickyWidth = stickyCol ? stickyCol.offsetWidth : 120;
                 
-                // Calcola la posizione di scroll
+                // Calcola lo scroll necessario
                 const scrollLeft = target.offsetLeft - stickyWidth - 20;
                 
-                wrapper.scrollTo({ 
-                    left: Math.max(0, scrollLeft), 
-                    behavior: 'smooth' 
-                });
+                console.log('Scrolling a:', scrollLeft);
                 
-                console.log('Scrolling to:', scrollLeft);
-            } else {
-                console.log('Target o wrapper non trovato');
+                // Esegui lo scroll
+                wrapper.scrollTo({
+                    left: Math.max(0, scrollLeft),
+                    behavior: 'smooth'
+                });
             }
         }
 
@@ -2325,20 +2603,20 @@
                 (s === 'grandi') ? 'section-active' : 'section-container';
             
             if (s === 'cuccioli') {
-                document.querySelector('.btn-cuccioli').setAttribute('aria-selected', 'true');
+                document.querySelector('[data-sezione="cuccioli"]').setAttribute('aria-selected', 'true');
             } else if (s === 'piccoli') {
-                document.querySelector('.btn-piccoli').setAttribute('aria-selected', 'true');
+                document.querySelector('[data-sezione="piccoli"]').setAttribute('aria-selected', 'true');
             } else if (s === 'grandi') {
-                document.querySelector('.btn-grandi').setAttribute('aria-selected', 'true');
+                document.querySelector('[data-sezione="grandi"]').setAttribute('aria-selected', 'true');
             }
             
             renderHeader(s);
             setTimeout(() => {
                 renderVirtualScroll(s);
-                // Attendi che il rendering sia completo prima di scrollare
+                // Attendi il rendering e poi scrolla
                 setTimeout(() => {
                     scrollOggi();
-                }, 200);
+                }, 300);
             }, 100);
         }
 
@@ -2407,11 +2685,11 @@
                     await caricaMese(annoC, m);
                     
                     const header = [["ATLETA", ...Array.from({length: g}, (_, i) => 
-                        `${nomiGiorni[new Date(annoC, m, i + 1).getDay()]}\n${i + 1}`), "TOT"]];
+                        `${window.nomiGiorni[new Date(annoC, m, i + 1).getDay()]}\n${i + 1}`), "TOT"]];
                     
                     doc.setFontSize(16); 
                     doc.setTextColor(52, 58, 64); 
-                    doc.text(`REGISTRO PRESENZE - ${nomiMesi[m].toUpperCase()} ${annoC}`, 14, 12);
+                    doc.text(`REGISTRO PRESENZE - ${window.nomiMesi[m].toUpperCase()} ${annoC}`, 14, 12);
                     
                     const colStyles = { 
                         0: { halign: 'left', cellWidth: 35, fontStyle: 'bold' } 
@@ -2456,10 +2734,10 @@
                         } 
                     };
                     
-                    doc.autoTable({...config, body: preparaDatiPDF(CAT_CUCCIOLI, annoC, m, g, oggi)});
-                    doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g, oggi), 
+                    doc.autoTable({...config, body: preparaDatiPDF(window.CAT_CUCCIOLI, annoC, m, g, oggi)});
+                    doc.autoTable({...config, body: preparaDatiPDF(window.CAT_PICCOLI, annoC, m, g, oggi), 
                                   startY: doc.lastAutoTable.finalY + 10});
-                    doc.autoTable({...config, body: preparaDatiPDF(CAT_GRANDI, annoC, m, g, oggi), 
+                    doc.autoTable({...config, body: preparaDatiPDF(window.CAT_GRANDI, annoC, m, g, oggi), 
                                   startY: doc.lastAutoTable.finalY + 10});
                 }
                 
@@ -2545,7 +2823,7 @@
             });
         }
 
-        // Funzioni per la gestione degli atleti (invariate)
+        // Funzioni per la gestione degli atleti
         async function salvaAtleta() {
             const id = document.getElementById('edit-id').value;
             const nome = document.getElementById('new-nome').value.trim().toUpperCase();
@@ -2700,7 +2978,7 @@
             } 
         }
 
-        // Funzioni per registrazione veloce (invariate)
+        // Funzioni per registrazione veloce
         function avviaRegistrazioneVeloce() {
             const sezione = getSezioneCorrente();
             if (!sezione) {
@@ -3231,9 +3509,9 @@
                 const atleta = atletiCache.find(a => a.id === p.atleta_id);
                 if (atleta) {
                     const cat = (atleta.categoria || "").trim().toUpperCase();
-                    if (CAT_PICCOLI.includes(cat)) {
+                    if (window.CAT_PICCOLI.includes(cat)) {
                         risultati.piccoli.presenze++;
-                    } else if (CAT_GRANDI.includes(cat)) {
+                    } else if (window.CAT_GRANDI.includes(cat)) {
                         risultati.grandi.presenze++;
                     }
                 }
@@ -3463,18 +3741,29 @@
             }
         }
 
+        function checkIfInstalled() {
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                window.navigator.standalone === true) {
+                console.log('📲 App già installata');
+                const btnBottom = document.getElementById('installItem');
+                if (btnBottom) btnBottom.style.display = 'none';
+                return true;
+            }
+            return false;
+        }
+
         // Eventi per l'installazione PWA
         window.addEventListener('beforeinstallprompt', (e) => {
             console.log('📲 Evento beforeinstallprompt catturato');
             e.preventDefault();
             deferredPrompt = e;
-            const btnBottom = document.getElementById('install-pwa-item');
+            const btnBottom = document.getElementById('installItem');
             if (btnBottom) btnBottom.style.display = 'block';
         });
 
         window.addEventListener('appinstalled', (evt) => {
             console.log('📲 App installata con successo');
-            const btnBottom = document.getElementById('install-pwa-item');
+            const btnBottom = document.getElementById('installItem');
             if (btnBottom) btnBottom.style.display = 'none';
             deferredPrompt = null;
         });
@@ -3486,7 +3775,34 @@
             }
         });
 
-        window.onload = inizializza;
+        // Rendi disponibili le funzioni globalmente
+        window.toggleNumericInput = toggleNumericInput;
+        window.toggleBackupAutomatico = toggleBackupAutomatico;
+        window.aggiornaBackupDrive = aggiornaBackupDrive;
+        window.apriFileDrive = apriFileDrive;
+        window.toggleAdmin = toggleAdmin;
+        window.apriImpostazioniNotifiche = apriImpostazioniNotifiche;
+        window.installPWA = installPWA;
+        window.mostraSezione = mostraSezione;
+        window.scrollOggi = scrollOggi;
+        window.cambiaData = cambiaData;
+        window.vaiAllaHome = vaiAllaHome;
+        window.avviaRegistrazioneVeloce = avviaRegistrazioneVeloce;
+        window.prevQuickAthlete = prevQuickAthlete;
+        window.nextQuickAthlete = nextQuickAthlete;
+        window.toggleQuickPresent = toggleQuickPresent;
+        window.chiudiRegistrazioneVeloce = chiudiRegistrazioneVeloce;
+        window.clearNumberInput = clearNumberInput;
+        window.cancelNumberInput = cancelNumberInput;
+        window.confirmNumberInput = confirmNumberInput;
+        window.salvaAtleta = salvaAtleta;
+        window.preparaModifica = preparaModifica;
+        window.resetForm = resetForm;
+        window.setArchiviazione = setArchiviazione;
+        window.eliminaDefinitivo = eliminaDefinitivo;
+        window.salvaImpostazioniNotifiche = salvaImpostazioniNotifiche;
+        window.chiudiImpostazioniNotifiche = chiudiImpostazioniNotifiche;
+        window.autorizzaNotifiche = autorizzaNotifiche;
     </script>
 </body>
 </html>
