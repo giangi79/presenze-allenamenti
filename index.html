@@ -249,6 +249,7 @@
             max-height: 70vh;
             overflow-y: auto;
             margin: 0 auto;
+            pointer-events: auto; /* Assicura che il menu riceva i click */
         }
         
         /* Regolazioni per schermi piccoli */
@@ -272,7 +273,7 @@
             display: block;
         }
         
-        /* Overlay per chiudere il menu */
+        /* Overlay per chiudere il menu - CORRETTO: z-index inferiore al menu */
         .dropdown-overlay {
             display: none;
             position: fixed;
@@ -281,7 +282,8 @@
             right: 0;
             bottom: 0;
             background: rgba(0,0,0,0.5);
-            z-index: 9999;
+            z-index: 9999; /* Inferiore al menu (10000) */
+            pointer-events: auto; /* L'overlay riceve i click per chiudere */
         }
         
         .dropdown-overlay.show {
@@ -298,14 +300,17 @@
             font-weight: 600;
             transition: all 0.2s;
             font-size: 15px;
+            background: white;
+            position: relative;
+            z-index: 10001; /* Ancora più alto per sicurezza */
+        }
+        
+        .dropdown-item:active {
+            background: #f1f5f9;
         }
         
         .dropdown-item:last-child {
             border-bottom: none;
-        }
-        
-        .dropdown-item:hover {
-            background: #f8fafc;
         }
         
         .dropdown-item i {
