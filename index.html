@@ -225,10 +225,12 @@
             box-shadow: 0 5px 10px rgba(102, 126, 234, 0.3);
             transition: all 0.3s;
             white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .dropdown-button:active {
             transform: scale(0.98);
+            opacity: 0.9;
         }
         
         /* Menu centrato orizzontalmente con larghezza controllata */
@@ -249,7 +251,7 @@
             max-height: 70vh;
             overflow-y: auto;
             margin: 0 auto;
-            pointer-events: auto; /* Assicura che il menu riceva i click */
+            -webkit-overflow-scrolling: touch;
         }
         
         /* Regolazioni per schermi piccoli */
@@ -273,7 +275,7 @@
             display: block;
         }
         
-        /* Overlay per chiudere il menu - CORRETTO: z-index inferiore al menu */
+        /* Overlay per chiudere il menu */
         .dropdown-overlay {
             display: none;
             position: fixed;
@@ -282,8 +284,8 @@
             right: 0;
             bottom: 0;
             background: rgba(0,0,0,0.5);
-            z-index: 9999; /* Inferiore al menu (10000) */
-            pointer-events: auto; /* L'overlay riceve i click per chiudere */
+            z-index: 9999;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .dropdown-overlay.show {
@@ -301,8 +303,10 @@
             transition: all 0.2s;
             font-size: 15px;
             background: white;
-            position: relative;
-            z-index: 10001; /* Ancora più alto per sicurezza */
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
         }
         
         .dropdown-item:active {
@@ -495,6 +499,8 @@
             background: white; 
             position: relative; 
             -webkit-overflow-scrolling: touch; 
+            overscroll-behavior: contain;
+            scroll-behavior: smooth;
         }
         
         table { 
@@ -597,6 +603,7 @@
             transition: all 0.2s;
             vertical-align: middle;
             font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         
         .day-cell:active {
@@ -1304,7 +1311,7 @@
     <a href="#main-content" class="skip-link"><i class="fas fa-arrow-down"></i> Salta al contenuto</a>
     
     <!-- OVERLAY PER CHIUDERE MENU -->
-    <div class="dropdown-overlay" id="dropdown-overlay" onclick="closeDropdown()"></div>
+    <div class="dropdown-overlay" id="dropdown-overlay" onclick="closeDropdown()" ontouchstart="closeDropdown()"></div>
     
     <!-- CONTAINER TOAST - NASCOSTO -->
     <div id="toast-container" class="toast-container"></div>
@@ -1328,37 +1335,37 @@
                 
                 <!-- MENU A TENDINA - CORRETTO -->
                 <div class="dropdown-menu" id="dropdown-menu">
-                    <button class="dropdown-button" onclick="toggleDropdown()" id="dropdown-btn">
+                    <button class="dropdown-button" onclick="toggleDropdown()" id="dropdown-btn" ontouchstart="toggleDropdown()">
                         <i class="fas fa-bars"></i> MENU
                     </button>
                     <div class="dropdown-content" id="dropdown-content">
-                        <div class="dropdown-item" onclick="toggleNumericInput(); closeDropdown()">
+                        <div class="dropdown-item" onclick="toggleNumericInput(); closeDropdown()" ontouchstart="toggleNumericInput(); closeDropdown()">
                             <i class="fas fa-hashtag"></i>
                             <span>INPUT NUMERICO</span>
                             <span class="dropdown-badge off" id="numeric-badge">OFF</span>
                         </div>
-                        <div class="dropdown-item" onclick="toggleBackupAutomatico(); closeDropdown()">
+                        <div class="dropdown-item" onclick="toggleBackupAutomatico(); closeDropdown()" ontouchstart="toggleBackupAutomatico(); closeDropdown()">
                             <i class="fas fa-clock"></i>
                             <span>BACKUP AUTO</span>
                             <span class="dropdown-badge on" id="backup-badge">ON</span>
                         </div>
-                        <div class="dropdown-item" onclick="aggiornaBackupDrive(); closeDropdown()">
+                        <div class="dropdown-item" onclick="aggiornaBackupDrive(); closeDropdown()" ontouchstart="aggiornaBackupDrive(); closeDropdown()">
                             <i class="fas fa-file-pdf"></i>
                             <span>BACKUP PDF</span>
                         </div>
-                        <div class="dropdown-item" onclick="apriFileDrive(); closeDropdown()">
+                        <div class="dropdown-item" onclick="apriFileDrive(); closeDropdown()" ontouchstart="apriFileDrive(); closeDropdown()">
                             <i class="fas fa-folder-open"></i>
                             <span>APRI PDF</span>
                         </div>
-                        <div class="dropdown-item" onclick="toggleAdmin(); closeDropdown()">
+                        <div class="dropdown-item" onclick="toggleAdmin(); closeDropdown()" ontouchstart="toggleAdmin(); closeDropdown()">
                             <i class="fas fa-users-cog"></i>
                             <span>GESTIONE ATLETI</span>
                         </div>
-                        <div class="dropdown-item" onclick="apriImpostazioniNotifiche(); closeDropdown()">
+                        <div class="dropdown-item" onclick="apriImpostazioniNotifiche(); closeDropdown()" ontouchstart="apriImpostazioniNotifiche(); closeDropdown()">
                             <i class="fas fa-bell"></i>
                             <span>NOTIFICHE</span>
                         </div>
-                        <div class="dropdown-item" id="install-pwa-item" style="display: none;" onclick="installPWA(); closeDropdown()">
+                        <div class="dropdown-item" id="install-pwa-item" style="display: none;" onclick="installPWA(); closeDropdown()" ontouchstart="installPWA(); closeDropdown()">
                             <i class="fas fa-download"></i>
                             <span>INSTALLA APP</span>
                         </div>
@@ -1643,14 +1650,16 @@
         }
 
         // =================== FUNZIONI MENU A TENDINA ===================
-        window.toggleDropdown = function() {
+        window.toggleDropdown = function(e) {
+            if (e) e.preventDefault();
             const dropdown = document.getElementById('dropdown-content');
             const overlay = document.getElementById('dropdown-overlay');
             dropdown.classList.toggle('show');
             overlay.classList.toggle('show');
         }
 
-        window.closeDropdown = function() {
+        window.closeDropdown = function(e) {
+            if (e) e.preventDefault();
             const dropdown = document.getElementById('dropdown-content');
             const overlay = document.getElementById('dropdown-overlay');
             dropdown.classList.remove('show');
@@ -2282,10 +2291,21 @@
             const stickyWidth = active.querySelector('.sticky-col')?.offsetWidth || 90;
             
             if (target && wrapper) {
+                // Forza il calcolo delle dimensioni
+                const targetRect = target.getBoundingClientRect();
+                const wrapperRect = wrapper.getBoundingClientRect();
+                
+                // Calcola la posizione di scroll
+                const scrollLeft = target.offsetLeft - stickyWidth - 20;
+                
                 wrapper.scrollTo({ 
-                    left: target.offsetLeft - stickyWidth - 20, 
+                    left: Math.max(0, scrollLeft), 
                     behavior: 'smooth' 
                 });
+                
+                console.log('Scrolling to:', scrollLeft);
+            } else {
+                console.log('Target o wrapper non trovato');
             }
         }
 
@@ -2315,7 +2335,10 @@
             renderHeader(s);
             setTimeout(() => {
                 renderVirtualScroll(s);
-                scrollOggi();
+                // Attendi che il rendering sia completo prima di scrollare
+                setTimeout(() => {
+                    scrollOggi();
+                }, 200);
             }, 100);
         }
 
@@ -2342,7 +2365,11 @@
                 renderVirtualScroll(sezione);
             }
             document.getElementById('status-auto').innerHTML = '<i class="fas fa-check-circle" style="color: #22c55e;"></i> Mese caricato';
-            scrollOggi();
+            
+            // Attendi il rendering e poi scrolla
+            setTimeout(() => {
+                scrollOggi();
+            }, 300);
         }
 
         function toggleAdmin() { 
