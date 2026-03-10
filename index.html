@@ -81,10 +81,11 @@
         .app-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 20px 15px 40px;
+            padding: 20px 15px 100px;
             min-height: 100vh;
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            position: relative;
         }
         
         /* HEADER */
@@ -143,80 +144,6 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
         }
         
-        /* PULSANTI AZIONE */
-        .actions-container { 
-            display: flex; 
-            justify-content: center; 
-            gap: 12px; 
-            margin: 20px 0 25px; 
-            flex-wrap: wrap; 
-        }
-        
-        .btn-action { 
-            padding: 14px 22px; 
-            border-radius: 14px; 
-            border: none; 
-            font-weight: 900; 
-            cursor: pointer; 
-            color: white; 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px; 
-            font-size: 15px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
-            text-transform: uppercase; 
-            transition: transform 0.3s;
-        }
-        
-        .btn-action:hover {
-            transform: translateY(-2px);
-        }
-        
-        .btn-action:active { 
-            transform: translateY(2px); 
-        }
-        
-        .btn-action:focus-visible {
-            outline: 3px solid #ffbf47;
-            outline-offset: 2px;
-        }
-        
-        .btn-drive { background: linear-gradient(135deg, #4285F4, #0d47a1); } 
-        .btn-open-drive { background: linear-gradient(135deg, #34a853, #1e7e34); } 
-        .btn-admin { background: linear-gradient(135deg, #6c757d, #343a40); } 
-        .btn-home { background: linear-gradient(135deg, #ff9800, #f57c00); }
-        .btn-oggi { 
-            background: linear-gradient(135deg, #17a2b8, #0f6674); 
-            width: 52px; 
-            height: 52px; 
-            justify-content: center; 
-            font-size: 24px; 
-            border-radius: 14px; 
-        }
-        .btn-backup-auto { background: linear-gradient(135deg, #f39c12, #e67e22); }
-        .btn-backup-auto.attivo { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-        .btn-numeric-input { background: linear-gradient(135deg, #8e44ad, #6c3483); }
-        .btn-numeric-input.attivo { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-        .btn-quick-register { background: linear-gradient(135deg, #e67e22, #d35400); }
-        .btn-notifica { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-        .btn-stato-notifiche { background: linear-gradient(135deg, #3498db, #2980b9); }
-        .btn-install { 
-            background: linear-gradient(135deg, #667eea, #764ba2) !important;
-            animation: pulse-install 2s infinite;
-        }
-        
-        @keyframes pulse-install {
-            0% {
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
-            }
-        }
-        
         /* STATUS BAR */
         .status-container {
             display: flex;
@@ -228,6 +155,7 @@
             margin: 20px 0 25px;
             flex-wrap: wrap;
             gap: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         }
         
         #status-auto { 
@@ -270,13 +198,14 @@
             cursor: pointer; 
             text-transform: uppercase; 
             box-shadow: 0 15px 30px rgba(0,0,0,0.2); 
-            transition: transform 0.3s;
+            transition: all 0.3s ease;
             line-height: 1.4;
             position: relative;
         }
         
         .btn-menu:hover {
             transform: translateY(-2px);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.25);
         }
         
         .btn-menu:active { 
@@ -320,21 +249,212 @@
             }
         }
         
-        /* Badge notifiche */
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ff4444;
+        /* BOTTOM BAR FISSA */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.1);
+            z-index: 100;
+            border-top: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .bottom-left, .bottom-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .bottom-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+        
+        /* PULSANTI PRINCIPALI BOTTOM BAR - STILE PREMIUM */
+        .btn-primary-bottom {
+            padding: 14px 24px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
             color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary-bottom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn-primary-bottom:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary-bottom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+        }
+        
+        .btn-primary-bottom:active {
+            transform: translateY(0);
+        }
+        
+        .btn-home-bottom {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
+        
+        .btn-quick-bottom {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+        }
+        
+        /* DROPDOWN MENU PREMIUM */
+        .dropdown-menu {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-toggle {
+            background: linear-gradient(135deg, #2c3e50, #1a252f);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 40px;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
             display: flex;
             align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 180px;
             justify-content: center;
-            font-weight: bold;
+        }
+        
+        .dropdown-toggle:hover {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+        }
+        
+        .dropdown-toggle i {
+            font-size: 18px;
+        }
+        
+        .dropdown-content {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            background: white;
+            min-width: 280px;
+            border-radius: 20px;
+            box-shadow: 0 -5px 30px rgba(0,0,0,0.2);
+            padding: 12px;
+            display: none;
+            z-index: 1000;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        
+        .dropdown-content.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
+        
+        /* PULSANTI DROPDOWN - STILE PREMIUM */
+        .dropdown-item {
+            width: 100%;
+            padding: 16px 20px;
+            margin: 4px 0;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dropdown-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .dropdown-item:hover::before {
+            left: 100%;
+        }
+        
+        .dropdown-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .dropdown-item.drive { background: linear-gradient(135deg, #4285F4, #0d47a1); }
+        .dropdown-item.open-drive { background: linear-gradient(135deg, #34a853, #1e7e34); }
+        .dropdown-item.numeric { background: linear-gradient(135deg, #8e44ad, #6c3483); }
+        .dropdown-item.numeric.active { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .dropdown-item.backup { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .dropdown-item.backup.active { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .dropdown-item.admin { background: linear-gradient(135deg, #6c757d, #343a40); }
+        .dropdown-item.install { background: linear-gradient(135deg, #667eea, #764ba2); animation: pulse-install 2s infinite; }
+        
+        @keyframes pulse-install {
+            0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
         }
         
         /* === TABELLA === */
@@ -439,11 +559,6 @@
         .categoria-junior .nome-cognome { color: #009688; }
         .categoria-senior .nome-cognome { color: #f44336; }
         
-        /* Il badge della categoria è nascosto */
-        .categoria-badge {
-            display: none !important;
-        }
-        
         /* Celle giorni */
         .day-cell { 
             width: 45px;
@@ -513,13 +628,6 @@
         
         tbody tr:hover {
             background-color: #f8f9fa;
-        }
-        
-        /* Padding rows per virtual scroll */
-        .virtual-padding-row {
-            height: 0;
-            visibility: hidden;
-            pointer-events: none;
         }
         
         /* FOOTER */
@@ -809,8 +917,32 @@
         
         /* RESPONSIVE */
         @media (max-width: 768px) {
-            .app-container { padding: 15px 10px 30px; }
+            .app-container { padding: 15px 10px 90px; }
             .top-bar { flex-direction: column; align-items: stretch; }
+            
+            .bottom-bar {
+                padding: 12px 15px;
+            }
+            
+            .btn-primary-bottom {
+                padding: 12px 18px;
+                font-size: 13px;
+            }
+            
+            .dropdown-toggle {
+                padding: 12px 20px;
+                min-width: 150px;
+                font-size: 13px;
+            }
+            
+            .dropdown-content {
+                min-width: 250px;
+            }
+            
+            .dropdown-item {
+                padding: 14px 16px;
+                font-size: 13px;
+            }
             
             th.sticky-col, td.sticky-col { 
                 min-width: 100px;
@@ -861,6 +993,30 @@
         }
         
         @media (max-width: 480px) {
+            .bottom-bar {
+                padding: 10px;
+            }
+            
+            .btn-primary-bottom {
+                padding: 10px 14px;
+                font-size: 12px;
+            }
+            
+            .dropdown-toggle {
+                padding: 10px 16px;
+                min-width: 130px;
+                font-size: 12px;
+            }
+            
+            .dropdown-content {
+                min-width: 220px;
+            }
+            
+            .dropdown-item {
+                padding: 12px 14px;
+                font-size: 12px;
+            }
+            
             .day-cell { 
                 width: 35px;
                 min-width: 35px;
@@ -934,9 +1090,8 @@
                 <div class="date-controls">
                     <select id="select-mese" onchange="cambiaData()" aria-label="Seleziona mese"></select>
                     <select id="select-anno" onchange="cambiaData()" aria-label="Seleziona anno"></select>
-                    <button class="btn-action btn-oggi" onclick="scrollOggi()" title="Vai a oggi" aria-label="Vai al giorno corrente">🎯</button>
+                    <button class="btn-primary-bottom btn-oggi" onclick="scrollOggi()" title="Vai a oggi" aria-label="Vai al giorno corrente" style="padding: 12px 18px; min-width: 52px;">🎯</button>
                 </div>
-                <button class="btn-action btn-home" onclick="vaiAllaHome()" title="Home" aria-label="Torna alla home">🏠 HOME</button>
             </div>
             
             <!-- STATUS BAR CON STATISTICHE BASE -->
@@ -947,21 +1102,6 @@
                     <div><span id="stat-presenze-oggi" aria-label="Presenze oggi">0</span> Oggi</div>
                     <div><span id="stat-presenze-mese" aria-label="Presenze questo mese">0</span> Questo Mese</div>
                 </div>
-            </div>
-            
-            <!-- PULSANTI AZIONE -->
-            <div class="actions-container">
-                <button class="btn-action btn-quick-register" onclick="avviaRegistrazioneVeloce()" title="Registrazione veloce" aria-label="Avvia registrazione veloce atleti">⚡ REGISTRA VELOCE</button>
-                <button class="btn-action btn-drive" onclick="aggiornaBackupDrive()" title="Crea backup PDF" aria-label="Crea backup PDF su Drive">☁️ BACKUP PDF</button>
-                <button class="btn-action btn-open-drive" onclick="apriFileDrive()" title="Apri ultimo backup" aria-label="Apri ultimo backup su Drive">📂 APRI DRIVE</button>
-                <button class="btn-action btn-numeric-input" onclick="toggleNumericInput()" id="btn-numeric-input" title="Input numerico" aria-label="Attiva o disattiva input numerico">🔢 NUM OFF</button>
-                <button class="btn-action btn-backup-auto attivo" onclick="toggleBackupAutomatico()" id="btn-backup-auto" title="Backup automatico" aria-label="Attiva o disattiva backup automatico">▶️ AUTO ON</button>
-                <button class="btn-action btn-admin" onclick="toggleAdmin()" title="Gestione atleti" aria-label="Apri pannello gestione atleti">⚙️ GESTISCI ATLETI</button>
-                <!-- PULSANTI NOTIFICHE -->
-                <button class="btn-action btn-notifica" onclick="testNotifiche()" title="Test notifiche" aria-label="Test sistema notifiche">🔔 TEST NOTIFICA</button>
-                <button class="btn-action btn-stato-notifiche" onclick="mostraStatoNotifiche()" title="Stato notifiche" aria-label="Mostra stato notifiche">📊 STATO NOTIFICHE</button>
-                <!-- PULSANTE INSTALLAZIONE (inizialmente nascosto) -->
-                <button class="btn-action btn-install" id="install-pwa-btn" style="display: none;" onclick="installPWA()">📲 INSTALLA APP</button>
             </div>
         </div>
 
@@ -1037,6 +1177,47 @@
         </div>
     </div>
 
+    <!-- === BOTTOM BAR FISSA === -->
+    <div class="bottom-bar">
+        <div class="bottom-left">
+            <button class="btn-primary-bottom btn-home-bottom" onclick="vaiAllaHome()" title="Home" aria-label="Torna alla home">
+                🏠 HOME
+            </button>
+        </div>
+        <div class="bottom-center">
+            <div class="dropdown-menu" id="dropdown-menu">
+                <button class="dropdown-toggle" onclick="toggleDropdown(event)" id="dropdownToggle">
+                    <span>☰</span> MENU <span>▼</span>
+                </button>
+                <div class="dropdown-content" id="dropdownContent">
+                    <button class="dropdown-item drive" onclick="aggiornaBackupDrive(); closeDropdown()">
+                        ☁️ BACKUP PDF
+                    </button>
+                    <button class="dropdown-item open-drive" onclick="apriFileDrive(); closeDropdown()">
+                        📂 APRI DRIVE
+                    </button>
+                    <button class="dropdown-item numeric" onclick="toggleNumericInput(); closeDropdown()" id="dropdown-numeric">
+                        🔢 NUM OFF
+                    </button>
+                    <button class="dropdown-item backup" onclick="toggleBackupAutomatico(); closeDropdown()" id="dropdown-backup">
+                        ▶️ AUTO ON
+                    </button>
+                    <button class="dropdown-item admin" onclick="toggleAdmin(); closeDropdown()">
+                        ⚙️ GESTISCI ATLETI
+                    </button>
+                    <button class="dropdown-item install" id="dropdown-install" style="display: none;" onclick="installPWA(); closeDropdown()">
+                        📲 INSTALLA APP
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-right">
+            <button class="btn-primary-bottom btn-quick-bottom" onclick="avviaRegistrazioneVeloce()" title="Registrazione veloce" aria-label="Avvia registrazione veloce atleti">
+                ⚡ REGISTRA
+            </button>
+        </div>
+    </div>
+
     <!-- === PANNELLO ADMIN === -->
     <div id="admin-overlay" role="dialog" aria-labelledby="admin-title" aria-modal="true">
         <div id="admin-panel">
@@ -1062,7 +1243,7 @@
                     <option value="SENIOR">SENIOR</option>
                 </select>
                 
-                <button id="btn-save-atleta" class="btn-action" 
+                <button id="btn-save-atleta" class="btn-primary-bottom" 
                         style="width:100%; justify-content:center; padding: 16px; font-size: 18px; background: linear-gradient(135deg, #34a853, #1e7e34);" 
                         onclick="salvaAtleta()"
                         aria-label="Aggiungi o aggiorna atleta">
@@ -1191,7 +1372,7 @@
             deferredPrompt = null;
             
             // Nascondi il pulsante
-            const btn = document.getElementById('install-pwa-btn');
+            const btn = document.getElementById('dropdown-install');
             if (btn) btn.style.display = 'none';
         }
 
@@ -1200,7 +1381,7 @@
             if (window.matchMedia('(display-mode: standalone)').matches || 
                 window.navigator.standalone === true) {
                 console.log('📲 App già installata (modalità standalone)');
-                const btn = document.getElementById('install-pwa-btn');
+                const btn = document.getElementById('dropdown-install');
                 if (btn) btn.style.display = 'none';
                 return true;
             }
@@ -1213,6 +1394,26 @@
         const CAT_CUCCIOLI = ['CUCCIOLI'];
         const CAT_PICCOLI = ['GIOVANISSIMI', 'ESORDIENTI'];
         const CAT_GRANDI = ['R12', 'RAGAZZI', 'ALLIEVI', 'JUNIOR', 'JUNIORES', 'SENIOR'];
+
+        // =================== FUNZIONI DROPDOWN ===================
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('dropdownContent');
+            dropdown.classList.toggle('show');
+        }
+
+        function closeDropdown() {
+            document.getElementById('dropdownContent').classList.remove('show');
+        }
+
+        // Chiudi dropdown quando si clicca fuori
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('dropdownContent');
+            const toggle = document.getElementById('dropdownToggle');
+            if (!toggle.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
 
         // =================== TOAST NOTIFICATIONS DISATTIVATE ===================
         function mostraToast(messaggio, tipo = 'successo', durata = 3000) {
@@ -1713,15 +1914,15 @@
         // =================== GESTIONE INPUT NUMERICO ===================
         function toggleNumericInput() {
             numericInputAttivo = !numericInputAttivo;
-            const btn = document.getElementById('btn-numeric-input');
+            const btn = document.getElementById('dropdown-numeric');
             
             if (numericInputAttivo) {
                 btn.innerHTML = "🔢 NUM ON";
-                btn.classList.add('attivo');
+                btn.classList.add('active');
                 document.getElementById('status-auto').innerText = "✅ Input numerico ATTIVATO";
             } else {
                 btn.innerHTML = "🔢 NUM OFF";
-                btn.classList.remove('attivo');
+                btn.classList.remove('active');
                 document.getElementById('status-auto').innerText = "⏸️ Input numerico DISATTIVATO";
             }
             
@@ -1734,13 +1935,13 @@
             const savedState = localStorage.getItem('numeric_input_attivo');
             if (savedState !== null) {
                 numericInputAttivo = savedState === 'true';
-                const btn = document.getElementById('btn-numeric-input');
+                const btn = document.getElementById('dropdown-numeric');
                 if (numericInputAttivo) {
                     btn.innerHTML = "🔢 NUM ON";
-                    btn.classList.add('attivo');
+                    btn.classList.add('active');
                 } else {
                     btn.innerHTML = "🔢 NUM OFF";
-                    btn.classList.remove('attivo');
+                    btn.classList.remove('active');
                 }
             }
         }
@@ -1971,15 +2172,15 @@
 
         function toggleBackupAutomatico() {
             backupAutomaticoAttivo = !backupAutomaticoAttivo;
-            const btn = document.getElementById('btn-backup-auto');
+            const btn = document.getElementById('dropdown-backup');
             
             if (backupAutomaticoAttivo) {
                 btn.innerHTML = "▶️ AUTO ON";
-                btn.classList.add('attivo');
+                btn.classList.add('active');
                 document.getElementById('status-auto').innerText = "✅ Backup automatico ATTIVATO";
             } else {
                 btn.innerHTML = "⏸️ AUTO OFF";
-                btn.classList.remove('attivo');
+                btn.classList.remove('active');
                 document.getElementById('status-auto').innerText = "⏸️ Backup automatico DISATTIVATO";
             }
             
@@ -1990,13 +2191,13 @@
             const savedState = localStorage.getItem('backup_auto_attivo');
             if (savedState !== null) {
                 backupAutomaticoAttivo = savedState === 'true';
-                const btn = document.getElementById('btn-backup-auto');
+                const btn = document.getElementById('dropdown-backup');
                 if (backupAutomaticoAttivo) {
                     btn.innerHTML = "▶️ AUTO ON";
-                    btn.classList.add('attivo');
+                    btn.classList.add('active');
                 } else {
                     btn.innerHTML = "⏸️ AUTO OFF";
-                    btn.classList.remove('attivo');
+                    btn.classList.remove('active');
                 }
             }
         }
@@ -2949,84 +3150,22 @@
                     statoEl.innerHTML = '🔔 ❌ Notifiche bloccate - Abilita dalle impostazioni';
                     break;
                 default:
-                    statoEl.innerHTML = '🔔 ⏸️ Notifiche non attivate - Clicca su TEST NOTIFICA per abilitare';
+                    statoEl.innerHTML = '🔔 ⏸️ Notifiche non attivate';
             }
         }
-
-        async function testNotifiche() {
-            console.log('🔔 Test sistema notifiche...');
-            
-            const permesso = await initSistemaNotifiche();
-            
-            if (permesso) {
-                const risultati = {
-                    piccoli: {
-                        deveAllenarsi: true,
-                        presenze: 0,
-                        totaleAtleti: getAtletiFiltrati('piccoli').length
-                    },
-                    grandi: {
-                        deveAllenarsi: true,
-                        presenze: 0,
-                        totaleAtleti: getAtletiFiltrati('grandi').length
-                    }
-                };
-                
-                await inviaNotificaCompleta(risultati);
-            } else {
-                alert('Permessi notifiche non concessi. Controlla le impostazioni del browser.');
-            }
-        }
-
-        function mostraStatoNotifiche() {
-            const oggi = new Date();
-            const giorno = oggi.getDay();
-            const giornoNome = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'][giorno];
-            
-            const piccoliAllenamento = CONFIG_NOTIFICHE.GIORNI_PICCOLI.includes(giorno) ? 'SÌ' : 'NO';
-            const grandiAllenamento = CONFIG_NOTIFICHE.GIORNI_GRANDI.includes(giorno) ? 'SÌ' : 'NO';
-            
-            const atletiPiccoli = getAtletiFiltrati('piccoli').length;
-            const atletiGrandi = getAtletiFiltrati('grandi').length;
-            
-            const oggiStr = oggi.toLocaleDateString('en-CA');
-            let presenzeOggi = 0;
-            Object.values(presenzePerMese).forEach(mesePresenze => {
-                presenzeOggi += mesePresenze.filter(p => p.data === oggiStr).length;
-            });
-            
-            const messaggio = `
-📊 STATO NOTIFICHE
-📅 Oggi: ${giornoNome}
-👦 Piccoli allenamento: ${piccoliAllenamento} (${atletiPiccoli} atleti)
-🏃 Grandi allenamento: ${grandiAllenamento} (${atletiGrandi} atleti)
-📝 Presenze oggi: ${presenzeOggi}
-⏰ Orario notifica: 21:00
-🔔 Notifiche: ${Notification.permission === 'granted' ? 'ATTIVE ✅' : 'NON ATTIVE ❌'}
-            `;
-            
-            alert(messaggio);
-        }
-
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) {
-                console.log('App tornata in primo piano, controllo presenze...');
-                controllaPresenzeGiornaliere();
-            }
-        });
 
         // Eventi per l'installazione PWA
         window.addEventListener('beforeinstallprompt', (e) => {
             console.log('📲 Evento beforeinstallprompt catturato');
             e.preventDefault();
             deferredPrompt = e;
-            const btn = document.getElementById('install-pwa-btn');
-            if (btn) btn.style.display = 'inline-flex';
+            const btn = document.getElementById('dropdown-install');
+            if (btn) btn.style.display = 'flex';
         });
 
         window.addEventListener('appinstalled', (evt) => {
             console.log('📲 App installata con successo');
-            const btn = document.getElementById('install-pwa-btn');
+            const btn = document.getElementById('dropdown-install');
             if (btn) btn.style.display = 'none';
             deferredPrompt = null;
             alert('✅ Grazie per aver installato Registro Presenze 2050!');
@@ -3037,4 +3176,3 @@
     </script>
 </body>
 </html>
-
