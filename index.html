@@ -13,8 +13,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     
     <!-- === META PWA ANDROID/CHROME === -->
-    <meta name="theme-color" content="#343a40">
-    <meta name="msapplication-TileColor" content="#343a40">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="msapplication-TileColor" content="#1a1a2e">
     
     <!-- === MANIFEST PWA === -->
     <link rel="manifest" href="manifest.json">
@@ -26,281 +26,421 @@
     <!-- === META DESCRIPTION === -->
     <meta name="description" content="Registro digitale presenze atleti - Gruppo Sportivo 2050">
 
+    <!-- === GOOGLE FONTS === -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- === FONTAWESOME (icone) === -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <!-- === LIBRERIE ESTERNE === -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
     
-    <!-- === STILI CSS === -->
+    <!-- === STILI CSS MIGLIORATI === -->
     <style>
-        /* RESET */
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
+        /* ========== VARIABILI GLOBALI ========== */
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5649c0;
+            --primary-light: #8b7cf0;
+            --secondary: #00cec9;
+            --secondary-dark: #00a8a3;
+            --success: #00b894;
+            --danger: #d63031;
+            --warning: #fdcb6e;
+            --info: #0984e3;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --gray: #b2bec3;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.95);
+            --glass-dark: rgba(0, 0, 0, 0.8);
+            --shadow-sm: 0 5px 15px rgba(0,0,0,0.05);
+            --shadow-md: 0 10px 25px rgba(0,0,0,0.1);
+            --shadow-lg: 0 15px 35px rgba(0,0,0,0.2);
+            --shadow-xl: 0 25px 50px rgba(0,0,0,0.25);
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-success: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            --gradient-danger: linear-gradient(135deg, #d63031 0%, #e17055 100%);
+            --gradient-warning: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+            --gradient-info: linear-gradient(135deg, #0984e3 0%, #6c5ce7 100%);
+            --gradient-dark: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
         }
-        
-        html, body { 
-            width: 100%; 
-            height: 100%; 
-            overflow-x: hidden; 
-        }
-        
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
+
+        /* ========== RESET & BASE ========== */
+        * {
+            margin: 0;
             padding: 0;
-            -webkit-tap-highlight-color: transparent;
-            min-height: 100vh;
+            box-sizing: border-box;
         }
-        
-        /* SKIP LINK PER ACCESSIBILITÀ */
+
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: var(--gradient-primary);
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Effetto sfondo animato */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(108, 92, 231, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 206, 201, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(253, 203, 110, 0.2) 0%, transparent 50%);
+            animation: gradientShift 15s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* ========== SKIP LINK ========== */
         .skip-link {
             position: absolute;
             top: -40px;
             left: 0;
-            background: #343a40;
+            background: var(--dark);
             color: white;
             padding: 8px;
             z-index: 10001;
             text-decoration: none;
             border-radius: 0 0 5px 0;
+            transition: top 0.3s;
         }
-        
+
         .skip-link:focus {
             top: 0;
         }
-        
-        /* TOAST NOTIFICATIONS - COMPLETAMENTE NASCOSTI */
+
+        /* ========== TOAST NOTIFICATIONS NASCOSTI ========== */
         .toast-container {
             display: none !important;
         }
-        
-        /* CONTENITORE PRINCIPALE */
+
+        /* ========== CONTAINER PRINCIPALE ========== */
         .app-container {
             max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px 15px 100px;
-            min-height: 100vh;
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            margin: 20px auto;
+            padding: 20px 20px 100px;
             position: relative;
+            z-index: 1;
         }
-        
-        /* HEADER */
-        .header { 
-            text-align: center; 
-            margin-bottom: 25px; 
-            background: white;
-            padding: 20px;
+
+        /* Effetto glassmorphism */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 30px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* ========== HEADER ========== */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 40px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .logo-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            max-height: 120px;
+            width: auto;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-md);
+            transition: transform 0.5s;
         }
-        
-        .logo { 
-            max-height: 150px; 
-            max-width: 95%; 
-            height: auto; 
-            border-radius: 15px; 
-            margin-bottom: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+
+        .logo:hover {
+            transform: scale(1.02) rotate(1deg);
         }
-        
-        /* TOP BAR */
+
+        /* ========== TOP BAR ========== */
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 15px;
-            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 20px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
+
         .date-controls {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            background: #f8f9fa;
-            padding: 10px 15px;
-            border-radius: 15px;
         }
-        
+
         select, input { 
-            padding: 12px 18px; 
-            border-radius: 12px; 
-            border: 2px solid #e0e0e0; 
-            font-weight: 600; 
-            font-size: 15px; 
-            color: #333; 
-            outline: none; 
+            padding: 12px 20px;
+            border-radius: 40px;
+            border: none;
             background: white;
-            min-width: 130px;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--dark);
+            outline: none;
             cursor: pointer;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+            min-width: 130px;
         }
-        
+
+        select:hover, input:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
         select:focus, input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.25);
         }
-        
-        /* STATUS BAR */
+
+        .btn-oggi {
+            background: white !important;
+            color: var(--primary) !important;
+            border: none !important;
+            font-size: 18px !important;
+            padding: 12px 18px !important;
+            min-width: 52px !important;
+        }
+
+        /* ========== STATUS BAR ========== */
         .status-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: white;
-            padding: 15px 20px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 20px 25px;
             border-radius: 50px;
             margin: 20px 0 25px;
             flex-wrap: wrap;
-            gap: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            gap: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
-        #status-auto { 
-            font-size: 15px; 
-            color: #2c3e50; 
-            font-weight: 700; 
-            background: #f8f9fa; 
-            padding: 8px 20px; 
-            border-radius: 30px; 
-            display: inline-block;
-            transition: background-color 0.3s, color 0.3s;
+
+        #status-auto {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+            background: white;
+            padding: 10px 25px;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
         }
-        
+
         .stats-info {
             display: flex;
-            gap: 20px;
-            font-size: 16px;
+            gap: 25px;
             font-weight: 700;
-            color: #333;
         }
-        .stats-info span { color: #667eea; font-size: 20px; margin-right: 5px; font-weight: 900; }
-        
-        /* MENU CATEGORIE */
-        .menu-container { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 18px; 
-            padding: 10px 0 25px; 
-            width: 100%; 
+
+        .stats-info div {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            box-shadow: var(--shadow-sm);
         }
-        
-        .btn-menu { 
-            width: 100%; 
-            padding: 30px 20px; 
-            font-weight: 900; 
-            font-size: 24px; 
-            border-radius: 30px; 
-            color: white; 
-            border: none; 
-            cursor: pointer; 
-            text-transform: uppercase; 
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2); 
-            transition: all 0.3s ease;
-            line-height: 1.4;
+
+        .stats-info span {
+            font-size: 18px;
+            font-weight: 900;
+            margin-right: 5px;
+        }
+
+        /* ========== MENU CATEGORIE ========== */
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 10px 0 30px;
+        }
+
+        .btn-menu {
+            width: 100%;
+            padding: 35px 25px;
+            font-weight: 900;
+            font-size: 28px;
+            border-radius: 50px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
             position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--shadow-lg);
         }
-        
+
+        .btn-menu::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-menu:hover::before {
+            left: 100%;
+        }
+
         .btn-menu:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 35px rgba(0,0,0,0.25);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-xl);
         }
-        
-        .btn-menu:active { 
-            transform: scale(0.98); 
+
+        .btn-menu:active {
+            transform: translateY(0) scale(0.98);
         }
-        
+
         .btn-menu:focus-visible {
             outline: 3px solid #ffbf47;
             outline-offset: 2px;
         }
-        
+
         .btn-menu span {
             display: block;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 400;
             text-transform: none;
             opacity: 0.9;
-            margin-top: 8px;
-            letter-spacing: 0.5px;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        .btn-cuccioli { 
+            background: linear-gradient(135deg, #e84393, #c2185b);
         }
         
-        .btn-cuccioli { background: linear-gradient(135deg, #e91e63, #c2185b); } 
-        .btn-piccoli { background: linear-gradient(135deg, #007bff, #0056b3); } 
-        .btn-grandi { background: linear-gradient(135deg, #28a745, #1e7e34); }
-        
-        /* Animazione per pulsanti in attenzione */
-        .btn-piccoli.attenzione, .btn-grandi.attenzione {
-            animation: pulse 2s infinite;
-            box-shadow: 0 0 0 3px #ff4444;
+        .btn-piccoli { 
+            background: linear-gradient(135deg, #0984e3, #6c5ce7);
         }
         
-        @keyframes pulse {
+        .btn-grandi { 
+            background: linear-gradient(135deg, #00b894, #00cec9);
+        }
+
+        .btn-piccoli.attenzione,
+        .btn-grandi.attenzione {
+            animation: pulseWarning 1.5s infinite;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.5);
+        }
+
+        @keyframes pulseWarning {
             0% {
-                box-shadow: 0 0 0 0 #ff4444;
+                box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7);
             }
             70% {
-                box-shadow: 0 0 0 10px rgba(255, 68, 68, 0);
+                box-shadow: 0 0 0 15px rgba(255, 107, 107, 0);
             }
             100% {
-                box-shadow: 0 0 0 0 rgba(255, 68, 68, 0);
+                box-shadow: 0 0 0 0 rgba(255, 107, 107, 0);
             }
         }
-        
-        /* BOTTOM BAR FISSA */
+
+        /* ========== BOTTOM BAR ========== */
         .bottom-bar {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            padding: 15px 20px;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 15px 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 15px;
-            box-shadow: 0 -5px 25px rgba(0,0,0,0.1);
-            z-index: 100;
-            border-top: 1px solid rgba(255,255,255,0.3);
+            border-radius: 100px;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            z-index: 1000;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        
+
         .bottom-left, .bottom-right {
             display: flex;
             gap: 12px;
             align-items: center;
         }
-        
+
         .bottom-center {
             flex: 1;
             display: flex;
             justify-content: center;
             position: relative;
         }
-        
-        /* PULSANTI PRINCIPALI BOTTOM BAR - STILE PREMIUM */
+
         .btn-primary-bottom {
-            padding: 14px 24px;
+            padding: 12px 24px;
             border-radius: 40px;
             border: none;
-            font-weight: 800;
-            font-size: 15px;
+            font-weight: 700;
+            font-size: 14px;
             cursor: pointer;
             color: white;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
+            gap: 8px;
+            transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
             position: relative;
             overflow: hidden;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            box-shadow: var(--shadow-md);
         }
-        
+
         .btn-primary-bottom::before {
             content: '';
             position: absolute;
@@ -308,88 +448,86 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s ease;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
         }
-        
+
         .btn-primary-bottom:hover::before {
             left: 100%;
         }
-        
+
         .btn-primary-bottom:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+            box-shadow: var(--shadow-lg);
         }
-        
+
         .btn-primary-bottom:active {
             transform: translateY(0);
         }
-        
+
         .btn-home-bottom {
-            background: linear-gradient(135deg, #ff9800, #f57c00);
+            background: linear-gradient(135deg, #fdcb6e, #e17055);
         }
-        
+
         .btn-quick-bottom {
-            background: linear-gradient(135deg, #e67e22, #d35400);
+            background: linear-gradient(135deg, #00b894, #00cec9);
         }
-        
-        /* DROPDOWN MENU PREMIUM */
+
+        /* ========== DROPDOWN PREMIUM ========== */
         .dropdown-menu {
             position: relative;
             display: inline-block;
         }
-        
+
         .dropdown-toggle {
-            background: linear-gradient(135deg, #2c3e50, #1a252f);
+            background: linear-gradient(135deg, var(--dark), #1e272e);
             color: white;
             border: none;
-            padding: 14px 32px;
+            padding: 12px 32px;
             border-radius: 40px;
-            font-weight: 800;
-            font-size: 15px;
+            font-weight: 700;
+            font-size: 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
+            gap: 10px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             min-width: 180px;
             justify-content: center;
         }
-        
+
         .dropdown-toggle:hover {
-            background: linear-gradient(135deg, #34495e, #2c3e50);
-            transform: translateY(-2px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, #2d3436, #1e272e);
         }
-        
-        .dropdown-toggle i {
-            font-size: 18px;
-        }
-        
+
         .dropdown-content {
             position: absolute;
             bottom: 100%;
             left: 50%;
             transform: translateX(-50%) translateY(-10px);
-            background: white;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             min-width: 280px;
-            border-radius: 20px;
-            box-shadow: 0 -5px 30px rgba(0,0,0,0.2);
-            padding: 12px;
+            border-radius: 30px;
+            box-shadow: var(--shadow-xl);
+            padding: 15px;
             display: none;
             z-index: 1000;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255,255,255,0.5);
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        
+
         .dropdown-content.show {
             display: block;
             animation: slideUp 0.3s ease;
         }
-        
+
         @keyframes slideUp {
             from {
                 opacity: 0;
@@ -400,48 +538,38 @@
                 transform: translateX(-50%) translateY(-10px);
             }
         }
-        
-        /* PULSANTI DROPDOWN - STILE PREMIUM */
+
         .dropdown-item {
             width: 100%;
-            padding: 16px 20px;
-            margin: 4px 0;
+            padding: 15px 20px;
+            margin: 5px 0;
             border: none;
-            border-radius: 16px;
-            font-weight: 700;
-            font-size: 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
             cursor: pointer;
             color: white;
             display: flex;
             align-items: center;
             gap: 12px;
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             position: relative;
             overflow: hidden;
+            box-shadow: var(--shadow-sm);
         }
-        
-        .dropdown-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s ease;
+
+        .dropdown-item i {
+            font-size: 16px;
+            width: 20px;
         }
-        
-        .dropdown-item:hover::before {
-            left: 100%;
-        }
-        
+
         .dropdown-item:hover {
             transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow-md);
         }
-        
+
         .dropdown-item.drive { background: linear-gradient(135deg, #4285F4, #0d47a1); }
         .dropdown-item.open-drive { background: linear-gradient(135deg, #34a853, #1e7e34); }
         .dropdown-item.numeric { background: linear-gradient(135deg, #8e44ad, #6c3483); }
@@ -450,384 +578,455 @@
         .dropdown-item.backup.active { background: linear-gradient(135deg, #2ecc71, #27ae60); }
         .dropdown-item.admin { background: linear-gradient(135deg, #6c757d, #343a40); }
         .dropdown-item.notifications { background: linear-gradient(135deg, #00bcd4, #0097a7); }
-        .dropdown-item.install { background: linear-gradient(135deg, #667eea, #764ba2); animation: pulse-install 2s infinite; }
-        
-        @keyframes pulse-install {
-            0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
+        .dropdown-item.install { background: var(--gradient-primary); animation: pulseInstall 2s infinite; }
+
+        @keyframes pulseInstall {
+            0% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(108, 92, 231, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(108, 92, 231, 0); }
         }
-        
-        /* === TABELLA === */
-        .section-container { display: none; width: 100%; margin-top: 20px; } 
-        .section-active { display: block; }
-        
+
+        /* ========== TABELLE MODERNE ========== */
+        .section-container {
+            display: none;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .section-active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .table-container {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 20px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .table-wrapper {
+            overflow: auto;
+            max-height: 70vh;
+            border-radius: 30px;
             background: white;
-            border-radius: 20px;
-            padding: 15px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow-sm);
+            -webkit-overflow-scrolling: touch;
         }
-        
-        .table-wrapper { 
-            overflow: auto; 
-            max-height: 70vh; 
-            border: 1px solid #e0e0e0; 
-            border-radius: 15px; 
-            background: white; 
-            position: relative; 
-            -webkit-overflow-scrolling: touch; 
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
         }
-        
-        table { 
-            border-collapse: collapse; 
-            width: 100%; 
-            table-layout: auto;
-        }
-        
-        /* Intestazione fissa */
-        thead th { 
-            position: sticky; 
-            top: 0; 
-            background: linear-gradient(135deg, #343a40, #1d2124) !important; 
-            color: white !important; 
-            z-index: 20; 
-            padding: 12px 5px;
+
+        thead th {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, #1e272e, #2d3436) !important;
+            color: white !important;
+            z-index: 20;
+            padding: 15px 5px;
             font-size: 12px;
-            border: 1px solid #454d55; 
-            text-align: center; 
-            white-space: nowrap;
             font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            white-space: nowrap;
         }
-        
-        /* Colonna ATLETA sticky */
-        th.sticky-col, td.sticky-col { 
-            position: sticky; 
-            left: 0; 
-            background: white; 
-            z-index: 15; 
-            border-right: 3px solid #667eea; 
+
+        thead th:first-child {
+            border-top-left-radius: 30px;
+        }
+
+        thead th:last-child {
+            border-top-right-radius: 30px;
+        }
+
+        th.sticky-col, td.sticky-col {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 15;
             min-width: 120px;
             max-width: 120px;
-            width: 120px;
-            padding: 8px 4px;
-            font-weight: 800; 
+            padding: 12px 5px;
+            font-weight: 800;
             font-size: 12px;
             text-align: center;
             vertical-align: middle;
+            border-right: 3px solid var(--primary);
         }
-        
-        /* Intestazione colonna ATLETA */
-        thead th.sticky-col { 
-            background: linear-gradient(135deg, #343a40, #1d2124) !important;
+
+        thead th.sticky-col {
+            background: linear-gradient(135deg, #1e272e, #2d3436) !important;
             color: white !important;
-            border-right: 3px solid #667eea;
+            border-right: 3px solid var(--primary);
             z-index: 30 !important;
         }
-        
-        /* Contenitore nome atleta */
+
         .nome-container {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: 100%;
-            white-space: normal;
-            word-break: break-word;
-            padding: 4px 0;
+            padding: 5px;
         }
-        
+
         .nome-cognome {
             font-weight: 800;
-            text-align: center;
-            width: 100%;
             font-size: 12px;
             line-height: 1.3;
-            white-space: normal;
-            word-break: break-word;
-            padding: 0 2px;
-            color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            color: var(--dark);
         }
-        
-        /* Colori per le diverse categorie */
-        .categoria-cuccioli .nome-cognome { color: #e91e63; }
-        .categoria-giovanissimi .nome-cognome { color: #ff9800; }
-        .categoria-esordienti .nome-cognome { color: #9c27b0; }
-        .categoria-r12 .nome-cognome { color: #00bcd4; }
-        .categoria-ragazzi .nome-cognome { color: #ff5722; }
-        .categoria-allievi .nome-cognome { color: #3f51b5; }
-        .categoria-junior .nome-cognome { color: #009688; }
-        .categoria-senior .nome-cognome { color: #f44336; }
-        
-        /* Celle giorni */
-        .day-cell { 
+
+        .day-cell {
             width: 45px;
             min-width: 45px;
-            max-width: 45px;
             height: 60px;
-            border: 1px solid #eaeef2; 
-            text-align: center; 
-            cursor: pointer; 
-            font-weight: bold; 
+            border: 1px solid #eef2f7;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 700;
             font-size: 14px;
-            padding: 4px 0; 
-            user-select: none;
-            transition: background-color 0.2s;
-            vertical-align: middle;
+            transition: all 0.2s;
+            background: white;
         }
-        
-        .p-partecipa { 
-            background: linear-gradient(135deg, #2ecc71, #27ae60) !important; 
-            color: white !important; 
+
+        .day-cell:hover {
+            background: #f1f5f9;
+            transform: scale(1.1);
+            z-index: 10;
+            box-shadow: var(--shadow-md);
+        }
+
+        .p-partecipa {
+            background: linear-gradient(135deg, #00b894, #00cec9) !important;
+            color: white !important;
             font-weight: 900;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
-        
-        .p-assente { 
-            background: linear-gradient(135deg, #e74c3c, #c0392b) !important; 
-            color: white !important; 
+
+        .p-assente {
+            background: linear-gradient(135deg, #d63031, #e17055) !important;
+            color: white !important;
             font-weight: 900;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
-        
-        .today-cell { 
-            background: #d1ecf1; 
-            border: 3px solid #0c5460 !important; 
+
+        .today-cell {
+            background: #fff3cd;
+            border: 3px solid #856404 !important;
+            position: relative;
         }
-        
-        /* Colonna totale */
-        .tot-cell { 
-            position: sticky; 
-            right: 0; 
-            text-align: center; 
-            font-weight: 900; 
-            background: #f1f3f5; 
-            width: 48px;
+
+        .tot-cell {
+            position: sticky;
+            right: 0;
+            text-align: center;
+            font-weight: 900;
+            background: linear-gradient(135deg, #f1f3f5, #e9ecef);
             min-width: 48px;
-            max-width: 48px;
-            font-size: 14px;
-            border-left: 3px solid #667eea; 
-            z-index: 15; 
-            color: #2c3e50;
+            border-left: 3px solid var(--primary);
+            z-index: 15;
+            color: var(--dark);
             padding: 12px 0;
-            vertical-align: middle;
         }
-        
-        thead th:last-child { 
-            position: sticky; 
-            right: 0; 
-            z-index: 30 !important; 
-            background: linear-gradient(135deg, #343a40, #1d2124) !important; 
-            border-left: 3px solid #667eea;
+
+        thead th:last-child {
+            position: sticky;
+            right: 0;
+            z-index: 30 !important;
+            background: linear-gradient(135deg, #1e272e, #2d3436) !important;
+            border-left: 3px solid var(--primary);
             min-width: 48px;
         }
-        
-        /* Righe della tabella */
+
         tbody tr {
-            border-bottom: 1px solid #eaeef2;
+            border-bottom: 1px solid #eef2f7;
             transition: background-color 0.2s;
         }
-        
+
         tbody tr:hover {
             background-color: #f8f9fa;
         }
-        
-        /* FOOTER */
+
+        /* ========== FOOTER ========== */
         .app-footer {
             margin-top: 40px;
-            padding: 30px 20px 20px;
-            background: white;
-            border-radius: 20px;
+            padding: 30px 20px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 40px;
             text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
+
         .copyright {
-            color: #adb5bd;
-            font-size: 13px;
+            color: var(--dark);
+            font-size: 14px;
             line-height: 1.6;
+            opacity: 0.8;
         }
-        
-        /* Stato notifiche nel footer */
+
         .notification-status {
             margin-top: 15px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            font-size: 13px;
-        }
-        
-        /* PANNELLO ADMIN */
-        #admin-overlay { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.8); 
-            z-index: 1000; 
-            justify-content: center; 
-            align-items: center; 
-            padding: 20px;
-        }
-        
-        #admin-panel { 
-            background: white; 
-            width: 100%; 
-            max-width: 700px; 
-            padding: 35px; 
-            border-radius: 30px; 
-            box-shadow: 0 30px 70px rgba(0,0,0,0.4); 
-            position: relative; 
-            max-height: 90vh; 
-            display: flex; 
-            flex-direction: column; 
-        }
-        
-        .close-admin { 
-            position: absolute; 
-            top: 20px; 
-            right: 20px; 
-            font-size: 30px; 
-            cursor: pointer; 
-            color: #999; 
-            background: #f0f0f0;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
-        }
-        
-        .close-admin:hover {
-            transform: rotate(90deg);
-        }
-        
-        .close-admin:focus-visible {
-            outline: 3px solid #ffbf47;
-        }
-        
-        /* INPUT NUMERICO */
-        .number-input-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        
-        .number-input-container {
+            padding: 12px;
             background: white;
-            padding: 35px;
-            border-radius: 30px;
-            text-align: center;
-            min-width: 320px;
-            max-width: 95%;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+            box-shadow: var(--shadow-sm);
         }
-        
-        .number-input {
-            width: 100%;
-            font-size: 48px;
-            text-align: center;
-            border: 4px solid #2ecc71;
-            border-radius: 20px;
-            padding: 20px;
-            margin: 25px 0;
-            font-weight: bold;
-            background: #f8f9fa;
-        }
-        
-        .number-input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
-        }
-        
-        /* LISTA ATLETI ADMIN */
-        .atleta-item { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 18px; 
-            border-bottom: 1px solid #e9ecef; 
-            background: #f8f9fa;
-            border-radius: 12px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .atleta-item.archiviato { opacity: 0.7; background: #e9ecef; }
-        .atleta-info { flex: 1; min-width: 200px; }
-        .atleta-name { font-weight: 800; font-size: 16px; display: block; color: #2c3e50; }
-        .atleta-cat { font-size: 13px; color: #667eea; font-weight: 600; }
-        
-        /* POPUP REGISTRAZIONE VELOCE */
-        #quick-register-overlay {
+
+        /* ========== OVERLAY MODERNI ========== */
+        #admin-overlay, 
+        #number-input-overlay, 
+        #quick-register-overlay,
+        #notifiche-overlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             z-index: 10000;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            backdrop-filter: blur(10px);
         }
-        
-        .quick-register-container {
-            background: white;
+
+        #admin-panel,
+        .number-input-container,
+        .quick-register-container,
+        .notifiche-container {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             width: 100%;
+            max-width: 700px;
+            padding: 40px;
+            border-radius: 50px;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .number-input-container {
+            max-width: 400px;
+        }
+
+        .quick-register-container {
             max-width: 500px;
-            padding: 30px 20px;
-            border-radius: 40px;
-            text-align: center;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            animation: popIn 0.3s ease;
         }
-        
-        @keyframes popIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+
+        @keyframes modalPop {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
-        
-        .quick-register-header {
+
+        .close-admin,
+        .close-notifiche {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--dark);
+            box-shadow: var(--shadow-md);
+        }
+
+        .close-admin:hover,
+        .close-notifiche:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: var(--danger);
+            color: white;
+        }
+
+        /* ========== ADMIN PANEL ========== */
+        #admin-form {
+            background: white;
+            padding: 25px;
+            border-radius: 30px;
             margin-bottom: 25px;
         }
-        
+
+        #new-nome, #new-cat {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 30px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        #new-nome:focus, #new-cat:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        #btn-save-atleta {
+            width: 100%;
+            justify-content: center;
+            padding: 16px;
+            font-size: 16px;
+            background: linear-gradient(135deg, #34a853, #1e7e34);
+        }
+
+        .atleta-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: white;
+            border-radius: 30px;
+            margin-bottom: 10px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+            border: 1px solid rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .atleta-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-md);
+            background: linear-gradient(135deg, #f8f9fa, white);
+        }
+
+        .atleta-item.archiviato {
+            opacity: 0.7;
+            background: #e9ecef;
+        }
+
+        .atleta-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .atleta-name {
+            font-weight: 800;
+            font-size: 16px;
+            display: block;
+            color: var(--dark);
+        }
+
+        .atleta-cat {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* ========== INPUT NUMERICO ========== */
+        .number-input {
+            width: 100%;
+            font-size: 48px;
+            text-align: center;
+            border: 4px solid var(--success);
+            border-radius: 30px;
+            padding: 20px;
+            margin: 25px 0;
+            font-weight: bold;
+            background: #f8f9fa;
+        }
+
+        .number-input:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .input-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+            min-width: 100px;
+            transition: all 0.3s;
+        }
+
+        .input-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .input-btn.clear { background: #f39c12; }
+        .input-btn.cancel { background: #d63031; }
+        .input-btn.confirm { background: #00b894; }
+
+        /* ========== REGISTRAZIONE VELOCE ========== */
+        .quick-register-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
         .quick-register-header h2 {
             font-size: 28px;
-            color: #343a40;
+            color: var(--dark);
             margin-bottom: 10px;
         }
-        
+
         .quick-register-header .progress {
             font-size: 18px;
-            color: #667eea;
+            color: var(--primary);
             font-weight: 600;
-            background: #f8f9fa;
+            background: white;
             padding: 8px 20px;
             border-radius: 50px;
             display: inline-block;
         }
-        
+
         .quick-athlete-card {
             padding: 40px 20px;
-            border-radius: 30px;
+            border-radius: 40px;
             margin: 20px 0 30px;
             color: white;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            transition: background-color 0.3s ease;
+            box-shadow: var(--shadow-xl);
+            transition: all 0.3s;
+            text-align: center;
         }
-        
+
         .quick-categoria-cuccioli { background: linear-gradient(135deg, #e91e63, #c2185b); }
         .quick-categoria-giovanissimi { background: linear-gradient(135deg, #ff9800, #f57c00); }
         .quick-categoria-esordienti { background: linear-gradient(135deg, #9c27b0, #7b1fa2); }
@@ -836,7 +1035,7 @@
         .quick-categoria-allievi { background: linear-gradient(135deg, #3f51b5, #303f9f); }
         .quick-categoria-junior { background: linear-gradient(135deg, #009688, #00796b); }
         .quick-categoria-senior { background: linear-gradient(135deg, #f44336, #d32f2f); }
-        
+
         .quick-athlete-name {
             font-size: 36px;
             font-weight: 900;
@@ -845,421 +1044,385 @@
             word-break: break-word;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        
+
         .quick-athlete-category {
             font-size: 24px;
             font-weight: 700;
-            opacity: 0.95;
             background: rgba(255,255,255,0.2);
             padding: 12px 24px;
-            border-radius: 50px;
+            border-radius: 60px;
             display: inline-block;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
             border: 2px solid rgba(255,255,255,0.3);
         }
-        
+
         .quick-buttons {
             display: flex;
             gap: 15px;
             margin: 30px 0;
             flex-wrap: wrap;
         }
-        
+
         .quick-btn {
             flex: 1;
             min-width: 100px;
-            padding: 20px;
+            padding: 15px;
             border: none;
-            border-radius: 25px;
-            font-weight: 900;
-            font-size: 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 16px;
             cursor: pointer;
             color: white;
-            transition: transform 0.2s, opacity 0.2s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            box-shadow: var(--shadow-md);
         }
-        
+
+        .quick-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
         .quick-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.98);
         }
-        
+
         .quick-btn:disabled {
             opacity: 0.5;
             pointer-events: none;
         }
-        
-        .quick-btn-present {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-        }
-        
-        .quick-btn-present.partecipa {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-        }
-        
-        .quick-btn-next {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-        }
-        
-        .quick-btn-prev {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-        }
-        
-        .quick-btn-close {
-            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
-            min-width: 100%;
-        }
-        
+
+        .quick-btn-prev { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .quick-btn-present { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .quick-btn-present.partecipa { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .quick-btn-next { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .quick-btn-close { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
+
         .quick-status {
-            font-size: 18px;
+            font-size: 16px;
             margin: 15px 0 10px;
-            color: #2c3e50;
+            color: var(--dark);
             font-weight: 600;
+            text-align: center;
         }
-        
-        /* === OVERLAY GESTIONE NOTIFICHE COMPLETO === */
-        #notifiche-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 10001;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .notifiche-container {
-            background: white;
-            width: 100%;
-            max-width: 600px;
-            padding: 35px;
-            border-radius: 30px;
-            box-shadow: 0 30px 70px rgba(0,0,0,0.4);
-            position: relative;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideIn 0.3s ease;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        .close-notifiche {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 30px;
-            cursor: pointer;
-            color: #999;
-            background: #f0f0f0;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
-            z-index: 10;
-        }
-        
-        .close-notifiche:hover {
-            transform: rotate(90deg);
-        }
-        
+
+        /* ========== NOTIFICHE MENU ========== */
         .notifiche-section {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 20px;
+            background: white;
+            padding: 25px;
+            border-radius: 30px;
             margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
         }
-        
+
         .notifiche-section h3 {
-            color: #343a40;
+            color: var(--dark);
             margin-bottom: 15px;
             font-size: 18px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        
+
         .notifiche-badge {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: var(--gradient-primary);
             color: white;
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 40px;
+            margin-bottom: 25px;
             text-align: center;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
+            box-shadow: var(--shadow-lg);
         }
-        
+
         .giorni-container {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
-        
+
         .giorno-checkbox {
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 12px 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 30px;
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             gap: 8px;
             cursor: pointer;
-            transition: all 0.2s;
-            min-width: 70px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            flex: 1 0 auto;
             justify-content: center;
+            font-weight: 600;
         }
-        
+
         .giorno-checkbox:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary);
         }
-        
+
         .giorno-checkbox input[type="checkbox"] {
             width: 18px;
             height: 18px;
             cursor: pointer;
+            accent-color: var(--primary);
         }
-        
+
         .notifiche-orario-input {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 40px;
             font-size: 16px;
             font-weight: 600;
             margin-top: 10px;
+            transition: all 0.3s;
         }
-        
+
+        .notifiche-orario-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
         .notifiche-toggle {
             display: flex;
             align-items: center;
             gap: 15px;
-            background: white;
-            padding: 15px;
-            border-radius: 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 15px 20px;
+            border-radius: 40px;
             margin-bottom: 10px;
+            transition: all 0.3s;
         }
-        
+
+        .notifiche-toggle:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-sm);
+        }
+
         .notifiche-toggle input[type="checkbox"] {
             width: 20px;
             height: 20px;
             cursor: pointer;
+            accent-color: var(--primary);
         }
-        
+
         .notifiche-toggle label {
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
             cursor: pointer;
             flex: 1;
         }
-        
+
         .btn-test-notifica {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
+            background: var(--gradient-warning);
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 15px;
+            padding: 18px;
+            border-radius: 40px;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 16px;
             cursor: pointer;
             width: 100%;
             margin-top: 15px;
-            transition: transform 0.2s;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-md);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        
+
         .btn-test-notifica:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
         }
-        
-        .btn-test-notifica:active {
-            transform: translateY(0);
+
+        /* ========== LOADING SPINNER ========== */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(108, 92, 231, 0.2);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
-        
-        /* RESPONSIVE */
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ========== RESPONSIVE ========== */
         @media (max-width: 768px) {
-            .app-container { padding: 15px 10px 90px; }
-            .top-bar { flex-direction: column; align-items: stretch; }
-            
+            .app-container {
+                padding: 15px 15px 90px;
+            }
+
+            .btn-menu {
+                padding: 25px 20px;
+                font-size: 22px;
+            }
+
+            .btn-menu span {
+                font-size: 13px;
+            }
+
             .bottom-bar {
                 padding: 12px 15px;
+                border-radius: 40px;
             }
-            
+
             .btn-primary-bottom {
                 padding: 12px 18px;
                 font-size: 13px;
             }
-            
+
             .dropdown-toggle {
                 padding: 12px 20px;
                 min-width: 150px;
                 font-size: 13px;
             }
-            
+
             .dropdown-content {
                 min-width: 250px;
             }
-            
+
             .dropdown-item {
                 padding: 14px 16px;
                 font-size: 13px;
             }
-            
-            th.sticky-col, td.sticky-col { 
+
+            th.sticky-col, td.sticky-col {
                 min-width: 100px;
                 max-width: 100px;
-                width: 100px;
-                font-size: 10px; 
+                font-size: 10px;
             }
-            
+
             .nome-cognome {
                 font-size: 10px;
             }
-            
-            .day-cell { 
+
+            .day-cell {
                 width: 38px;
                 min-width: 38px;
-                max-width: 38px;
-                height: 55px; 
+                height: 55px;
                 font-size: 12px;
             }
-            
-            .tot-cell { 
+
+            .tot-cell {
                 width: 40px;
                 min-width: 40px;
-                max-width: 40px;
                 font-size: 12px;
             }
-            
-            thead th { 
-                font-size: 10px; 
-                padding: 8px 2px; 
+
+            thead th {
+                font-size: 10px;
+                padding: 8px 2px;
             }
-            .btn-menu { padding: 20px 15px; font-size: 20px; }
-            .btn-menu span { font-size: 11px; }
-            
+
+            .stats-info {
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .stats-info div {
+                padding: 6px 15px;
+                font-size: 12px;
+            }
+
+            .stats-info span {
+                font-size: 16px;
+            }
+
             .quick-athlete-name {
                 font-size: 28px;
             }
-            
+
             .quick-athlete-category {
                 font-size: 20px;
                 padding: 10px 20px;
             }
-            
-            .quick-btn {
-                padding: 15px;
-                font-size: 18px;
-            }
-            
-            .notifiche-container {
-                padding: 25px;
-            }
-            
-            .giorno-checkbox {
-                min-width: 60px;
-                padding: 10px 12px;
-            }
         }
-        
+
         @media (max-width: 480px) {
             .bottom-bar {
+                flex-wrap: wrap;
+                border-radius: 30px;
                 padding: 10px;
             }
-            
+
+            .bottom-left, .bottom-right {
+                width: 100%;
+                justify-content: center;
+            }
+
             .btn-primary-bottom {
                 padding: 10px 14px;
                 font-size: 12px;
             }
-            
+
             .dropdown-toggle {
                 padding: 10px 16px;
                 min-width: 130px;
                 font-size: 12px;
             }
-            
+
             .dropdown-content {
                 min-width: 220px;
             }
-            
+
             .dropdown-item {
                 padding: 12px 14px;
                 font-size: 12px;
             }
-            
-            .day-cell { 
+
+            .day-cell {
                 width: 35px;
                 min-width: 35px;
-                max-width: 35px;
-                height: 50px; 
+                height: 50px;
                 font-size: 11px;
             }
-            
-            th.sticky-col, td.sticky-col { 
+
+            th.sticky-col, td.sticky-col {
                 min-width: 90px;
                 max-width: 90px;
-                width: 90px;
-                font-size: 10px; 
+                font-size: 10px;
             }
-            
+
             .nome-cognome {
                 font-size: 9px;
             }
-            
-            .tot-cell { 
+
+            .tot-cell {
                 width: 35px;
                 min-width: 35px;
-                max-width: 35px;
-                font-size: 11px; 
+                font-size: 11px;
             }
-            
+
             .quick-athlete-name {
                 font-size: 24px;
             }
-            
+
             .quick-athlete-category {
                 font-size: 18px;
                 padding: 8px 16px;
             }
-            
+
             .quick-btn {
                 padding: 12px;
                 font-size: 16px;
             }
-            
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+
             .notifiche-container {
-                padding: 20px;
-            }
-            
-            .giorno-checkbox {
-                min-width: 50px;
-                padding: 8px 10px;
-                font-size: 13px;
+                padding: 30px 20px;
             }
         }
-        
-        /* ANIMAZIONI CARICAMENTO */
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -1272,16 +1435,17 @@
     <div class="app-container" id="main-content">
         <!-- === HEADER === -->
         <div class="header">
-            <!-- LOGO -->
-            <img src="./logo.png" alt="Logo Registro Presenze Gruppo Sportivo 2050" class="logo" 
-                 onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQzYTQwIiByeD0iMTUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjMyIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+R1JVUFBPIDIwNTA8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyMCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9IjFlbSI+UkVHSVNUUk8gUFJFU0VOWkU8L3RleHQ+PC9zdmc+'">
+            <div class="logo-container">
+                <img src="./logo.png" alt="Logo Registro Presenze Gruppo Sportivo 2050" class="logo" 
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjE1MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzQzYTQwIiByeD0iMTUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjMyIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+R1JVUFBPIDIwNTA8L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2NSUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyMCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9IjFlbSI+UkVHSVNUUk8gUFJFU0VOWkU8L3RleHQ+PC9zdmc+'>
+            </div>
             
             <!-- TOP BAR CON CONTROLLI -->
             <div class="top-bar">
                 <div class="date-controls">
                     <select id="select-mese" onchange="cambiaData()" aria-label="Seleziona mese"></select>
                     <select id="select-anno" onchange="cambiaData()" aria-label="Seleziona anno"></select>
-                    <button class="btn-primary-bottom btn-oggi" onclick="scrollOggi()" title="Vai a oggi" aria-label="Vai al giorno corrente" style="padding: 12px 18px; min-width: 52px;">🎯</button>
+                    <button class="btn-primary-bottom btn-oggi" onclick="scrollOggi()" title="Vai a oggi" aria-label="Vai al giorno corrente">🎯</button>
                 </div>
             </div>
             
@@ -1418,15 +1582,13 @@
             <span class="close-admin" onclick="toggleAdmin()" role="button" tabindex="0" aria-label="Chiudi pannello admin">&times;</span>
             <h2 id="admin-title" style="margin-bottom: 25px; color: #343a40; font-size: 28px;">👤 GESTIONE ATLETI</h2>
             
-            <div id="admin-form" style="background: #f8f9fa; padding: 25px; border-radius: 20px; margin-bottom: 25px;">
+            <div id="admin-form">
                 <input type="hidden" id="edit-id">
                 
                 <input type="text" id="new-nome" placeholder="NOME E COGNOME" 
-                       style="width:100%; margin-bottom:15px; padding: 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 16px; outline: none;"
                        aria-label="Nome atleta" required>
                 
-                <select id="new-cat" style="width:100%; margin-bottom:20px; padding: 15px; border: 2px solid #ddd; border-radius: 12px; font-size: 16px; outline: none;"
-                        aria-label="Categoria atleta" required>
+                <select id="new-cat" aria-label="Categoria atleta" required>
                     <option value="CUCCIOLI">CUCCIOLI</option>
                     <option value="GIOVANISSIMI">GIOVANISSIMI</option>
                     <option value="ESORDIENTI">ESORDIENTI</option>
@@ -1438,7 +1600,6 @@
                 </select>
                 
                 <button id="btn-save-atleta" class="btn-primary-bottom" 
-                        style="width:100%; justify-content:center; padding: 16px; font-size: 18px; background: linear-gradient(135deg, #34a853, #1e7e34);" 
                         onclick="salvaAtleta()"
                         aria-label="Aggiungi o aggiorna atleta">
                     ➕ AGGIUNGI ATLETA
@@ -1464,10 +1625,10 @@
                    pattern="[0-9]*" inputmode="numeric" autofocus
                    aria-label="Inserisci numero" aria-describedby="number-input-description">
             <div id="number-input-description" style="display: none;">Inserisci un numero da 0 a 999</div>
-            <div class="input-buttons" style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                <button class="input-btn clear" onclick="clearNumberInput()" style="background: #f39c12; padding: 14px 28px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; flex: 1; min-width: 100px;" aria-label="Pulisci campo">PULISCI</button>
-                <button class="input-btn cancel" onclick="cancelNumberInput()" style="background: #e74c3c; padding: 14px 28px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; flex: 1; min-width: 100px;" aria-label="Annulla">ANNULLA</button>
-                <button class="input-btn confirm" onclick="confirmNumberInput()" style="background: #2ecc71; padding: 14px 28px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; flex: 1; min-width: 100px;" aria-label="Conferma">OK</button>
+            <div class="input-buttons">
+                <button class="input-btn clear" onclick="clearNumberInput()" aria-label="Pulisci campo">PULISCI</button>
+                <button class="input-btn cancel" onclick="cancelNumberInput()" aria-label="Annulla">ANNULLA</button>
+                <button class="input-btn confirm" onclick="confirmNumberInput()" aria-label="Conferma">OK</button>
             </div>
         </div>
     </div>
@@ -1504,12 +1665,10 @@
             
             <h2 id="notifiche-title" style="margin-bottom: 25px; color: #343a40; font-size: 28px;">🔔 GESTIONE NOTIFICHE</h2>
             
-            <!-- STATO GENERALE -->
             <div class="notifiche-badge" id="notifiche-stato-generale">
                 ✅ NOTIFICHE ATTIVE
             </div>
             
-            <!-- SEZIONE 1: ATTIVAZIONE -->
             <div class="notifiche-section">
                 <h3>📴 ATTIVAZIONE</h3>
                 <div class="notifiche-toggle">
@@ -1518,30 +1677,22 @@
                 </div>
             </div>
             
-            <!-- SEZIONE 2: ORARIO NOTIFICA -->
             <div class="notifiche-section">
                 <h3>⏰ ORARIO NOTIFICA SERALE</h3>
                 <input type="time" id="notifiche-orario" class="notifiche-orario-input" value="21:00" onchange="salvaImpostazioniNotifiche()">
                 <p style="color: #666; margin-top: 10px; font-size: 14px;">Le notifiche vengono inviate a quest'ora se non ci sono presenze</p>
             </div>
             
-            <!-- SEZIONE 3: GIORNI ALLENAMENTO PICCOLI -->
             <div class="notifiche-section">
                 <h3>👦 GIORNI ALLENAMENTO PICCOLI</h3>
-                <div class="giorni-container" id="giorni-piccoli-container">
-                    <!-- Generato da JavaScript -->
-                </div>
+                <div class="giorni-container" id="giorni-piccoli-container"></div>
             </div>
             
-            <!-- SEZIONE 4: GIORNI ALLENAMENTO GRANDI -->
             <div class="notifiche-section">
                 <h3>🏃 GIORNI ALLENAMENTO GRANDI</h3>
-                <div class="giorni-container" id="giorni-grandi-container">
-                    <!-- Generato da JavaScript -->
-                </div>
+                <div class="giorni-container" id="giorni-grandi-container"></div>
             </div>
             
-            <!-- SEZIONE 5: OPZIONI AVANZATE -->
             <div class="notifiche-section">
                 <h3>⚙️ OPZIONI AVANZATE</h3>
                 
@@ -1556,12 +1707,11 @@
                 </div>
                 
                 <div class="notifiche-toggle">
-                    <input type="checkbox" id="notifiche-renotify" checked onchange="salvaImpostazioniNotifiche()">
+                    <input type="checkbox" id="notifiche-renotify" onchange="salvaImpostazioniNotifiche()">
                     <label for="notifiche-renotify">Notifica anche se già inviata oggi</label>
                 </div>
             </div>
             
-            <!-- BOTTONE TEST -->
             <button class="btn-test-notifica" onclick="testNotifica()">
                 🔔 INVIA NOTIFICA DI TEST
             </button>
@@ -1614,10 +1764,10 @@
         
         // =================== CONFIGURAZIONE NOTIFICHE ===================
         let CONFIG_NOTIFICHE = {
-            ORARIO_NOTIFICA: 21, // 21:00 (9 PM)
-            GIORNI_PICCOLI: [1, 3, 5], // Lunedì(1), Mercoledì(3), Venerdì(5)
-            GIORNI_GRANDI: [1, 2, 3, 4, 5], // Lunedì(1) a Venerdì(5)
-            NOTIFICHE_INVIATE: {}, // Per tracciare notifiche già inviate oggi
+            ORARIO_NOTIFICA: 21,
+            GIORNI_PICCOLI: [1, 3, 5],
+            GIORNI_GRANDI: [1, 2, 3, 4, 5],
+            NOTIFICHE_INVIATE: {},
             ABILITATE: true,
             SOLO_SE_ZERO: true,
             VIBRAZIONE: true,
@@ -1627,29 +1777,23 @@
         // =================== GESTIONE INSTALLAZIONE PWA ===================
         let deferredPrompt;
 
-        // Funzione per installare l'app
         window.installPWA = async function() {
             if (!deferredPrompt) {
                 console.log('❌ Nessun prompt di installazione disponibile');
                 return;
             }
             
-            // Mostra il prompt di installazione
             deferredPrompt.prompt();
             
-            // Aspetta la scelta dell'utente
             const { outcome } = await deferredPrompt.userChoice;
             console.log(`📲 Utente ha ${outcome === 'accepted' ? 'accettato' : 'rifiutato'} l'installazione`);
             
-            // Resetta deferredPrompt
             deferredPrompt = null;
             
-            // Nascondi il pulsante
             const btn = document.getElementById('dropdown-install');
             if (btn) btn.style.display = 'none';
         }
 
-        // Controlla se l'app è già installata
         function checkIfInstalled() {
             if (window.matchMedia('(display-mode: standalone)').matches || 
                 window.navigator.standalone === true) {
@@ -1679,7 +1823,6 @@
             document.getElementById('dropdownContent').classList.remove('show');
         }
 
-        // Chiudi dropdown quando si clicca fuori
         document.addEventListener('click', function(event) {
             const dropdown = document.getElementById('dropdownContent');
             const toggle = document.getElementById('dropdownToggle');
@@ -2054,10 +2197,7 @@
         async function inizializza() {
             console.log('🚀 Inizializzazione applicazione...');
             
-            // Controlla se l'app è già installata
             checkIfInstalled();
-            
-            // Carica impostazioni notifiche
             caricaImpostazioniNotifiche();
             
             const m = localStorage.getItem('p_mese') || dataAttuale.getMonth();
@@ -2084,7 +2224,6 @@
             caricaStatoNumericInput();
             caricaStatoBackupAuto();
             
-            // Inizializza notifiche dopo 3 secondi
             setTimeout(() => {
                 initSistemaNotifiche();
             }, 3000);
@@ -2137,7 +2276,6 @@
                                 }
                             }
                             
-                            // Controlla presenze dopo aggiornamento
                             controllaPresenzeGiornaliere();
                         }
                     })
@@ -2154,7 +2292,6 @@
                             aggiornaListaVeloce();
                         }
                         
-                        // Aggiorna badge notifiche
                         const risultati = await getRisultatiControllo();
                         aggiornaBadgeNotifiche(risultati);
                     })
@@ -2328,7 +2465,6 @@
                     avviaTimerBackup();
                 }
                 
-                // Controlla presenze dopo modifica
                 controllaPresenzeGiornaliere();
                 
             } catch (error) {
@@ -2399,7 +2535,6 @@
                         avviaTimerBackup();
                     }
                     
-                    // Controlla presenze dopo modifica
                     controllaPresenzeGiornaliere();
                     
                 } catch (error) {
@@ -3004,7 +3139,6 @@
                 const sezione = getSezioneCorrente();
                 if (sezione) renderVirtualScroll(sezione);
                 
-                // Controlla presenze dopo modifica
                 controllaPresenzeGiornaliere();
                 
                 if (quickCurrentIndex < quickAthletes.length - 1) {
@@ -3063,7 +3197,6 @@
 
         // =================== SISTEMA NOTIFICHE PUSH ===================
         
-        // Funzioni per il menu notifiche
         window.apriMenuNotifiche = function() {
             document.getElementById('notifiche-overlay').style.display = 'flex';
             aggiornaMenuNotifiche();
@@ -3074,21 +3207,14 @@
         }
 
         function aggiornaMenuNotifiche() {
-            // Aggiorna stato generale
             const badge = document.getElementById('notifiche-stato-generale');
             badge.innerHTML = CONFIG_NOTIFICHE.ABILITATE ? '✅ NOTIFICHE ATTIVE' : '⏸️ NOTIFICHE DISATTIVATE';
-            badge.style.background = CONFIG_NOTIFICHE.ABILITATE ? 
-                'linear-gradient(135deg, #667eea, #764ba2)' : 
-                'linear-gradient(135deg, #95a5a6, #7f8c8d)';
             
-            // Imposta checkbox abilitazione
             document.getElementById('notifiche-abilitate').checked = CONFIG_NOTIFICHE.ABILITATE;
             
-            // Imposta orario
             const ore = String(CONFIG_NOTIFICHE.ORARIO_NOTIFICA).padStart(2, '0');
             document.getElementById('notifiche-orario').value = `${ore}:00`;
             
-            // Genera checkbox giorni piccoli
             const giorniPiccoli = document.getElementById('giorni-piccoli-container');
             const giorniNomi = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
             giorniPiccoli.innerHTML = '';
@@ -3103,7 +3229,6 @@
                 `;
             }
             
-            // Genera checkbox giorni grandi
             const giorniGrandi = document.getElementById('giorni-grandi-container');
             giorniGrandi.innerHTML = '';
             
@@ -3117,7 +3242,6 @@
                 `;
             }
             
-            // Imposta opzioni avanzate
             document.getElementById('notifiche-solo-se-zero').checked = CONFIG_NOTIFICHE.SOLO_SE_ZERO;
             document.getElementById('notifiche-vibrazione').checked = CONFIG_NOTIFICHE.VIBRAZIONE;
             document.getElementById('notifiche-renotify').checked = CONFIG_NOTIFICHE.RENOTIFY;
@@ -3136,31 +3260,17 @@
         }
 
         window.salvaImpostazioniNotifiche = function() {
-            // Abilitazione
             CONFIG_NOTIFICHE.ABILITATE = document.getElementById('notifiche-abilitate').checked;
-            
-            // Orario
             const orario = document.getElementById('notifiche-orario').value;
             CONFIG_NOTIFICHE.ORARIO_NOTIFICA = parseInt(orario.split(':')[0]);
-            
-            // Opzioni avanzate
             CONFIG_NOTIFICHE.SOLO_SE_ZERO = document.getElementById('notifiche-solo-se-zero').checked;
             CONFIG_NOTIFICHE.VIBRAZIONE = document.getElementById('notifiche-vibrazione').checked;
             CONFIG_NOTIFICHE.RENOTIFY = document.getElementById('notifiche-renotify').checked;
             
-            // Salva in localStorage
             localStorage.setItem('config_notifiche', JSON.stringify(CONFIG_NOTIFICHE));
             
-            // Aggiorna badge
             document.getElementById('notifiche-stato-generale').innerHTML = 
                 CONFIG_NOTIFICHE.ABILITATE ? '✅ NOTIFICHE ATTIVE' : '⏸️ NOTIFICHE DISATTIVATE';
-            
-            console.log('💾 Impostazioni notifiche salvate:', CONFIG_NOTIFICHE);
-            
-            // Riavvia monitoraggio con nuove impostazioni
-            if (CONFIG_NOTIFICHE.ABILITATE) {
-                programmaControlloSerale();
-            }
         }
 
         function caricaImpostazioniNotifiche() {
@@ -3472,7 +3582,6 @@
             
             let titolo = '';
             let corpo = '';
-            let categoriaNotifica = categoria.toUpperCase();
             
             if (categoria === 'piccoli') {
                 titolo = '👦 PICCOLI - Nessuna presenza registrata';
@@ -3599,7 +3708,6 @@
             }
         }
 
-        // Eventi per l'installazione PWA
         window.addEventListener('beforeinstallprompt', (e) => {
             console.log('📲 Evento beforeinstallprompt catturato');
             e.preventDefault();
@@ -3616,16 +3724,23 @@
             alert('✅ Grazie per aver installato Registro Presenze 2050!');
         });
 
-        // Chiudi menu notifiche con ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 if (document.getElementById('notifiche-overlay').style.display === 'flex') {
                     chiudiMenuNotifiche();
                 }
+                if (document.getElementById('admin-overlay').style.display === 'flex') {
+                    toggleAdmin();
+                }
+                if (document.getElementById('quick-register-overlay').style.display === 'flex') {
+                    chiudiRegistrazioneVeloce();
+                }
+                if (document.getElementById('number-input-overlay').style.display === 'flex') {
+                    cancelNumberInput();
+                }
             }
         });
 
-        // =================== INIZIALIZZAZIONE ===================
         window.onload = inizializza;
     </script>
 </body>
