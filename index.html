@@ -449,6 +449,7 @@
         .dropdown-item.backup { background: linear-gradient(135deg, #f39c12, #e67e22); }
         .dropdown-item.backup.active { background: linear-gradient(135deg, #2ecc71, #27ae60); }
         .dropdown-item.admin { background: linear-gradient(135deg, #6c757d, #343a40); }
+        .dropdown-item.notifications { background: linear-gradient(135deg, #00bcd4, #0097a7); }
         .dropdown-item.install { background: linear-gradient(135deg, #667eea, #764ba2); animation: pulse-install 2s infinite; }
         
         @keyframes pulse-install {
@@ -915,6 +916,177 @@
             font-weight: 600;
         }
         
+        /* === OVERLAY GESTIONE NOTIFICHE COMPLETO === */
+        #notifiche-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 10001;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .notifiche-container {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            padding: 35px;
+            border-radius: 30px;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.4);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .close-notifiche {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #999;
+            background: #f0f0f0;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+            z-index: 10;
+        }
+        
+        .close-notifiche:hover {
+            transform: rotate(90deg);
+        }
+        
+        .notifiche-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .notifiche-section h3 {
+            color: #343a40;
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .notifiche-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .giorni-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .giorno-checkbox {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 70px;
+            justify-content: center;
+        }
+        
+        .giorno-checkbox:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .giorno-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .notifiche-orario-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .notifiche-toggle {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .notifiche-toggle input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .notifiche-toggle label {
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .btn-test-notifica {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+        
+        .btn-test-notifica:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn-test-notifica:active {
+            transform: translateY(0);
+        }
+        
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .app-container { padding: 15px 10px 90px; }
@@ -990,6 +1162,15 @@
                 padding: 15px;
                 font-size: 18px;
             }
+            
+            .notifiche-container {
+                padding: 25px;
+            }
+            
+            .giorno-checkbox {
+                min-width: 60px;
+                padding: 10px 12px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1055,6 +1236,16 @@
             .quick-btn {
                 padding: 12px;
                 font-size: 16px;
+            }
+            
+            .notifiche-container {
+                padding: 20px;
+            }
+            
+            .giorno-checkbox {
+                min-width: 50px;
+                padding: 8px 10px;
+                font-size: 13px;
             }
         }
         
@@ -1205,6 +1396,9 @@
                     <button class="dropdown-item admin" onclick="toggleAdmin(); closeDropdown()">
                         ⚙️ GESTISCI ATLETI
                     </button>
+                    <button class="dropdown-item notifications" onclick="apriMenuNotifiche(); closeDropdown()">
+                        🔔 GESTISCI NOTIFICHE
+                    </button>
                     <button class="dropdown-item install" id="dropdown-install" style="display: none;" onclick="installPWA(); closeDropdown()">
                         📲 INSTALLA APP
                     </button>
@@ -1303,6 +1497,81 @@
         </div>
     </div>
 
+    <!-- === OVERLAY GESTIONE NOTIFICHE === -->
+    <div id="notifiche-overlay" role="dialog" aria-labelledby="notifiche-title" aria-modal="true">
+        <div class="notifiche-container">
+            <span class="close-notifiche" onclick="chiudiMenuNotifiche()" role="button" tabindex="0" aria-label="Chiudi menu notifiche">&times;</span>
+            
+            <h2 id="notifiche-title" style="margin-bottom: 25px; color: #343a40; font-size: 28px;">🔔 GESTIONE NOTIFICHE</h2>
+            
+            <!-- STATO GENERALE -->
+            <div class="notifiche-badge" id="notifiche-stato-generale">
+                ✅ NOTIFICHE ATTIVE
+            </div>
+            
+            <!-- SEZIONE 1: ATTIVAZIONE -->
+            <div class="notifiche-section">
+                <h3>📴 ATTIVAZIONE</h3>
+                <div class="notifiche-toggle">
+                    <input type="checkbox" id="notifiche-abilitate" checked onchange="salvaImpostazioniNotifiche()">
+                    <label for="notifiche-abilitate">Notifiche abilitate (controllo automatico)</label>
+                </div>
+            </div>
+            
+            <!-- SEZIONE 2: ORARIO NOTIFICA -->
+            <div class="notifiche-section">
+                <h3>⏰ ORARIO NOTIFICA SERALE</h3>
+                <input type="time" id="notifiche-orario" class="notifiche-orario-input" value="21:00" onchange="salvaImpostazioniNotifiche()">
+                <p style="color: #666; margin-top: 10px; font-size: 14px;">Le notifiche vengono inviate a quest'ora se non ci sono presenze</p>
+            </div>
+            
+            <!-- SEZIONE 3: GIORNI ALLENAMENTO PICCOLI -->
+            <div class="notifiche-section">
+                <h3>👦 GIORNI ALLENAMENTO PICCOLI</h3>
+                <div class="giorni-container" id="giorni-piccoli-container">
+                    <!-- Generato da JavaScript -->
+                </div>
+            </div>
+            
+            <!-- SEZIONE 4: GIORNI ALLENAMENTO GRANDI -->
+            <div class="notifiche-section">
+                <h3>🏃 GIORNI ALLENAMENTO GRANDI</h3>
+                <div class="giorni-container" id="giorni-grandi-container">
+                    <!-- Generato da JavaScript -->
+                </div>
+            </div>
+            
+            <!-- SEZIONE 5: OPZIONI AVANZATE -->
+            <div class="notifiche-section">
+                <h3>⚙️ OPZIONI AVANZATE</h3>
+                
+                <div class="notifiche-toggle">
+                    <input type="checkbox" id="notifiche-solo-se-zero" checked onchange="salvaImpostazioniNotifiche()">
+                    <label for="notifiche-solo-se-zero">Notifica solo se ZERO presenze</label>
+                </div>
+                
+                <div class="notifiche-toggle">
+                    <input type="checkbox" id="notifiche-vibrazione" checked onchange="salvaImpostazioniNotifiche()">
+                    <label for="notifiche-vibrazione">Abilita vibrazione</label>
+                </div>
+                
+                <div class="notifiche-toggle">
+                    <input type="checkbox" id="notifiche-renotify" checked onchange="salvaImpostazioniNotifiche()">
+                    <label for="notifiche-renotify">Notifica anche se già inviata oggi</label>
+                </div>
+            </div>
+            
+            <!-- BOTTONE TEST -->
+            <button class="btn-test-notifica" onclick="testNotifica()">
+                🔔 INVIA NOTIFICA DI TEST
+            </button>
+            
+            <p style="text-align: center; margin-top: 20px; color: #999; font-size: 12px;">
+                Le modifiche vengono salvate automaticamente
+            </p>
+        </div>
+    </div>
+
     <script>
         // =================== CONFIGURAZIONE ===================
         const CONFIG = {
@@ -1344,11 +1613,15 @@
         let numericInputAttivo = false;
         
         // =================== CONFIGURAZIONE NOTIFICHE ===================
-        const CONFIG_NOTIFICHE = {
+        let CONFIG_NOTIFICHE = {
             ORARIO_NOTIFICA: 21, // 21:00 (9 PM)
             GIORNI_PICCOLI: [1, 3, 5], // Lunedì(1), Mercoledì(3), Venerdì(5)
             GIORNI_GRANDI: [1, 2, 3, 4, 5], // Lunedì(1) a Venerdì(5)
-            NOTIFICHE_INVIATE: {} // Per tracciare notifiche già inviate oggi
+            NOTIFICHE_INVIATE: {}, // Per tracciare notifiche già inviate oggi
+            ABILITATE: true,
+            SOLO_SE_ZERO: true,
+            VIBRAZIONE: true,
+            RENOTIFY: false
         };
         
         // =================== GESTIONE INSTALLAZIONE PWA ===================
@@ -1784,6 +2057,9 @@
             // Controlla se l'app è già installata
             checkIfInstalled();
             
+            // Carica impostazioni notifiche
+            caricaImpostazioniNotifiche();
+            
             const m = localStorage.getItem('p_mese') || dataAttuale.getMonth();
             const a = localStorage.getItem('p_anno') || dataAttuale.getFullYear();
             dataAttuale = new Date(a, m, 1);
@@ -1879,7 +2155,8 @@
                         }
                         
                         // Aggiorna badge notifiche
-                        aggiornaBadgeNotifiche(await getRisultatiControllo());
+                        const risultati = await getRisultatiControllo();
+                        aggiornaBadgeNotifiche(risultati);
                     })
                 .subscribe();
         }
@@ -2785,8 +3062,173 @@
         }
 
         // =================== SISTEMA NOTIFICHE PUSH ===================
+        
+        // Funzioni per il menu notifiche
+        window.apriMenuNotifiche = function() {
+            document.getElementById('notifiche-overlay').style.display = 'flex';
+            aggiornaMenuNotifiche();
+        }
+
+        window.chiudiMenuNotifiche = function() {
+            document.getElementById('notifiche-overlay').style.display = 'none';
+        }
+
+        function aggiornaMenuNotifiche() {
+            // Aggiorna stato generale
+            const badge = document.getElementById('notifiche-stato-generale');
+            badge.innerHTML = CONFIG_NOTIFICHE.ABILITATE ? '✅ NOTIFICHE ATTIVE' : '⏸️ NOTIFICHE DISATTIVATE';
+            badge.style.background = CONFIG_NOTIFICHE.ABILITATE ? 
+                'linear-gradient(135deg, #667eea, #764ba2)' : 
+                'linear-gradient(135deg, #95a5a6, #7f8c8d)';
+            
+            // Imposta checkbox abilitazione
+            document.getElementById('notifiche-abilitate').checked = CONFIG_NOTIFICHE.ABILITATE;
+            
+            // Imposta orario
+            const ore = String(CONFIG_NOTIFICHE.ORARIO_NOTIFICA).padStart(2, '0');
+            document.getElementById('notifiche-orario').value = `${ore}:00`;
+            
+            // Genera checkbox giorni piccoli
+            const giorniPiccoli = document.getElementById('giorni-piccoli-container');
+            const giorniNomi = ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'];
+            giorniPiccoli.innerHTML = '';
+            
+            for (let i = 1; i <= 7; i++) {
+                const checked = CONFIG_NOTIFICHE.GIORNI_PICCOLI.includes(i);
+                giorniPiccoli.innerHTML += `
+                    <label class="giorno-checkbox">
+                        <input type="checkbox" value="${i}" ${checked ? 'checked' : ''} onchange="aggiornaGiorniPiccoli()">
+                        ${giorniNomi[i-1]}
+                    </label>
+                `;
+            }
+            
+            // Genera checkbox giorni grandi
+            const giorniGrandi = document.getElementById('giorni-grandi-container');
+            giorniGrandi.innerHTML = '';
+            
+            for (let i = 1; i <= 7; i++) {
+                const checked = CONFIG_NOTIFICHE.GIORNI_GRANDI.includes(i);
+                giorniGrandi.innerHTML += `
+                    <label class="giorno-checkbox">
+                        <input type="checkbox" value="${i}" ${checked ? 'checked' : ''} onchange="aggiornaGiorniGrandi()">
+                        ${giorniNomi[i-1]}
+                    </label>
+                `;
+            }
+            
+            // Imposta opzioni avanzate
+            document.getElementById('notifiche-solo-se-zero').checked = CONFIG_NOTIFICHE.SOLO_SE_ZERO;
+            document.getElementById('notifiche-vibrazione').checked = CONFIG_NOTIFICHE.VIBRAZIONE;
+            document.getElementById('notifiche-renotify').checked = CONFIG_NOTIFICHE.RENOTIFY;
+        }
+
+        window.aggiornaGiorniPiccoli = function() {
+            const checkboxes = document.querySelectorAll('#giorni-piccoli-container input:checked');
+            CONFIG_NOTIFICHE.GIORNI_PICCOLI = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            salvaImpostazioniNotifiche();
+        }
+
+        window.aggiornaGiorniGrandi = function() {
+            const checkboxes = document.querySelectorAll('#giorni-grandi-container input:checked');
+            CONFIG_NOTIFICHE.GIORNI_GRANDI = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            salvaImpostazioniNotifiche();
+        }
+
+        window.salvaImpostazioniNotifiche = function() {
+            // Abilitazione
+            CONFIG_NOTIFICHE.ABILITATE = document.getElementById('notifiche-abilitate').checked;
+            
+            // Orario
+            const orario = document.getElementById('notifiche-orario').value;
+            CONFIG_NOTIFICHE.ORARIO_NOTIFICA = parseInt(orario.split(':')[0]);
+            
+            // Opzioni avanzate
+            CONFIG_NOTIFICHE.SOLO_SE_ZERO = document.getElementById('notifiche-solo-se-zero').checked;
+            CONFIG_NOTIFICHE.VIBRAZIONE = document.getElementById('notifiche-vibrazione').checked;
+            CONFIG_NOTIFICHE.RENOTIFY = document.getElementById('notifiche-renotify').checked;
+            
+            // Salva in localStorage
+            localStorage.setItem('config_notifiche', JSON.stringify(CONFIG_NOTIFICHE));
+            
+            // Aggiorna badge
+            document.getElementById('notifiche-stato-generale').innerHTML = 
+                CONFIG_NOTIFICHE.ABILITATE ? '✅ NOTIFICHE ATTIVE' : '⏸️ NOTIFICHE DISATTIVATE';
+            
+            console.log('💾 Impostazioni notifiche salvate:', CONFIG_NOTIFICHE);
+            
+            // Riavvia monitoraggio con nuove impostazioni
+            if (CONFIG_NOTIFICHE.ABILITATE) {
+                programmaControlloSerale();
+            }
+        }
+
+        function caricaImpostazioniNotifiche() {
+            const saved = localStorage.getItem('config_notifiche');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    CONFIG_NOTIFICHE = { ...CONFIG_NOTIFICHE, ...parsed };
+                } catch (e) {
+                    console.error('Errore caricamento impostazioni notifiche:', e);
+                }
+            }
+        }
+
+        window.testNotifica = async function() {
+            if (!('serviceWorker' in navigator) || Notification.permission !== 'granted') {
+                alert('Per testare le notifiche, devi prima accettare i permessi!');
+                return;
+            }
+
+            try {
+                const registration = await navigator.serviceWorker.ready;
+                
+                const options = {
+                    body: 'Questa è una notifica di test dal menu impostazioni',
+                    icon: 'icon-192.png',
+                    badge: 'icon-72.png',
+                    vibrate: CONFIG_NOTIFICHE.VIBRAZIONE ? [200, 100, 200, 100, 200, 100, 400] : [],
+                    tag: 'test-notification',
+                    renotify: CONFIG_NOTIFICHE.RENOTIFY,
+                    requireInteraction: true,
+                    actions: [
+                        {
+                            action: 'open-piccoli',
+                            title: '👦 APRI PICCOLI'
+                        },
+                        {
+                            action: 'open-grandi',
+                            title: '🏃 APRI GRANDI'
+                        },
+                        {
+                            action: 'close',
+                            title: '⏰ CHIUDI'
+                        }
+                    ],
+                    data: {
+                        url: '/presenze-allenamenti/',
+                        timestamp: Date.now()
+                    }
+                };
+                
+                await registration.showNotification('🔔 TEST NOTIFICA', options);
+                
+                alert('✅ Notifica di test inviata!');
+                
+            } catch (error) {
+                console.error('Errore test notifica:', error);
+                alert('❌ Errore nell\'invio della notifica');
+            }
+        }
+
         async function initSistemaNotifiche() {
             console.log('🔔 Inizializzazione sistema notifiche...');
+            
+            if (!CONFIG_NOTIFICHE.ABILITATE) {
+                aggiornaStatoNotificheUI('⏸️ Notifiche disattivate');
+                return false;
+            }
             
             const swRegistrato = await registraServiceWorker();
             if (!swRegistrato) {
@@ -2808,25 +3250,25 @@
         }
 
         async function registraServiceWorker() {
-    if (!('serviceWorker' in navigator)) {
-        console.log('Service Worker non supportato');
-        return false;
-    }
+            if (!('serviceWorker' in navigator)) {
+                console.log('Service Worker non supportato');
+                return false;
+            }
 
-    try {
-        const registration = await navigator.serviceWorker.register('sw.js', {
-            scope: '/presenze-allenamenti/'    // <--- CORRETTO!
-        });
-        console.log('Service Worker registrato:', registration);
-        
-        await navigator.serviceWorker.ready;
-        return true;
-        
-    } catch (error) {
-        console.error('Errore registrazione Service Worker:', error);
-        return false;
-    }
-}
+            try {
+                const registration = await navigator.serviceWorker.register('sw.js', {
+                    scope: '/presenze-allenamenti/'
+                });
+                console.log('Service Worker registrato:', registration);
+                
+                await navigator.serviceWorker.ready;
+                return true;
+                
+            } catch (error) {
+                console.error('Errore registrazione Service Worker:', error);
+                return false;
+            }
+        }
 
         async function richiediPermessiNotifiche() {
             if (!('Notification' in window)) {
@@ -2965,6 +3407,8 @@
         }
 
         async function controllaPresenzeGiornaliere(forzaNotifica = false) {
+            if (!CONFIG_NOTIFICHE.ABILITATE) return;
+            
             try {
                 const oggi = new Date();
                 const giornoSettimana = oggi.getDay();
@@ -2987,8 +3431,8 @@
                     
                     if (risultati.piccoli.deveAllenarsi && 
                         risultati.piccoli.totaleAtleti > 0 && 
-                        risultati.piccoli.presenze === 0 &&
-                        !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`piccoli-${oggiStr}`]) {
+                        (CONFIG_NOTIFICHE.SOLO_SE_ZERO ? risultati.piccoli.presenze === 0 : true) &&
+                        (CONFIG_NOTIFICHE.RENOTIFY || !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`piccoli-${oggiStr}`])) {
                         
                         await inviaNotificaCategoria('piccoli', risultati.piccoli.totaleAtleti);
                         CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`piccoli-${oggiStr}`] = true;
@@ -2996,8 +3440,8 @@
                     
                     if (risultati.grandi.deveAllenarsi && 
                         risultati.grandi.totaleAtleti > 0 && 
-                        risultati.grandi.presenze === 0 &&
-                        !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`grandi-${oggiStr}`]) {
+                        (CONFIG_NOTIFICHE.SOLO_SE_ZERO ? risultati.grandi.presenze === 0 : true) &&
+                        (CONFIG_NOTIFICHE.RENOTIFY || !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`grandi-${oggiStr}`])) {
                         
                         await inviaNotificaCategoria('grandi', risultati.grandi.totaleAtleti);
                         CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`grandi-${oggiStr}`] = true;
@@ -3005,9 +3449,8 @@
                     
                     if (risultati.piccoli.deveAllenarsi && 
                         risultati.grandi.deveAllenarsi && 
-                        risultati.piccoli.presenze === 0 && 
-                        risultati.grandi.presenze === 0 &&
-                        !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`entrambi-${oggiStr}`]) {
+                        (CONFIG_NOTIFICHE.SOLO_SE_ZERO ? (risultati.piccoli.presenze === 0 && risultati.grandi.presenze === 0) : true) &&
+                        (CONFIG_NOTIFICHE.RENOTIFY || !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`entrambi-${oggiStr}`])) {
                         
                         await inviaNotificaCompleta(risultati);
                         CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`entrambi-${oggiStr}`] = true;
@@ -3065,13 +3508,15 @@
             try {
                 const registration = await navigator.serviceWorker.ready;
                 
+                const vibrate = CONFIG_NOTIFICHE.VIBRAZIONE ? [200, 100, 200, 100, 200, 100, 400] : [];
+                
                 await registration.showNotification(titolo, {
                     body: corpo,
                     icon: 'icon-192.png',
                     badge: 'icon-72.png',
-                    vibrate: [200, 100, 200, 100, 200, 100, 400],
+                    vibrate: vibrate,
                     tag: `presenze-${categoria}-${new Date().toDateString()}`,
-                    renotify: true,
+                    renotify: CONFIG_NOTIFICHE.RENOTIFY,
                     requireInteraction: true,
                     actions: [
                         {
@@ -3144,7 +3589,7 @@
             
             switch(Notification.permission) {
                 case 'granted':
-                    statoEl.innerHTML = '🔔 ✅ Notifiche attive - Controllo ogni ora, notifica alle 21:00';
+                    statoEl.innerHTML = `🔔 ✅ Notifiche attive - Controllo ogni ora, notifica alle ${CONFIG_NOTIFICHE.ORARIO_NOTIFICA}:00`;
                     break;
                 case 'denied':
                     statoEl.innerHTML = '🔔 ❌ Notifiche bloccate - Abilita dalle impostazioni';
@@ -3169,6 +3614,15 @@
             if (btn) btn.style.display = 'none';
             deferredPrompt = null;
             alert('✅ Grazie per aver installato Registro Presenze 2050!');
+        });
+
+        // Chiudi menu notifiche con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (document.getElementById('notifiche-overlay').style.display === 'flex') {
+                    chiudiMenuNotifiche();
+                }
+            }
         });
 
         // =================== INIZIALIZZAZIONE ===================
