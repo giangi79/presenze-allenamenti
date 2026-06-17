@@ -230,9 +230,10 @@
         .btn-cuccioli { background: linear-gradient(135deg, #e91e63, #c2185b); } 
         .btn-piccoli { background: linear-gradient(135deg, #007bff, #0056b3); } 
         .btn-grandi { background: linear-gradient(135deg, #28a745, #1e7e34); }
+        .btn-serale { background: linear-gradient(135deg, #9c27b0, #6a1b9a); }
         
         /* Animazione per pulsanti in attenzione */
-        .btn-piccoli.attenzione, .btn-grandi.attenzione {
+        .btn-piccoli.attenzione, .btn-grandi.attenzione, .btn-serale.attenzione {
             animation: pulse 2s infinite;
             box-shadow: 0 0 0 3px #ff4444;
         }
@@ -559,6 +560,7 @@
         .categoria-allievi .nome-cognome { color: #3f51b5; }
         .categoria-junior .nome-cognome { color: #009688; }
         .categoria-senior .nome-cognome { color: #f44336; }
+        .categoria-serale .nome-cognome { color: #9c27b0; }
         
         /* Celle giorni */
         .day-cell { 
@@ -836,6 +838,7 @@
         .quick-categoria-allievi { background: linear-gradient(135deg, #3f51b5, #303f9f); }
         .quick-categoria-junior { background: linear-gradient(135deg, #009688, #00796b); }
         .quick-categoria-senior { background: linear-gradient(135deg, #f44336, #d32f2f); }
+        .quick-categoria-serale { background: linear-gradient(135deg, #9c27b0, #6a1b9a); }
         
         .quick-athlete-name {
             font-size: 36px;
@@ -1310,6 +1313,10 @@
                 🏃 GRANDI
                 <span>R12 • RAGAZZI • ALLIEVI • JUNIOR • SENIOR (LUN - VEN)</span>
             </button>
+            <button class="btn-menu btn-serale" onclick="mostraSezione('serale')" role="tab" aria-selected="false" aria-controls="sez-serale">
+                🌙 CORSO SERALE
+                <span>CORSO SERALE</span>
+            </button>
         </div>
 
         <!-- === SEZIONI TABELLE === -->
@@ -1351,6 +1358,20 @@
                 </div>
                 <div style="text-align: center; padding: 15px; color: #666; font-size: 14px;">
                     <span id="virtual-info-grandi"></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="sez-serale" class="section-container" role="tabpanel" aria-labelledby="tab-serale">
+            <div class="table-container">
+                <div class="table-wrapper" id="wrapper-serale" onscroll="handleVirtualScroll('serale')">
+                    <table id="tab-serale">
+                        <thead id="thead-serale"></thead>
+                        <tbody id="tbody-serale"></tbody>
+                    </table>
+                </div>
+                <div style="text-align: center; padding: 15px; color: #666; font-size: 14px;">
+                    <span id="virtual-info-serale"></span>
                 </div>
             </div>
         </div>
@@ -1435,6 +1456,7 @@
                     <option value="ALLIEVI">ALLIEVI</option>
                     <option value="JUNIOR">JUNIOR</option>
                     <option value="SENIOR">SENIOR</option>
+                    <option value="SERALE">SERALE</option>
                 </select>
                 
                 <button id="btn-save-atleta" class="btn-primary-bottom" 
@@ -1541,7 +1563,15 @@
                 </div>
             </div>
             
-            <!-- SEZIONE 5: OPZIONI AVANZATE -->
+            <!-- SEZIONE 5: GIORNI ALLENAMENTO CORSO SERALE -->
+            <div class="notifiche-section">
+                <h3>🌙 GIORNI ALLENAMENTO CORSO SERALE</h3>
+                <div class="giorni-container" id="giorni-serale-container">
+                    <!-- Generato da JavaScript -->
+                </div>
+            </div>
+            
+            <!-- SEZIONE 6: OPZIONI AVANZATE -->
             <div class="notifiche-section">
                 <h3>⚙️ OPZIONI AVANZATE</h3>
                 
@@ -1601,7 +1631,8 @@
         const virtualScrollStates = {
             cuccioli: { startIndex: 0, endIndex: 0, rowHeight: 60, visibleRows: 15, totalRows: 0, container: null, bufferSize: 10, renderTimeout: null },
             piccoli: { startIndex: 0, endIndex: 0, rowHeight: 60, visibleRows: 15, totalRows: 0, container: null, bufferSize: 10, renderTimeout: null },
-            grandi: { startIndex: 0, endIndex: 0, rowHeight: 60, visibleRows: 15, totalRows: 0, container: null, bufferSize: 10, renderTimeout: null }
+            grandi: { startIndex: 0, endIndex: 0, rowHeight: 60, visibleRows: 15, totalRows: 0, container: null, bufferSize: 10, renderTimeout: null },
+            serale: { startIndex: 0, endIndex: 0, rowHeight: 60, visibleRows: 15, totalRows: 0, container: null, bufferSize: 10, renderTimeout: null }
         };
         
         let longPressTimer = null;
@@ -1617,6 +1648,7 @@
             ORARIO_NOTIFICA: 21, // 21:00 (9 PM)
             GIORNI_PICCOLI: [1, 3, 5], // Lunedì(1), Mercoledì(3), Venerdì(5)
             GIORNI_GRANDI: [1, 2, 3, 4, 5], // Lunedì(1) a Venerdì(5)
+            GIORNI_SERALE: [1, 3, 5], // Lunedì(1), Mercoledì(3), Venerdì(5)
             NOTIFICHE_INVIATE: {}, // Per tracciare notifiche già inviate oggi
             ABILITATE: true,
             SOLO_SE_ZERO: true,
@@ -1667,6 +1699,7 @@
         const CAT_CUCCIOLI = ['CUCCIOLI'];
         const CAT_PICCOLI = ['GIOVANISSIMI', 'ESORDIENTI'];
         const CAT_GRANDI = ['R12', 'RAGAZZI', 'ALLIEVI', 'JUNIOR', 'JUNIORES', 'SENIOR'];
+        const CAT_SERALE = ['SERALE'];
 
         // =================== FUNZIONI DROPDOWN ===================
         function toggleDropdown(event) {
@@ -1824,7 +1857,8 @@
 
         function getAtletiFiltrati(sezione) {
             const cats = sezione === 'cuccioli' ? CAT_CUCCIOLI : 
-                        (sezione === 'piccoli' ? CAT_PICCOLI : CAT_GRANDI);
+                        (sezione === 'piccoli' ? CAT_PICCOLI : 
+                        (sezione === 'grandi' ? CAT_GRANDI : CAT_SERALE));
             
             return atletiCache.filter(a => 
                 cats.includes((a.categoria || "").trim().toUpperCase()) && 
@@ -1842,7 +1876,8 @@
                 'ALLIEVI': 'categoria-allievi',
                 'JUNIOR': 'categoria-junior',
                 'JUNIORES': 'categoria-junior',
-                'SENIOR': 'categoria-senior'
+                'SENIOR': 'categoria-senior',
+                'SERALE': 'categoria-serale'
             };
             return catMap[categoria] || '';
         }
@@ -1857,7 +1892,8 @@
                 'ALLIEVI': 'quick-categoria-allievi',
                 'JUNIOR': 'quick-categoria-junior',
                 'JUNIORES': 'quick-categoria-junior',
-                'SENIOR': 'quick-categoria-senior'
+                'SENIOR': 'quick-categoria-senior',
+                'SERALE': 'quick-categoria-serale'
             };
             return catMap[categoria] || 'quick-categoria-senior';
         }
@@ -2069,7 +2105,7 @@
             sottoscriviRealtime();
             
             setTimeout(() => {
-                ['cuccioli', 'piccoli', 'grandi'].forEach(sez => {
+                ['cuccioli', 'piccoli', 'grandi', 'serale'].forEach(sez => {
                     initVirtualScroll(sez);
                 });
             }, 500);
@@ -2165,6 +2201,7 @@
             if (document.getElementById('sez-cuccioli').classList.contains('section-active')) return 'cuccioli';
             if (document.getElementById('sez-piccoli').classList.contains('section-active')) return 'piccoli';
             if (document.getElementById('sez-grandi').classList.contains('section-active')) return 'grandi';
+            if (document.getElementById('sez-serale').classList.contains('section-active')) return 'serale';
             return null;
         }
 
@@ -2530,6 +2567,8 @@
                 (s === 'piccoli') ? 'section-active' : 'section-container';
             document.getElementById('sez-grandi').className = 
                 (s === 'grandi') ? 'section-active' : 'section-container';
+            document.getElementById('sez-serale').className = 
+                (s === 'serale') ? 'section-active' : 'section-container';
             
             if (s === 'cuccioli') {
                 document.querySelector('.btn-cuccioli').setAttribute('aria-selected', 'true');
@@ -2537,6 +2576,8 @@
                 document.querySelector('.btn-piccoli').setAttribute('aria-selected', 'true');
             } else if (s === 'grandi') {
                 document.querySelector('.btn-grandi').setAttribute('aria-selected', 'true');
+            } else if (s === 'serale') {
+                document.querySelector('.btn-serale').setAttribute('aria-selected', 'true');
             }
             
             renderHeader(s);
@@ -2661,6 +2702,8 @@
                     doc.autoTable({...config, body: preparaDatiPDF(CAT_PICCOLI, annoC, m, g, oggi), 
                                   startY: doc.lastAutoTable.finalY + 10});
                     doc.autoTable({...config, body: preparaDatiPDF(CAT_GRANDI, annoC, m, g, oggi), 
+                                  startY: doc.lastAutoTable.finalY + 10});
+                    doc.autoTable({...config, body: preparaDatiPDF(CAT_SERALE, annoC, m, g, oggi), 
                                   startY: doc.lastAutoTable.finalY + 10});
                 }
                 
@@ -3117,6 +3160,20 @@
                 `;
             }
             
+            // Genera checkbox giorni serale
+            const giorniSerale = document.getElementById('giorni-serale-container');
+            giorniSerale.innerHTML = '';
+            
+            for (let i = 1; i <= 7; i++) {
+                const checked = CONFIG_NOTIFICHE.GIORNI_SERALE.includes(i);
+                giorniSerale.innerHTML += `
+                    <label class="giorno-checkbox">
+                        <input type="checkbox" value="${i}" ${checked ? 'checked' : ''} onchange="aggiornaGiorniSerale()">
+                        ${giorniNomi[i-1]}
+                    </label>
+                `;
+            }
+            
             // Imposta opzioni avanzate
             document.getElementById('notifiche-solo-se-zero').checked = CONFIG_NOTIFICHE.SOLO_SE_ZERO;
             document.getElementById('notifiche-vibrazione').checked = CONFIG_NOTIFICHE.VIBRAZIONE;
@@ -3132,6 +3189,12 @@
         window.aggiornaGiorniGrandi = function() {
             const checkboxes = document.querySelectorAll('#giorni-grandi-container input:checked');
             CONFIG_NOTIFICHE.GIORNI_GRANDI = Array.from(checkboxes).map(cb => parseInt(cb.value));
+            salvaImpostazioniNotifiche();
+        }
+
+        window.aggiornaGiorniSerale = function() {
+            const checkboxes = document.querySelectorAll('#giorni-serale-container input:checked');
+            CONFIG_NOTIFICHE.GIORNI_SERALE = Array.from(checkboxes).map(cb => parseInt(cb.value));
             salvaImpostazioniNotifiche();
         }
 
@@ -3200,6 +3263,10 @@
                         {
                             action: 'open-grandi',
                             title: '🏃 APRI GRANDI'
+                        },
+                        {
+                            action: 'open-serale',
+                            title: '🌙 APRI SERALE'
                         },
                         {
                             action: 'close',
@@ -3303,6 +3370,8 @@
                         mostraSezione('piccoli');
                     } else if (categoria === 'grandi') {
                         mostraSezione('grandi');
+                    } else if (categoria === 'serale') {
+                        mostraSezione('serale');
                     }
                     
                     if (document.hidden) {
@@ -3378,6 +3447,12 @@
                     presenze: 0,
                     totaleAtleti: 0,
                     notificaInviata: false
+                },
+                serale: {
+                    deveAllenarsi: CONFIG_NOTIFICHE.GIORNI_SERALE.includes(giornoSettimana),
+                    presenze: 0,
+                    totaleAtleti: 0,
+                    notificaInviata: false
                 }
             };
             
@@ -3387,9 +3462,11 @@
             
             const atletiPiccoli = getAtletiFiltrati('piccoli');
             const atletiGrandi = getAtletiFiltrati('grandi');
+            const atletiSerale = getAtletiFiltrati('serale');
             
             risultati.piccoli.totaleAtleti = atletiPiccoli.length;
             risultati.grandi.totaleAtleti = atletiGrandi.length;
+            risultati.serale.totaleAtleti = atletiSerale.length;
             
             presenzeOggi.forEach(p => {
                 const atleta = atletiCache.find(a => a.id === p.atleta_id);
@@ -3399,6 +3476,8 @@
                         risultati.piccoli.presenze++;
                     } else if (CAT_GRANDI.includes(cat)) {
                         risultati.grandi.presenze++;
+                    } else if (CAT_SERALE.includes(cat)) {
+                        risultati.serale.presenze++;
                     }
                 }
             });
@@ -3447,9 +3526,19 @@
                         CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`grandi-${oggiStr}`] = true;
                     }
                     
+                    if (risultati.serale.deveAllenarsi && 
+                        risultati.serale.totaleAtleti > 0 && 
+                        (CONFIG_NOTIFICHE.SOLO_SE_ZERO ? risultati.serale.presenze === 0 : true) &&
+                        (CONFIG_NOTIFICHE.RENOTIFY || !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`serale-${oggiStr}`])) {
+                        
+                        await inviaNotificaCategoria('serale', risultati.serale.totaleAtleti);
+                        CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`serale-${oggiStr}`] = true;
+                    }
+                    
                     if (risultati.piccoli.deveAllenarsi && 
                         risultati.grandi.deveAllenarsi && 
-                        (CONFIG_NOTIFICHE.SOLO_SE_ZERO ? (risultati.piccoli.presenze === 0 && risultati.grandi.presenze === 0) : true) &&
+                        risultati.serale.deveAllenarsi &&
+                        (CONFIG_NOTIFICHE.SOLO_SE_ZERO ? (risultati.piccoli.presenze === 0 && risultati.grandi.presenze === 0 && risultati.serale.presenze === 0) : true) &&
                         (CONFIG_NOTIFICHE.RENOTIFY || !CONFIG_NOTIFICHE.NOTIFICHE_INVIATE[`entrambi-${oggiStr}`])) {
                         
                         await inviaNotificaCompleta(risultati);
@@ -3477,6 +3566,9 @@
             if (categoria === 'piccoli') {
                 titolo = '👦 PICCOLI - Nessuna presenza registrata';
                 corpo = `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i PICCOLI. ${totaleAtleti} atleti in lista.`;
+            } else if (categoria === 'serale') {
+                titolo = '🌙 CORSO SERALE - Nessuna presenza registrata';
+                corpo = `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per il CORSO SERALE. ${totaleAtleti} atleti in lista.`;
             } else {
                 titolo = '🏃 GRANDI - Nessuna presenza registrata';
                 corpo = `Oggi ${giornoNome} ${dataFormattata} (giorno di allenamento) non ci sono presenze per i GRANDI. ${totaleAtleti} atleti in lista.`;
@@ -3494,7 +3586,8 @@
             const titolo = '⚠️ NESSUNA PRESENZA OGGI';
             const corpo = `${giornoNome} ${dataFormattata} - Nessun atleta presente!\n` +
                         `PICCOLI: ${risultati.piccoli.totaleAtleti} atleti\n` +
-                        `GRANDI: ${risultati.grandi.totaleAtleti} atleti`;
+                        `GRANDI: ${risultati.grandi.totaleAtleti} atleti\n` +
+                        `CORSO SERALE: ${risultati.serale.totaleAtleti} atleti`;
             
             await inviaNotificaPush(titolo, corpo, 'TUTTI');
         }
@@ -3528,6 +3621,10 @@
                             title: '🏃 APRI GRANDI'
                         },
                         {
+                            action: 'open-serale',
+                            title: '🌙 APRI SERALE'
+                        },
+                        {
                             action: 'close',
                             title: '⏰ RICORDA DOMANI'
                         }
@@ -3551,6 +3648,7 @@
             
             const piccoliBtn = document.querySelector('.btn-piccoli');
             const grandiBtn = document.querySelector('.btn-grandi');
+            const seraleBtn = document.querySelector('.btn-serale');
             
             if (piccoliBtn) {
                 if (CONFIG_NOTIFICHE.GIORNI_PICCOLI.includes(giorno) && 
@@ -3569,6 +3667,16 @@
                     grandiBtn.classList.add('attenzione');
                 } else {
                     grandiBtn.classList.remove('attenzione');
+                }
+            }
+            
+            if (seraleBtn) {
+                if (CONFIG_NOTIFICHE.GIORNI_SERALE.includes(giorno) && 
+                    risultati.serale.totaleAtleti > 0 && 
+                    risultati.serale.presenze === 0) {
+                    seraleBtn.classList.add('attenzione');
+                } else {
+                    seraleBtn.classList.remove('attenzione');
                 }
             }
         }
